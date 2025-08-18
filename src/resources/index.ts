@@ -21,7 +21,7 @@ export function registerResources(server: McpServer): void {
         "data": ["Pandas", "NumPy", "Polars", "Dask", "Vaex"]
       };
       
-      const selectedCategory = category.toLowerCase();
+      const selectedCategory = typeof category === 'string' ? category.toLowerCase() : '';
       
       if (selectedCategory === "all") {
         return {
@@ -89,7 +89,7 @@ export function registerResources(server: McpServer): void {
           "5. Establish feedback mechanisms"
       };
       
-      const selectedTopic = topic.toLowerCase();
+      const selectedTopic = typeof topic === 'string' ? topic.toLowerCase() : '';
       
       if (selectedTopic === "all") {
         return {
