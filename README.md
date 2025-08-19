@@ -13,6 +13,41 @@ A Model Context Protocol (MCP) server designed for AI engineering tasks. This se
 
 - **AI Model Evaluator** - Evaluates AI model metrics and provides recommendations
 - **AI Prompt Generator** - Creates structured prompts for different AI tasks
+- **MCP Orchestrator** - Coordinates task execution between users and AI agents
+
+## MCP Orchestrator
+
+The MCP Orchestrator is a proof-of-concept that demonstrates how MCP can coordinate task execution between users and AI agents without requiring a complex state machine.
+
+### How It Works
+
+1. The user (via the AI agent) calls the `advance` tool.
+2. On first call:
+   - MCP creates `.ai/task/task.md` (a task template)
+   - MCP instructs both the AI agent and user what to do next
+3. On subsequent calls:
+   - MCP reads `.ai/task/task.md`
+   - MCP instructs the AI agent to execute what's written there
+   - MCP gives the user a brief summary of what will happen
+
+### File Structure
+
+- `.ai/task/task.md` - Contains the task definition with goal, steps, and validation criteria
+- `.ai/task/task.log` - Contains a log of task execution progress
+
+### Usage Flow
+
+1. User says: "advance" → the agent calls the `advance` tool
+2. If response `mode: "draft"`:
+   - Task template is created
+   - Agent explains how to fill it out
+3. User and agent collaborate on `.ai/task/task.md`
+4. User says: "advance" again
+5. If response `mode: "execute"`:
+   - Agent summarizes what will happen
+   - Agent executes the steps
+   - Agent logs progress to `.ai/task/task.log`
+6. To start over, use the `reset` tool
 
 ## Installation
 
@@ -71,54 +106,31 @@ claude mcp add-json ai-engineer '{
 }'
 ```
 
-## Available Resources
-
-### Frameworks
-
-Access information about AI engineering frameworks:
-
-```
-frameworks://ml       # Machine learning frameworks
-frameworks://nlp      # NLP frameworks
-frameworks://cv       # Computer vision frameworks
-frameworks://rl       # Reinforcement learning frameworks
-frameworks://data     # Data processing frameworks
-frameworks://all      # List all categories
-```
-
-### Best Practices
-
-Access AI engineering best practices:
-
-```
-best-practices://testing      # Testing best practices
-best-practices://deployment   # Deployment best practices
-best-practices://monitoring   # Monitoring best practices
-best-practices://ethics       # Ethical considerations
-best-practices://all          # List all topics
-```
-
 ## Available Tools
 
-### evaluate-model
+### advance
 
-Evaluates AI model metrics and provides recommendations.
-
-Parameters:
-- `modelType`: "classification", "regression", or "generative"
-- `accuracy`: Model accuracy (0-1)
-- `precision`: Model precision (0-1) - optional for regression
-- `recall`: Model recall (0-1) - optional for regression
-- `f1Score`: Model F1 score (0-1) - optional
-
-### generate-prompt
-
-Generates structured prompts for different AI tasks.
+The `advance` tool is part of the MCP Orchestrator, which helps coordinate task execution between users and the AI agent. This tool either creates a task template or executes an existing task.
 
 Parameters:
-- `taskType`: "text-classification", "image-generation", "code-completion", or "question-answering"
-- `context`: Specific context or domain for the prompt
-- `complexity`: "simple", "moderate", or "complex"
+- `reason`: String (free text) explaining why you're advancing the task
+
+When called:
+- If `.ai/task/task.md` doesn't exist: Creates a task template file and enters "draft" mode
+- If `.ai/task/task.md` exists: Enters "execute" mode to carry out the steps in the file
+
+### reset
+
+Resets the orchestrator by deleting the task file.
+
+No parameters required.
+
+### append_log
+
+Appends a message to the task log file.
+
+Parameters:
+- `message`: The message to add to the log
 
 ## Troubleshooting
 

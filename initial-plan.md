@@ -52,3 +52,20 @@ It should remedy the problem of an AI forgetting a complex workflow by exposing 
 The solution should ask the user for input through chat and write everything into files so the user can review those files.
 The user can't directly modify files.
 The MCP can only instruct the AI to do things, or ask the AI to relay things to the user.
+
+# Implementation Details
+
+## Storage and State Management
+"I want to store everything in a folder called .ai/task. Lets use JSON, that can be parsed and validated with js and zod easily. I think a simpler approach with using classes that encapsulate state changes would work for now. We will cover everything with unit tests so we should be able to refactor later."
+
+## File Management
+"Use the .ai/task folder and everything should have a simple lower case file name, like plan.md, task.md, comments.md, etc."
+
+## Atlassian Integration
+"The mcp will gather the jira and confluence links, and asks the AI to use the Atlassian MCP server to gather the content of each link and save them to files link by link under ./ai/task/atlassian. Then also include a summary of what the AI learned from the content in the file we are working on. The general approach of this mcp is to 'know' what needs to be done and ask the AI Agent to do it. It will always need to tell the AI to communicate edge cases as well, for example if it does not have Atlassian MCP installed or can't reach jira or confluence links, tell the user to fix the Atlassian MCP. The MCP should provide some info on where the user can find guides on how to add the atlassian mcp."
+
+## Plan Template Structure
+"We will need to have a template that the AI and the user can understand yes. I am open to suggestions but we need an initial one."
+
+## Task Selection Criteria
+"It should be committed without breaking anything that already exists but small enough so its easy to review and reason about. Additionally it should have a single focus. For example a task setting up the project structure should not start implementing features. We might will need a separate doc just about guidance on how to select a next viable task. Essentially the MCP will do a lot of this: Tell the AI to do something and read some docs on how to do it properly. For example: Read the context.md and task-selection.md to figure out the next best task in order to get closer to our acceptance criterias."
