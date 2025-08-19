@@ -11,8 +11,6 @@ A Model Context Protocol (MCP) server designed for AI engineering tasks. This se
 
 ### Tools
 
-- **AI Model Evaluator** - Evaluates AI model metrics and provides recommendations
-- **AI Prompt Generator** - Creates structured prompts for different AI tasks
 - **MCP Orchestrator** - Coordinates task execution between users and AI agents
 
 ## MCP Orchestrator
