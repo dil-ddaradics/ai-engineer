@@ -351,6 +351,118 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 2. **Reparo Guard**: Blocked if PR_APPLIED_PENDING_ARCHIVE (must Accio to finish current review)
 3. **Reverto Guard**: Only allowed in PR states (except PR_APPLIED_PENDING_ARCHIVE where Accio must be used to complete the archive)
 
+### Response Format Templates
+
+To ensure a consistent user experience, all responses to state transitions will follow standardized templates. Each response has two sections:
+
+1. **Response to the AI**: Internal instructions for the AI system (not shown to users)
+2. **Response to the Developer**: User-facing structured information
+
+#### 1. Standard Transition Response Format
+
+For normal transitions, error states, and recovery:
+
+```markdown
+## Response to the AI
+
+<Detailed instructions for the AI system on how to process this transition>
+
+## Response to the Developer
+
+### What Just Happened
+<Clear explanation of the action performed in human-readable terms>
+
+### Where We Are
+<Human-friendly description of the current phase and what it means>
+
+### Available Spells
+- **Accio**: <What happens if cast in human-readable terms>
+- **Expecto**: <What happens if cast in human-readable terms>
+- **Reparo**: <What happens if cast in human-readable terms>
+- **Reverto**: <What happens if cast in human-readable terms>
+- **Finite**: <What happens if cast in human-readable terms>
+
+### Next Steps
+<Recommendation for what to do next in human-friendly language>
+```
+
+#### 2. Blocked Transition Response Format
+
+For when a spell cannot be used in the current state:
+
+```markdown
+## Response to the AI
+
+<Instruction to inform the developer that this action is blocked and why>
+
+## Response to the Developer
+
+### What Just Happened
+You attempted to cast **<Spell>** which cannot be used right now because <human-readable reason>.
+
+### Where We Are
+<Human-friendly description of the current phase and what it means>
+
+### Available Spells
+- **Spell1**: <Human-readable description of effect>
+- **Spell2**: <Human-readable description of effect>
+...
+
+### Next Steps
+<Clear direction on what to do instead in human-friendly language>
+```
+
+#### 3. No-op Transition Response Format
+
+For when a spell is cast but causes no state change:
+
+```markdown
+## Response to the AI
+
+<Instruction to inform the developer that this action had no effect and why>
+
+## Response to the Developer
+
+### What Just Happened
+You cast **<Spell>** which had no effect because <human-readable reason>.
+
+### Where We Are
+<Human-friendly description of the current phase and what it means>
+
+### Available Spells
+- **Spell1**: <Human-readable description of effect>
+- **Spell2**: <Human-readable description of effect>
+...
+
+### Next Steps
+<Recommendation for what to do to make progress in human-friendly language>
+```
+
+#### 4. Confirmation Transitions Response Format
+
+For when user confirmation is required before proceeding:
+
+```markdown
+## Response to the AI
+
+<Instructions for requesting confirmation from the developer>
+
+## Response to the Developer
+
+### What Just Happened
+A confirmation is needed: <explanation of what requires confirmation>.
+
+### Where We Are
+<Human-friendly description of the confirmation decision point>
+
+### Available Choices
+- **Reparo**: <Confirm the action and its consequences>
+- **Reverto**: <Cancel the action and its consequences>
+
+### Next Steps
+Please choose whether to proceed with the action or cancel it. Use **Reparo** to confirm or **Reverto** to cancel.
+```
+
 ### State Persistence
 
 All state is persisted in `.ai/task/state.json` with the following structure:
