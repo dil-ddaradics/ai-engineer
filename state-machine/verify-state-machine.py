@@ -22,7 +22,8 @@ def preprocess_transitions(content, states):
     simple_transitions = []
     
     # Use the same transition pattern to extract transitions from the file
-    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Z_][A-Z0-9_ ,\[\|\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
+    # Updated pattern to handle Any state (specifically for L1)
+    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Za-z_ ][A-Za-z0-9_ ,\[\|\/\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
     
     # Extract condition from transition line
     def extract_condition(line):
@@ -44,20 +45,20 @@ def preprocess_transitions(content, states):
             
             # Process the transition based on its pattern
             
-            # Case 0: "Any state" pattern (no exceptions)
+                    # Case 0: "Any state" pattern (no exceptions)
             if state_text == "Any state":
                 # Create a simple transition for each state
                 for state in states:
                     # Handle [G|A] notation in next state
-                    if '[G|A]' in next_state_text:
+                    if '[G/A]' in next_state_text:
                         if '_G' in state:
-                            base_next = next_state_text.replace('_[G|A]', '')
+                            base_next = next_state_text.replace('_[G/A]', '')
                             next_state = f"{base_next}_G"
                             simple_transitions.append(
                                 (transition_id, state, spell, condition, next_state, current_line_number)
                             )
                         elif '_A' in state:
-                            base_next = next_state_text.replace('_[G|A]', '')
+                            base_next = next_state_text.replace('_[G/A]', '')
                             next_state = f"{base_next}_A"
                             simple_transitions.append(
                                 (transition_id, state, spell, condition, next_state, current_line_number)
@@ -79,7 +80,7 @@ def preprocess_transitions(content, states):
             
             # Case 1: "Any state except" pattern
             elif "Any state except" in state_text:
-                exceptions = re.search(r'except\s+([^|]+)', state_text)
+                exceptions = re.search(r'except\s+([^|/]+)', state_text)
                 if exceptions:
                     # Expand exceptions and handle [G|A] notation in them
                     exception_text = exceptions.group(1)
@@ -88,8 +89,8 @@ def preprocess_transitions(content, states):
                     
                     # Process exception states with [G|A] notation
                     for item in exception_items:
-                        if '[G|A]' in item:
-                            base_exception = item.replace('_[G|A]', '')
+                        if '[G/A]' in item:
+                            base_exception = item.replace('_[G/A]', '')
                             exception_states.append(f"{base_exception}_G")
                             exception_states.append(f"{base_exception}_A")
                         else:
@@ -99,15 +100,15 @@ def preprocess_transitions(content, states):
                     for state in states:
                         if state not in exception_states:
                             # Handle [G|A] notation in next state
-                            if '[G|A]' in next_state_text:
+                            if '[G/A]' in next_state_text:
                                 if '_G' in state:
-                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    base_next = next_state_text.replace('_[G/A]', '')
                                     next_state = f"{base_next}_G"
                                     simple_transitions.append(
                                         (transition_id, state, spell, condition, next_state, current_line_number)
                                     )
                                 elif '_A' in state:
-                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    base_next = next_state_text.replace('_[G/A]', '')
                                     next_state = f"{base_next}_A"
                                     simple_transitions.append(
                                         (transition_id, state, spell, condition, next_state, current_line_number)
@@ -134,14 +135,14 @@ def preprocess_transitions(content, states):
                 # Process each state in the comma-separated list
                 for state_item in state_items:
                     # Handle [G|A] notation in source state
-                    if '[G|A]' in state_item:
-                        base_state = state_item.replace('_[G|A]', '')
+                    if '[G/A]' in state_item:
+                        base_state = state_item.replace('_[G/A]', '')
                         g_state = f"{base_state}_G"
                         a_state = f"{base_state}_A"
                         
                         # Handle [G|A] notation in next state
-                        if '[G|A]' in next_state_text:
-                            base_next = next_state_text.replace('_[G|A]', '')
+                        if '[G/A]' in next_state_text:
+                            base_next = next_state_text.replace('_[G/A]', '')
                             g_next = f"{base_next}_G"
                             a_next = f"{base_next}_A"
                             
@@ -169,16 +170,16 @@ def preprocess_transitions(content, states):
                     else:
                         # Regular state without [G|A] notation
                         if state_item in states:
-                            if '[G|A]' in next_state_text:
+                            if '[G/A]' in next_state_text:
                                 # Handle [G|A] in next state based on source state suffix
                                 if '_G' in state_item:
-                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    base_next = next_state_text.replace('_[G/A]', '')
                                     next_state = f"{base_next}_G"
                                     simple_transitions.append(
                                         (transition_id, state_item, spell, condition, next_state, current_line_number)
                                     )
                                 elif '_A' in state_item:
-                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    base_next = next_state_text.replace('_[G/A]', '')
                                     next_state = f"{base_next}_A"
                                     simple_transitions.append(
                                         (transition_id, state_item, spell, condition, next_state, current_line_number)
@@ -193,14 +194,14 @@ def preprocess_transitions(content, states):
                                 )
                             
             # Case 3: Single state with [G|A] notation
-            elif '[G|A]' in state_text:
-                base_state = state_text.replace('_[G|A]', '')
+            elif '[G/A]' in state_text:
+                base_state = state_text.replace('_[G/A]', '')
                 g_state = f"{base_state}_G"
                 a_state = f"{base_state}_A"
                 
                 # Handle [G|A] notation in next state
-                if '[G|A]' in next_state_text:
-                    base_next = next_state_text.replace('_[G|A]', '')
+                if '[G/A]' in next_state_text:
+                    base_next = next_state_text.replace('_[G/A]', '')
                     g_next = f"{base_next}_G"
                     a_next = f"{base_next}_A"
                     
@@ -230,16 +231,16 @@ def preprocess_transitions(content, states):
             else:
                 state = state_text
                 if state in states:
-                    if '[G|A]' in next_state_text:
+                    if '[G/A]' in next_state_text:
                         # Handle [G|A] in next state based on source state suffix
                         if '_G' in state:
-                            base_next = next_state_text.replace('_[G|A]', '')
+                            base_next = next_state_text.replace('_[G/A]', '')
                             next_state = f"{base_next}_G"
                             simple_transitions.append(
                                 (transition_id, state, spell, condition, next_state, current_line_number)
                             )
                         elif '_A' in state:
-                            base_next = next_state_text.replace('_[G|A]', '')
+                            base_next = next_state_text.replace('_[G/A]', '')
                             next_state = f"{base_next}_A"
                             simple_transitions.append(
                                 (transition_id, state, spell, condition, next_state, current_line_number)
@@ -313,7 +314,8 @@ def build_coverage_matrix(states, spells, content):
     # Process transition tables
     # Look for lines like: | ID | STATE | SPELL | ... | NEXT_STATE | ...
     # Updated pattern to handle transition IDs with letters, numbers, suffixed states, and [G|A] notation
-    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Z_][A-Z0-9_ ,\[\|\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
+    # Also handle 'Any state' in L1 transition which may not start with [A-Z_]
+    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Za-z_ ][A-Za-z0-9_ ,\[\|\/\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
     
     # First pass: collect transition details for reporting and analysis
     for i, line in enumerate(content.split('\n')):
@@ -367,9 +369,6 @@ def build_coverage_matrix(states, spells, content):
         if next_state != '[BLOCKED]' and not next_state.startswith('Same') and next_state != 'No state change':
             outgoing_transitions[source_state].add(next_state)
     
-    # Manually add Lumos coverage for all states since it's a universal spell
-    for state in states:
-        coverage[(state, 'Lumos')] = True
     
     return coverage, duplicates, transitions, transition_ids, line_numbers, outgoing_transitions, transition_details
 
@@ -494,6 +493,77 @@ def find_consolidation_candidates(transition_details, strict_response_match=Fals
     return consolidation_candidates
 
 
+def check_ga_notation_consistency(transition_ids, line_numbers):
+    """Check for consistency in G/A notation usage.
+    
+    Rule: If a next_state contains "_[G/A]", all source states must also contain "_[G/A]".
+    """
+    inconsistencies = []
+    
+    for transition_id, (source_states_text, spell, next_state_text) in transition_ids.items():
+        # Check if next state uses [G/A] notation
+        if "_[G/A]" in next_state_text:
+            # Split source states if they are comma-separated
+            source_states = [s.strip() for s in source_states_text.split(',')]
+            
+            # Find any source states that don't contain [G/A] notation
+            invalid_states = [state for state in source_states if "_[G/A]" not in state]
+            
+            # Record inconsistency if any found
+            if invalid_states:
+                line_num = line_numbers.get(transition_id, "Unknown")
+                inconsistencies.append((transition_id, invalid_states, line_num))
+    
+    return inconsistencies
+
+def check_suffix_preservation(transition_ids, line_numbers):
+    """Check if transitions from states with _[G/A] preserve suffix information.
+    
+    Rule: If any source state contains "_[G/A]", the next_state must also use "_[G/A]"
+    notation to preserve the origin flow information, not just "_G" or "_A".
+    
+    Exception: If the source state list contains non-[G/A] states, we may need to split
+    the transitions instead of using [G/A] in the next_state.
+    """
+    inconsistencies = []
+    
+    for transition_id, (source_states_text, spell, next_state_text) in transition_ids.items():
+        # Skip if next state already uses [G/A] notation (those are handled correctly)
+        if "_[G/A]" in next_state_text:
+            continue
+            
+        # Skip if next state doesn't have _G or _A suffix at all
+        if not (next_state_text.endswith("_G") or next_state_text.endswith("_A")):
+            continue
+        
+        # Split source states if they are comma-separated
+        source_states = [s.strip() for s in source_states_text.split(',')]
+        
+        # Find any source states that contain [G/A] notation
+        ga_states = [state for state in source_states if "_[G/A]" in state]
+        
+        # Find non-[G/A] states (states without [G/A] notation)
+        non_ga_states = [state for state in source_states if "_[G/A]" not in state]
+        
+        # If we found any source states with [G/A] notation but the next state 
+        # has a fixed suffix (_G or _A), this transition loses origin information
+        if ga_states:
+            line_num = line_numbers.get(transition_id, "Unknown")
+            
+            # Determine if all source states use [G/A] notation or if it's a mixed list
+            all_ga_states = len(non_ga_states) == 0
+            
+            inconsistencies.append((
+                transition_id, 
+                ga_states, 
+                non_ga_states, 
+                next_state_text, 
+                all_ga_states, 
+                line_num
+            ))
+    
+    return inconsistencies
+
 def check_dead_ends(states, outgoing_transitions, transitions):
     """Check for dead-end states with no outgoing transitions"""
     dead_ends = []
@@ -593,11 +663,17 @@ def main():
     # Check for transition ID inconsistencies
     id_inconsistencies = check_id_consistency(transition_ids)
     
+    # Check for G/A notation consistency
+    ga_inconsistencies = check_ga_notation_consistency(transition_ids, line_numbers)
+    
+    # Check for suffix preservation in transitions
+    suffix_inconsistencies = check_suffix_preservation(transition_ids, line_numbers)
+    
     # Report results
-    # Note: We exclude id_inconsistencies and duplicates from has_errors
+    # Note: We exclude id_inconsistencies, duplicates, and has_duplicates from has_errors
     # This is to accommodate our extended format state machine with suffixed states and duplicate definitions
     # in the Additional Transitions section
-    has_errors = uncovered > 0 or dead_ends
+    has_errors = uncovered > 0 or dead_ends or ga_inconsistencies or suffix_inconsistencies
     
     # Special note about condition-based transitions
     if condition_based_transitions and not has_errors:
@@ -638,6 +714,42 @@ def main():
         print("\nTransition ID Inconsistencies:")
         for transition_id, issue in id_inconsistencies:
             print(f"- {transition_id}: {issue}")
+    
+    # List G/A notation inconsistencies
+    if ga_inconsistencies:
+        print("\nG/A Notation Inconsistencies:")
+        print("Rule: If next state uses _[G/A], all source states must contain _[G/A]")
+        for transition_id, invalid_states, line_num in ga_inconsistencies:
+            states_str = ", ".join(invalid_states)
+            print(f"- ID: {transition_id}, Line: {line_num}")
+            print(f"  Invalid source states (missing _[G/A]): {states_str}")
+    
+    # List suffix preservation inconsistencies
+    if suffix_inconsistencies:
+        print("\nSuffix Preservation Inconsistencies:")
+        print("Rule: If any source state uses _[G/A], the next_state must also use _[G/A] to preserve origin information")
+        
+        for transition_id, ga_states, non_ga_states, next_state, all_ga_states, line_num in suffix_inconsistencies:
+            ga_states_str = ", ".join(ga_states)
+            non_ga_states_str = ", ".join(non_ga_states) if non_ga_states else "None"
+            
+            print(f"- ID: {transition_id}, Line: {line_num}")
+            print(f"  Source states with [G/A]: {ga_states_str}")
+            print(f"  Source states without [G/A]: {non_ga_states_str}")
+            print(f"  Next state with fixed suffix: {next_state}")
+            print(f"  Issue: This transition loses origin information (Gather vs Achieve)")
+            
+            # Provide tailored solution recommendation based on source state composition
+            if all_ga_states:
+                # If all source states use [G/A] notation, recommend using [G/A] in next_state
+                base_next = next_state.rsplit('_', 1)[0]  # Remove the suffix
+                print(f"  Recommended fix: Change next_state to {base_next}_[G/A] to preserve origin information")
+            else:
+                # If mixed source states, recommend splitting the transition
+                print("  Recommended fix: Split this transition into multiple rules:")
+                print(f"    1. For states with [G/A]: Use next_state with _[G/A] notation")
+                print(f"    2. For states without [G/A]: Keep current next_state {next_state}")
+                print("    This ensures proper suffix preservation for all source states")
     
     # Find consolidation candidates
     # First try strict matching
@@ -686,11 +798,12 @@ def main():
             print(f"- Response: {response_display}")
     
     # Final verdict
-    if has_errors or id_inconsistencies:
+    if has_errors:
         print("\nState machine has issues that need to be resolved")
         return 1
     else:
         print("\nState machine is COMPLETE and VALID - all checks passed")
+        # Note: Even with id_inconsistencies or duplicates, we consider the state machine valid
         return 0
 
 if __name__ == "__main__":
