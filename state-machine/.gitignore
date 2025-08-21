@@ -1,0 +1,22 @@
+# Temporary files created by verification scripts
+*.tmp
+tmp/
+.tmp/
+temp/
+.temp/
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Logs and output files
+*.log
+output/
+
+review.md
