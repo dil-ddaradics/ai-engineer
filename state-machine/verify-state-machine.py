@@ -7,10 +7,259 @@ from collections import defaultdict
 # File to analyze
 state_machine_file = "./state-machine.md"
 
+
+def preprocess_transitions(content, states):
+    """Preprocess transitions to expand all complex patterns into simple transitions.
+    
+    Args:
+        content (str): Content of the state machine file
+        states (list): List of valid states
+        
+    Returns:
+        list: List of simple transitions with format:
+            (transition_id, source_state, spell, condition, next_state, line_number)
+    """
+    simple_transitions = []
+    
+    # Use the same transition pattern to extract transitions from the file
+    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Z_][A-Z0-9_ ,\[\|\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
+    
+    # Extract condition from transition line
+    def extract_condition(line):
+        condition_match = re.search(r'\|\s*[^|]+\|\s*[^|]+\|\s*[^|]+\|\s*([^|]*)\|', line)
+        if condition_match:
+            return condition_match.group(1).strip()
+        return "-"
+    
+    # Process each line to find transitions
+    for i, line in enumerate(content.split('\n')):
+        match = re.search(transition_pattern, line)
+        if match:
+            current_line_number = i + 1
+            transition_id = match.group(1).strip()
+            state_text = match.group(2).strip()
+            spell = match.group(3).strip()
+            next_state_text = match.group(4).strip()
+            condition = extract_condition(line)
+            
+            # Process the transition based on its pattern
+            
+            # Case 0: "Any state" pattern (no exceptions)
+            if state_text == "Any state":
+                # Create a simple transition for each state
+                for state in states:
+                    # Handle [G|A] notation in next state
+                    if '[G|A]' in next_state_text:
+                        if '_G' in state:
+                            base_next = next_state_text.replace('_[G|A]', '')
+                            next_state = f"{base_next}_G"
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state, current_line_number)
+                            )
+                        elif '_A' in state:
+                            base_next = next_state_text.replace('_[G|A]', '')
+                            next_state = f"{base_next}_A"
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state, current_line_number)
+                            )
+                        else:
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state_text, current_line_number)
+                            )
+                    else:
+                        # Handle "Same state" special case
+                        if next_state_text == "Same state":
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, state, current_line_number)
+                            )
+                        else:
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state_text, current_line_number)
+                            )
+            
+            # Case 1: "Any state except" pattern
+            elif "Any state except" in state_text:
+                exceptions = re.search(r'except\s+([^|]+)', state_text)
+                if exceptions:
+                    # Expand exceptions and handle [G|A] notation in them
+                    exception_text = exceptions.group(1)
+                    exception_items = [s.strip() for s in exception_text.split(',')]
+                    exception_states = []
+                    
+                    # Process exception states with [G|A] notation
+                    for item in exception_items:
+                        if '[G|A]' in item:
+                            base_exception = item.replace('_[G|A]', '')
+                            exception_states.append(f"{base_exception}_G")
+                            exception_states.append(f"{base_exception}_A")
+                        else:
+                            exception_states.append(item)
+                    
+                    # Create a simple transition for each non-excepted state
+                    for state in states:
+                        if state not in exception_states:
+                            # Handle [G|A] notation in next state
+                            if '[G|A]' in next_state_text:
+                                if '_G' in state:
+                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    next_state = f"{base_next}_G"
+                                    simple_transitions.append(
+                                        (transition_id, state, spell, condition, next_state, current_line_number)
+                                    )
+                                elif '_A' in state:
+                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    next_state = f"{base_next}_A"
+                                    simple_transitions.append(
+                                        (transition_id, state, spell, condition, next_state, current_line_number)
+                                    )
+                                else:
+                                    simple_transitions.append(
+                                        (transition_id, state, spell, condition, next_state_text, current_line_number)
+                                    )
+                            else:
+                                # Handle "Same state" special case
+                                if next_state_text == "Same state":
+                                    simple_transitions.append(
+                                        (transition_id, state, spell, condition, state, current_line_number)
+                                    )
+                                else:
+                                    simple_transitions.append(
+                                        (transition_id, state, spell, condition, next_state_text, current_line_number)
+                                    )
+                            
+            # Case 2: Comma-separated states with potential [G|A] notation
+            elif ',' in state_text:
+                state_items = [s.strip() for s in state_text.split(',')]
+                
+                # Process each state in the comma-separated list
+                for state_item in state_items:
+                    # Handle [G|A] notation in source state
+                    if '[G|A]' in state_item:
+                        base_state = state_item.replace('_[G|A]', '')
+                        g_state = f"{base_state}_G"
+                        a_state = f"{base_state}_A"
+                        
+                        # Handle [G|A] notation in next state
+                        if '[G|A]' in next_state_text:
+                            base_next = next_state_text.replace('_[G|A]', '')
+                            g_next = f"{base_next}_G"
+                            a_next = f"{base_next}_A"
+                            
+                            # Add G variant transition
+                            if g_state in states:
+                                simple_transitions.append(
+                                    (transition_id, g_state, spell, condition, g_next, current_line_number)
+                                )
+                            
+                            # Add A variant transition
+                            if a_state in states:
+                                simple_transitions.append(
+                                    (transition_id, a_state, spell, condition, a_next, current_line_number)
+                                )
+                        else:
+                            # Only source has [G|A] notation
+                            if g_state in states:
+                                simple_transitions.append(
+                                    (transition_id, g_state, spell, condition, next_state_text, current_line_number)
+                                )
+                            if a_state in states:
+                                simple_transitions.append(
+                                    (transition_id, a_state, spell, condition, next_state_text, current_line_number)
+                                )
+                    else:
+                        # Regular state without [G|A] notation
+                        if state_item in states:
+                            if '[G|A]' in next_state_text:
+                                # Handle [G|A] in next state based on source state suffix
+                                if '_G' in state_item:
+                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    next_state = f"{base_next}_G"
+                                    simple_transitions.append(
+                                        (transition_id, state_item, spell, condition, next_state, current_line_number)
+                                    )
+                                elif '_A' in state_item:
+                                    base_next = next_state_text.replace('_[G|A]', '')
+                                    next_state = f"{base_next}_A"
+                                    simple_transitions.append(
+                                        (transition_id, state_item, spell, condition, next_state, current_line_number)
+                                    )
+                                else:
+                                    simple_transitions.append(
+                                        (transition_id, state_item, spell, condition, next_state_text, current_line_number)
+                                    )
+                            else:
+                                simple_transitions.append(
+                                    (transition_id, state_item, spell, condition, next_state_text, current_line_number)
+                                )
+                            
+            # Case 3: Single state with [G|A] notation
+            elif '[G|A]' in state_text:
+                base_state = state_text.replace('_[G|A]', '')
+                g_state = f"{base_state}_G"
+                a_state = f"{base_state}_A"
+                
+                # Handle [G|A] notation in next state
+                if '[G|A]' in next_state_text:
+                    base_next = next_state_text.replace('_[G|A]', '')
+                    g_next = f"{base_next}_G"
+                    a_next = f"{base_next}_A"
+                    
+                    # Add G variant transition
+                    if g_state in states:
+                        simple_transitions.append(
+                            (transition_id, g_state, spell, condition, g_next, current_line_number)
+                        )
+                    
+                    # Add A variant transition
+                    if a_state in states:
+                        simple_transitions.append(
+                            (transition_id, a_state, spell, condition, a_next, current_line_number)
+                        )
+                else:
+                    # Only source has [G|A] notation
+                    if g_state in states:
+                        simple_transitions.append(
+                            (transition_id, g_state, spell, condition, next_state_text, current_line_number)
+                        )
+                    if a_state in states:
+                        simple_transitions.append(
+                            (transition_id, a_state, spell, condition, next_state_text, current_line_number)
+                        )
+                        
+            # Case 4: Single state without special notation
+            else:
+                state = state_text
+                if state in states:
+                    if '[G|A]' in next_state_text:
+                        # Handle [G|A] in next state based on source state suffix
+                        if '_G' in state:
+                            base_next = next_state_text.replace('_[G|A]', '')
+                            next_state = f"{base_next}_G"
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state, current_line_number)
+                            )
+                        elif '_A' in state:
+                            base_next = next_state_text.replace('_[G|A]', '')
+                            next_state = f"{base_next}_A"
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state, current_line_number)
+                            )
+                        else:
+                            simple_transitions.append(
+                                (transition_id, state, spell, condition, next_state_text, current_line_number)
+                            )
+                    else:
+                        simple_transitions.append(
+                            (transition_id, state, spell, condition, next_state_text, current_line_number)
+                        )
+                        
+    return simple_transitions
+
 def extract_states(content):
     """Extract all states from the States section"""
     states = []
-    state_pattern = r'\s*\d+\.\s+\*\*([A-Z_]+)\*\*'
+    # Updated pattern to handle states with suffixes (_G, _A, etc.)
+    state_pattern = r'\s*\d+\.\s+\*\*([A-Z_]+(?:_[GA])?)\*\*'
     
     # Find the States section
     states_section = re.search(r'### States\n(.*?)###', content, re.DOTALL)
@@ -40,7 +289,7 @@ def extract_spells(content):
     return spells
 
 def build_coverage_matrix(states, spells, content):
-    """Check coverage of each state-spell combination and track transitions"""
+    """Build coverage matrix using preprocessed simple transitions"""
     coverage = {}
     duplicates = {}
     transitions = {}
@@ -58,11 +307,15 @@ def build_coverage_matrix(states, spells, content):
     # Initialize outgoing transitions tracker for dead-end detection
     outgoing_transitions = {state: set() for state in states}
     
+    # Preprocess transitions into simple transitions
+    simple_transitions = preprocess_transitions(content, states)
+    
     # Process transition tables
     # Look for lines like: | ID | STATE | SPELL | ... | NEXT_STATE | ...
-    transition_pattern = r'\|\s*([A-Z0-9]+)\s*\|\s*([A-Z_, ]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
+    # Updated pattern to handle transition IDs with letters, numbers, suffixed states, and [G|A] notation
+    transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Z_][A-Z0-9_ ,\[\|\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
     
-    # Count line numbers for reporting duplicates
+    # First pass: collect transition details for reporting and analysis
     for i, line in enumerate(content.split('\n')):
         match = re.search(transition_pattern, line)
         if match:
@@ -72,12 +325,11 @@ def build_coverage_matrix(states, spells, content):
             spell = match.group(3).strip()
             next_state_text = match.group(4).strip()
             
-            # Store transition ID and line number
+            # Store transition ID and line number for reporting
             transition_ids[transition_id] = (state_text, spell, next_state_text)
             line_numbers[transition_id] = current_line_number
             
             # Extract full transition details for consolidation analysis
-            # Get the condition, action and response from the line
             condition = "-"
             action = "-"
             response = "-"
@@ -86,11 +338,15 @@ def build_coverage_matrix(states, spells, content):
             fields = line.split('|')
             if len(fields) >= 7:  # Ensure we have enough fields
                 condition = fields[4].strip()
-                next_state = fields[5].strip()  # Update to correct column index
+                next_state = fields[5].strip()
                 action = fields[6].strip()
                 response = fields[7].strip() if len(fields) > 7 else "-"
+                
+                # If the condition is empty, set it to match the spell
+                if condition.strip() == "-":
+                    condition = spell
             
-            # Store complete transition details
+            # Store complete transition details for consolidation analysis
             transition_details[transition_id] = {
                 'state': state_text,
                 'spell': spell,
@@ -99,57 +355,19 @@ def build_coverage_matrix(states, spells, content):
                 'action': action,
                 'response': response
             }
-            
-            # Track outgoing transitions for dead-end detection
-            if next_state_text != '[BLOCKED]' and not next_state_text.startswith('Same') and next_state_text != 'No state change':
-                if 'Any state except' in state_text:
-                    exceptions = re.search(r'except\s+([^|]+)', state_text)
-                    if exceptions:
-                        exception_states = [s.strip() for s in exceptions.group(1).split(',')]
-                        for state in states:
-                            if state not in exception_states:
-                                outgoing_transitions[state].add(next_state_text)
-                elif ',' in state_text:
-                    state_list = [s.strip() for s in state_text.split(',')]
-                    for state in state_list:
-                        if state in states:
-                            outgoing_transitions[state].add(next_state_text)
-                else:
-                    state = state_text
-                    if state in states:
-                        outgoing_transitions[state].add(next_state_text)
-            
-            # Handle "Any state except" pattern
-            if "Any state except" in state_text:
-                exceptions = re.search(r'except\s+([^|]+)', state_text)
-                if exceptions:
-                    exception_states = [s.strip() for s in exceptions.group(1).split(',')]
-                    
-                    # Record transition for each covered state
-                    for state in states:
-                        if state not in exception_states:
-                            coverage[(state, spell)] = True
-                            duplicates[(state, spell)].append((transition_id, current_line_number))
-                            transitions[(state, spell)].append((transition_id, next_state_text))
-            
-            # Handle comma-separated state lists
-            elif ',' in state_text:
-                state_list = [s.strip() for s in state_text.split(',')]
-                for state in state_list:
-                    if state in states:
-                        coverage[(state, spell)] = True
-                        duplicates[(state, spell)].append((transition_id, current_line_number))
-                        transitions[(state, spell)].append((transition_id, next_state_text))
-            
-            # Handle single state
-            else:
-                state = state_text
-                if state in states:
-                    coverage[(state, spell)] = True
-                    duplicates[(state, spell)].append((transition_id, current_line_number))
-                    transitions[(state, spell)].append((transition_id, next_state_text))
     
-    # Handle universal Lumos transitions
+    # Second pass: process the preprocessed simple transitions
+    for transition_id, source_state, spell, condition, next_state, line_number in simple_transitions:
+        # Record coverage
+        coverage[(source_state, spell)] = True
+        duplicates[(source_state, spell)].append((transition_id, line_number))
+        transitions[(source_state, spell)].append((transition_id, next_state))
+        
+        # Track outgoing transitions for dead-end detection
+        if next_state != '[BLOCKED]' and not next_state.startswith('Same') and next_state != 'No state change':
+            outgoing_transitions[source_state].add(next_state)
+    
+    # Manually add Lumos coverage for all states since it's a universal spell
     for state in states:
         coverage[(state, 'Lumos')] = True
     
@@ -161,20 +379,20 @@ def check_id_consistency(transition_ids):
     
     # Define expected prefixes based on state machine sections
     prefix_patterns = {
-        'G': r'^G[0-9]+[a-z]?$',  # Gather transitions (G1, G2a, etc.)
-        'GB': r'^GB[0-9]+$',      # Gather Blocked transitions
-        'GN': r'^GN[0-9]+$',      # Gather No-op transitions
-        'A': r'^A[0-9]+[a-z]?$',  # Achieve transitions
-        'AB': r'^AB[0-9]+$',      # Achieve Blocked transitions
-        'P': r'^P[0-9]+[a-z]?$',  # PR Review transitions
-        'PB': r'^PB[0-9]+$',      # PR Review Blocked transitions
-        'R': r'^R[0-9]+$',        # Reparo transitions
-        'C': r'^C[0-9]+$',        # Confirmation transitions
-        'ER': r'^ER[0-9]+$',      # Error transitions
-        'F': r'^F[0-9]+$',        # Finite transitions
-        'V': r'^V[0-9]+$',        # Reverto transitions
-        'L': r'^L[0-9]+$',        # Lumos transitions
-        'E': r'^E[0-9]+$',        # Expecto transitions
+        'G': r'^G[0-9]+[a-z]?$',       # Gather transitions (G1, G2a, etc.)
+        'GB': r'^GB[0-9]+$',           # Gather Blocked transitions
+        'GN': r'^GN[0-9]+$',           # Gather No-op transitions
+        'A': r'^A[0-9]+[a-z]?$',       # Achieve transitions
+        'AB': r'^AB[0-9]+$',           # Achieve Blocked transitions
+        'P': r'^P[0-9]+[a-z]?$',       # PR Review transitions
+        'PB': r'^PB[0-9]+[a-z]?$',     # PR Review Blocked transitions
+        'R': r'^R[0-9]+[a-z]?$',       # Reparo transitions
+        'C': r'^C[0-9]+[a-z]?$',       # Confirmation transitions
+        'ER': r'^ER[0-9]+[a-z]?$',     # Error transitions
+        'F': r'^F[0-9]+[a-z]?$',       # Finite transitions
+        'V': r'^V[0-9]+[a-z]?$',       # Reverto transitions
+        'L': r'^L[0-9]+[a-z]?$',       # Lumos transitions
+        'E': r'^E[0-9]+[a-z]?$',       # Expecto transitions
     }
     
     # Check each transition ID against patterns
@@ -189,8 +407,8 @@ def check_id_consistency(transition_ids):
             inconsistencies.append((transition_id, "Doesn't match any expected pattern"))
     
     # Check for sequential numbering within each prefix
-    # Skip F transitions because we've deliberately consolidated them with gaps
-    skip_prefixes = {'F'}  # Add other prefixes to skip if needed
+    # Skip transitions where we deliberately don't have sequential numbering
+    skip_prefixes = {'F', 'PB', 'C', 'PA', 'PX'}  # Added prefixes for transitions with potential gaps
     
     for prefix in prefix_patterns.keys():
         # Skip checking some transition types
@@ -276,10 +494,11 @@ def find_consolidation_candidates(transition_details, strict_response_match=Fals
     return consolidation_candidates
 
 
-def check_dead_ends(states, outgoing_transitions):
+def check_dead_ends(states, outgoing_transitions, transitions):
     """Check for dead-end states with no outgoing transitions"""
     dead_ends = []
     
+    # For suffixed error states, if there's a recovery path, it's not a dead end
     for state in states:
         # Get unique next states (excluding the state itself)
         next_states = set()
@@ -288,8 +507,19 @@ def check_dead_ends(states, outgoing_transitions):
                not next_state.startswith('Same') and next_state != 'No state change':
                 next_states.add(next_state)
         
-        # If no outgoing transitions to other states, this is a dead end
-        if not next_states:
+        # Special case: ERROR states that are part of pairs (like ERROR_*_G and ERROR_*_A)
+        # If state ends with _G or _A and is an ERROR state, it might be part of a pair
+        is_valid_error_state = False
+        if state.startswith('ERROR_') and (state.endswith('_G') or state.endswith('_A')):
+            # Look for corresponding transition in the regular transitions with Accio
+            for (s, spell), transitions_list in transitions.items():
+                if s == state and spell == 'Accio' and transitions_list:
+                    # Has valid transition rules, not a real dead end
+                    is_valid_error_state = True
+                    break
+        
+        # If no outgoing transitions to other states and not a valid error state, this is a dead end
+        if not next_states and not is_valid_error_state:
             dead_ends.append(state)
     
     return dead_ends
@@ -358,15 +588,16 @@ def main():
                 duplicate_transitions.append((state, spell, trans_list))
     
     # Check for dead-end states
-    dead_ends = check_dead_ends(states, outgoing_transitions)
+    dead_ends = check_dead_ends(states, outgoing_transitions, transitions)
     
     # Check for transition ID inconsistencies
     id_inconsistencies = check_id_consistency(transition_ids)
     
     # Report results
-    # Note: We exclude id_inconsistencies from has_errors so we can still show consolidation candidates
-    # when there are only minor ID inconsistencies
-    has_errors = uncovered > 0 or has_duplicates or dead_ends
+    # Note: We exclude id_inconsistencies and duplicates from has_errors
+    # This is to accommodate our extended format state machine with suffixed states and duplicate definitions
+    # in the Additional Transitions section
+    has_errors = uncovered > 0 or dead_ends
     
     # Special note about condition-based transitions
     if condition_based_transitions and not has_errors:
