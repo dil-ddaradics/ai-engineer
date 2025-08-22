@@ -95,25 +95,32 @@ Find the first transition table in the document where the Response column entrie
 
 ### Phase 3: Response Organization
 
-5. Create an appropriate directory structure to store responses:
+5. Create an appropriate directory structure to store responses WITHIN the same directory as state-machine.md. The full path should be:
+   `/Users/ddaradics/IdeaProjects/ai-engineer/state-machine/responses/`
+
+   IMPORTANT: The responses directory must be created adjacent to state-machine.md, NOT in the project root or elsewhere.
 
    ```
-   responses/
-   ├── gather_transitions/  (For "Gather Acceptance Criteria Phase Transitions")
-   │   ├── G1.md
-   │   ├── G2.md
+   state-machine/           (directory containing state-machine.md)
+   ├── state-machine.md     (the main state machine definition file)
+   ├── responses/           (create this directory if it doesn't exist)
+   │   ├── gather_transitions/  (For "Gather Acceptance Criteria Phase Transitions")
+   │   │   ├── G1.md
+   │   │   ├── G2.md
+   │   │   └── ...
+   │   ├── gather_blocked/      (For "Gather Acceptance Criteria Phase Blocked Transitions")
+   │   │   └── ...
    │   └── ...
-   ├── gather_blocked/      (For "Gather Acceptance Criteria Phase Blocked Transitions")
-   │   └── ...
-   └── ...
    ```
 
 6. Name each response file using the transition ID (G1.md, G2.md, etc.)
 
-7. Update the state-machine.md file to reference these files using relative paths:
+7. Update the state-machine.md file to reference these files using relative paths from the state-machine.md file:
    ```
    [G1.md](responses/gather_transitions/G1.md)
    ```
+   
+   NOTE: Since state-machine.md and the responses directory are siblings in the directory structure, the relative path should NOT include "state-machine/" prefix.
 
 ### Phase 4: Quality Assurance
 
