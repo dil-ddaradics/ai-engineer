@@ -213,9 +213,9 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| GN1 | GATHER_EDITING | Finite | - | Same state | No state change | Explain: "Already in plan editing state, no action needed." | |
-| GN2 | GATHER_NEEDS_PLAN | Finite | - | Same state | No state change | Explain: "Cannot return to plan editing since we're already in initial state. Use Accio to create a plan." | |
-| GN3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | No Atlassian URLs found | Same state | No state change | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | |
+| GN1 | GATHER_EDITING | Finite | - | Same state | No state change | Explain: "Already in plan editing state, no action needed." | [GN1.md](responses/gather_noop/GN1.md) |
+| GN2 | GATHER_NEEDS_PLAN | Finite | - | Same state | No state change | Explain: "Cannot return to plan editing since we're already in initial state. Use Accio to create a plan." | [GN2.md](responses/gather_noop/GN2.md) |
+| GN3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | No Atlassian URLs found | Same state | No state change | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | [GN3.md](responses/gather_noop/GN3.md) |
 
 #### Achieve Acceptance Criteria Phase Transitions
 
