@@ -150,12 +150,12 @@ This workflow is implemented as a strict state machine where transitions occur o
 14. **ERROR_COMMENTS_MISSING_G**
     - *Description*: In PR_GATHERING_COMMENTS_G state, but comments.md is missing
     - *Indicators*: state.json shows PR_GATHERING_COMMENTS_G but comments.md doesn't exist
-    - *Valid Actions*: Accio, Finite, Lumos
+    - *Valid Actions*: Accio, Reverto, Lumos
 
 14a. **ERROR_COMMENTS_MISSING_A**
     - *Description*: In PR_GATHERING_COMMENTS_A state, but comments.md is missing
     - *Indicators*: state.json shows PR_GATHERING_COMMENTS_A but comments.md doesn't exist
-    - *Valid Actions*: Accio, Finite, Lumos
+    - *Valid Actions*: Accio, Reverto, Lumos
 
 15. **ERROR_REVIEW_TASK_MISSING_G**
     - *Description*: In PR_REVIEW_TASK_DRAFT_G state, but review-task.md is missing
@@ -296,8 +296,8 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 | ER2 | ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Use Accio to recreate the review task first." | [ER2.md](responses/error_other/ER2.md) |
 | ER3a | ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Reparo | - | [BLOCKED] | No state change | Explain: "Cannot start PR review until current error is resolved. Use Accio first." | [ER3a.md](responses/error_other/ER3a.md) |
 | ER3b | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reparo | - | [BLOCKED] | No state change | Explain: "Cannot start PR review until current review is archived. Use Accio first." | [ER3b.md](responses/error_other/ER3b.md) |
-| ER4 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_PLAN_MISSING, ERROR_COMMENTS_MISSING_[G/A], ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR review states. Resolve the current error first with Accio or Finite." | [ER4.md](responses/error_other/ER4.md) |
-| ER5 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "You should not return to plan editing until the current error is resolved. Use Accio to fix the missing file issue first." | [ER5.md](responses/error_other/ER5.md) |
+| ER4 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR review states. Resolve the current error first with Accio or Finite." | [ER4.md](responses/error_other/ER4.md) |
+| ER5 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING | Finite | - | [BLOCKED] | No state change | Explain: "You should not return to plan editing until the current error is resolved. Use Accio to fix the missing file issue first." | [ER5.md](responses/error_other/ER5.md) |
 | ER6 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Resolve the current error first with Accio or Finite." | [ER6.md](responses/error_other/ER6.md) |
 | ER7a | ERROR_PLAN_MISSING | Expecto | - | [BLOCKED] | No state change | Explain: "Cannot run Expecto without a plan file. Use Accio first to create one." | [ER7a.md](responses/error_other/ER7a.md) |
 | ER7b | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Cannot run Expecto until current review is archived. Use Accio first." | [ER7b.md](responses/error_other/ER7b.md) |
@@ -319,9 +319,9 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 #### Reverto Transitions (Exit PR Review)
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing | [V1.md](responses/reverto_transitions/V1.md) |
-| V2a | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | task.md exists AND task-results.md doesn't exist | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting | [V2a.md](responses/reverto_transitions/V2a.md) |
-| V2b | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | task.md exists AND task-results.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | Return to executed task with results | [V2b.md](responses/reverto_transitions/V2b.md) |
+| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G, ERROR_COMMENTS_MISSING_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing | [V1.md](responses/reverto_transitions/V1.md) |
+| V2a | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A, ERROR_COMMENTS_MISSING_A | Reverto | task.md exists AND task-results.md doesn't exist | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting | [V2a.md](responses/reverto_transitions/V2a.md) |
+| V2b | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A, ERROR_COMMENTS_MISSING_A | Reverto | task.md exists AND task-results.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | Return to executed task with results | [V2b.md](responses/reverto_transitions/V2b.md) |
 
 #### PR Review Phase Blocked Transitions
 
