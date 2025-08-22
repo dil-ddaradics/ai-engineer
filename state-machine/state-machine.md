@@ -347,8 +347,8 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| E1 | GATHER_NEEDS_PLAN | Expecto | Atlassian URLs found | GATHER_NEEDS_PLAN | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content | |
-| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content | |
+| E1 | GATHER_NEEDS_PLAN | Expecto | Atlassian URLs found | GATHER_NEEDS_PLAN | (1) MCP reads .ai/task/.atlassian-refs file if it exists; (2) MCP extracts Atlassian URLs from plan.md that are not in .atlassian-refs; (3) MCP passes these new URLs as [ATLASSIAN_URLS_PLACEHOLDER] to the AI | Enrich plan with Jira/Confluence content | [E1.md](responses/universal_expecto/E1.md) |
+| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | (1) MCP reads .ai/task/.atlassian-refs file if it exists; (2) MCP extracts Atlassian URLs from plan.md that are not in .atlassian-refs; (3) MCP passes these new URLs as [ATLASSIAN_URLS_PLACEHOLDER] to the AI | Enrich plan with Jira/Confluence content | [E2.md](responses/universal_expecto/E2.md) |
 
 
 ### State Guards
