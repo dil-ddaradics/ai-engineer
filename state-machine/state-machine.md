@@ -341,7 +341,27 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| L1 | Any state | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L1 | GATHER_NEEDS_PLAN | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L2 | GATHER_EDITING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L3 | ACHIEVE_TASK_DRAFTING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L4 | ACHIEVE_TASK_EXECUTED | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L5 | ACHIEVE_COMPLETE | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L6 | PR_GATHERING_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L7 | PR_GATHERING_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L8 | PR_REVIEW_TASK_DRAFT_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L9 | PR_REVIEW_TASK_DRAFT_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L10 | PR_APPLIED_PENDING_ARCHIVE_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L11 | PR_APPLIED_PENDING_ARCHIVE_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L12 | PR_CONFIRM_RESTART_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L13 | PR_CONFIRM_RESTART_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L14 | PR_CONFIRM_RESTART_TASK_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L15 | PR_CONFIRM_RESTART_TASK_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L16 | ERROR_TASK_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L17 | ERROR_TASK_RESULTS_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L18 | ERROR_PLAN_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L19 | ERROR_COMMENTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L20 | ERROR_REVIEW_TASK_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L21 | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
 
 #### Universal Expecto Transitions
 
