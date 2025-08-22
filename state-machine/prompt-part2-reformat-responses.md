@@ -1,8 +1,10 @@
-# Task: Reformat State Machine Responses Using Standard Templates
+# Task: Reformat Next State Machine Transition Table Using Standard Templates
 
 ## Introduction
 
 You are working with an AI Engineer workflow orchestration system defined in a state machine document. This document (`state-machine.md`) has been modified to preserve the original responses in an "Old Response" column, and now you need to reformat those responses using standardized templates.
+
+This task works **table by table** - you will find the next transition table where the Response column is empty and work only on that specific table, allowing for incremental progress and review.
 
 ## File Location
 
@@ -17,20 +19,33 @@ The state machine document defines:
 - Transition rules that determine what happens for each state-spell combination
 - Response messages that should be shown to users
 
-A new section called "Response Format Templates" has been added to the document, defining standardized formats for different types of transitions. Your task is to apply these templates to all responses in the transition tables.
+A new section called "Response Format Templates" has been added to the document, defining standardized formats for different types of transitions. Your task is to apply these templates to responses in the next incomplete transition table.
 
 ## Your Task
 
-Reformat all responses in the transition tables using the standardized templates defined in the "Response Format Templates" section of the document.
+Find the first transition table in the document where the Response column entries are empty, then reformat all responses in ONLY that table using the standardized templates defined in the "Response Format Templates" section of the document.
 
 ## Step-by-Step Instructions
+
+### Phase 1: Table Discovery
 
 1. Read the entire `state-machine.md` file, paying special attention to:
    - The "States" section to understand each possible state
    - The "Transition Rules" section to understand how states change
    - The "Response Format Templates" section which defines the required response structure
 
-2. For each row in every transition table:
+2. Scan through the document sequentially to find the **first** transition table where:
+   - The table has the standard format: `| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |`
+   - The "Response" column (last column) contains empty entries (just `|` characters)
+
+3. Once you find the first incomplete table:
+   - Note the section name (e.g., "#### Gather Acceptance Criteria Phase Transitions")
+   - Identify the line range where this table appears
+   - **Work ONLY on this table** - ignore all other tables
+
+### Phase 2: Table Processing
+
+4. For each row in the identified incomplete transition table:
 
    a) Identify the transition type:
       - Standard transition (normal state changes)
@@ -47,7 +62,9 @@ Reformat all responses in the transition tables using the standardized templates
    
    d) Place the reformatted response in the "Response" column
 
-3. For each reformatted response, ensure it includes all sections from the appropriate template:
+### Phase 3: Quality Assurance
+
+5. For each reformatted response in the table, ensure it includes all sections from the appropriate template:
 
    - **Response to the AI**:
      * Technical instructions for the AI system on how to implement the transition
@@ -59,6 +76,13 @@ Reformat all responses in the transition tables using the standardized templates
      * Where We Are
      * Available Spells (or Available Choices for confirmation transitions)
      * Next Steps
+
+### Phase 4: Completion
+
+6. After completing all responses in the identified transition table:
+   - Verify that every row in the table now has a properly formatted response
+   - **STOP HERE** - Do not continue to other tables
+   - Report which table was completed and what comes next
 
 ## Transformation Guidelines
 
@@ -82,6 +106,8 @@ Reformat all responses in the transition tables using the standardized templates
 5. Focus on providing clear guidance to users about what they can do next.
 
 6. Preserve ALL information from the original response - don't lose any details.
+
+7. **Scope Limitation**: Work only on the single identified table - do not process other tables even if they also have empty Response columns.
 
 ## Examples
 
@@ -145,25 +171,34 @@ Note: Reverto was omitted from Available Spells because it's blocked in this sta
 
 ## Final Notes
 
-- Process ALL transitions in ALL tables throughout the document
+- Process ONLY the first incomplete transition table you find - do not work on multiple tables
 - Follow the templates precisely while adapting the content to each specific transition
 - Only list spells that are truly useful in the current state
 - Focus on clarity and helpfulness in the "Response to the Developer" section
-- Don't forget any transitions - every row in every table needs a reformatted response
+- Complete every row in the identified table before stopping
+- Report which table was completed so the user knows the progress
 
-This task will standardize all responses across the state machine, making the system more consistent and user-friendly.
+This incremental approach allows for review and refinement of each table individually, ensuring quality while making steady progress toward standardizing all responses across the state machine.
 
-## Verification
+## Progress Tracking and Next Steps
 
-After completing all the response reformatting:
+After completing the single transition table:
 
-1. Run the state machine verification script to ensure your changes haven't broken anything:
+1. **Report Completion**: Clearly state which table section was just completed (e.g., "Completed: Gather Acceptance Criteria Phase Transitions")
+
+2. **Identify Next Steps**: Inform the user what the next incomplete table is, or if this was the last one
+
+3. **Optional Verification**: If desired, run the state machine verification script to ensure changes haven't broken anything:
    ```bash
    python verify-state-machine.py
    ```
 
-2. The script should report that the state machine is COMPLETE and VALID with 100% coverage.
+4. **Review Pause**: This is a natural stopping point for the user to review the completed table before continuing to the next one
 
-3. Some duplicate transitions and condition-based transitions might be reported, but these are expected and are not considered errors.
+## When All Tables Are Eventually Complete
 
-4. If the script reports any uncovered transitions or other issues, review your changes to ensure you haven't altered any transition rules inadvertently.
+Once all tables have been processed through multiple iterations:
+
+1. The verification script should report that the state machine is COMPLETE and VALID with 100% coverage
+2. Some duplicate transitions and condition-based transitions might be reported, but these are expected and not considered errors
+3. All transition tables will have standardized, user-friendly responses following the defined templates
