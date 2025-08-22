@@ -103,6 +103,26 @@ When the MCP archives files or references locations that may change:
 
 This ensures flexibility in deployment environments and prevents path assumptions that may not be true in all scenarios.
 
+### Full Path References
+
+When referring to files in responses (to both AI and Developer):
+
+1. **Always use full paths rather than relative paths**:
+   - INCORRECT: "Review the task details in task.md"
+   - CORRECT: "Review the task details in `.ai/task/task.md`"
+
+2. **Include full paths in all file references**:
+   - In AI instructions: "Read the `.ai/task/plan.md` file"
+   - In user guidance: "Let's review the task at `.ai/task/task.md`"
+   - In explanatory text: "I've archived the task to `.ai/task/tasks/`"
+
+3. **Apply full paths consistently**:
+   - For file references in Response to the AI
+   - For file references in Response to the Developer
+   - For all sections including What Just Happened and Next Steps
+
+This helps both the AI and the user easily locate referenced files without ambiguity.
+
 ## Your Task
 
 Find the first transition table in the document where the Response column entries are empty, then reformat all responses in ONLY that table using the standardized templates defined in the "Response Format Templates" section of the document.
@@ -180,7 +200,7 @@ Find the first transition table in the document where the Response column entrie
 #### Response to the AI Guidelines
 
 1. **BE DIRECTIVE with specific instructions**:
-   - Use clear file paths: "Read the ./ai/task/plan.md file"
+   - Use clear full file paths: "Read the `.ai/task/plan.md` file"
    - Specify exactly what the AI should do with the files
    - Focus on actionable instructions, not explanations of the system
 
@@ -264,7 +284,7 @@ CORRECT Reformatted Response:
 ```markdown
 ## Response to the AI
 
-Read the ./ai/task/plan.md file to understand the plan. Guide the user through filling out the plan sections, especially the Acceptance Criteria section.
+Read the `.ai/task/plan.md` file to understand the plan. Guide the user through filling out the plan sections, especially the Acceptance Criteria section.
 
 ## Response to the Developer
 
@@ -356,7 +376,7 @@ Read the empty `.ai/task/comments.md` file, and then:
 ### Comments Found Response:
 
 ### What Just Happened
-I've gathered PR comments for your current branch and saved them to comments.md.
+I've gathered PR comments for your current branch and saved them to `.ai/task/comments.md`.
 
 ### Where We Are
 We're now in the PR review flow where we need to address the feedback in these comments.
@@ -367,7 +387,7 @@ We're now in the PR review flow where we need to address the feedback in these c
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Review the comments I've gathered, then use Accio to create tasks that address this feedback.
+Review the comments I've gathered in `.ai/task/comments.md`, then use Accio to create tasks that address this feedback.
 
 ### No Comments Found Response:
 
@@ -385,22 +405,39 @@ We're in the PR review flow, but no comments were found to process.
 Since no PR comments were found, use Reverto to exit the PR review process and return to your previous workflow.
 ```
 
-### Example 4: Template Filling (Task Creation)
+### Example 4: Template Filling and Full Path Usage
 
 Original Response: `Fill out template with task details`
 
-INCORRECT Reformatted Response:
+INCORRECT Reformatted Response (Multiple Issues):
 ```markdown
 ## Response to the AI
 
 Create a new task.md file with details from the plan.md.
 ```
+Issues: Claims to create a file (MCP's job) and uses relative paths without full file paths
 
-CORRECT Reformatted Response:
+STILL INCORRECT (Incomplete Path References):
 ```markdown
 ## Response to the AI
 
-Read the plan.md to identify the next task. Fill out the template in `.ai/task/task.md` that the MCP has created with appropriate details based on the plan.
+Read the plan.md to identify the next task. Fill out the template in task.md that the MCP has created.
+
+## Response to the Developer
+
+### What Just Happened
+I've filled out the task template based on our project plan.
+
+### Next Steps
+Let's review the task details and make any necessary adjustments before executing it.
+```
+Issues: Missing full file paths makes it hard to locate files
+
+CORRECT Reformatted Response (Full Paths and Template Filling):
+```markdown
+## Response to the AI
+
+Read the `.ai/task/plan.md` file to identify the next task. Fill out the template in `.ai/task/task.md` that the MCP has created with appropriate details based on the plan.
 
 ## Response to the Developer
 
@@ -420,7 +457,7 @@ We're now in the task drafting phase where we need to define the specific steps 
 Let's review the task details in `.ai/task/task.md` and make any necessary adjustments before using Accio to execute it.
 ```
 
-This example demonstrates how to correctly refer to templates being filled rather than claiming to create files.
+This example demonstrates how to correctly refer to templates being filled rather than claiming to create files, while also using full file paths consistently to ensure both the AI and user can easily locate referenced files.
 
 ## Handling Conditional Responses
 
