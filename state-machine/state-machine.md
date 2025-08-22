@@ -467,13 +467,13 @@ Please choose whether to proceed with the action or cancel it. Use **Reparo** to
 
 ### State Persistence
 
-All state is persisted in `.ai/task/state.json` with the following structure:
+All state is persisted in `.ai/task/state.json` with the following structure: 
 
 ```json
 {
   "current_state": "GATHER_EDITING",
   "context": {
-    // Only populated for states that need additional info
+
   },
   "history": [
     {
@@ -486,3 +486,4 @@ All state is persisted in `.ai/task/state.json` with the following structure:
 ```
 
 The existence of specific files serves as a secondary indicator of state, but the authoritative source is always the state file.
+Context is only populated for states that need additional info.
