@@ -341,27 +341,27 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| L1 | GATHER_NEEDS_PLAN | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L2 | GATHER_EDITING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L3 | ACHIEVE_TASK_DRAFTING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L4 | ACHIEVE_TASK_EXECUTED | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L5 | ACHIEVE_COMPLETE | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L6 | PR_GATHERING_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L7 | PR_GATHERING_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L8 | PR_REVIEW_TASK_DRAFT_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L9 | PR_REVIEW_TASK_DRAFT_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L10 | PR_APPLIED_PENDING_ARCHIVE_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L11 | PR_APPLIED_PENDING_ARCHIVE_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L12 | PR_CONFIRM_RESTART_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L13 | PR_CONFIRM_RESTART_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L14 | PR_CONFIRM_RESTART_TASK_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L15 | PR_CONFIRM_RESTART_TASK_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L16 | ERROR_TASK_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L17 | ERROR_TASK_RESULTS_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L18 | ERROR_PLAN_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L19 | ERROR_COMMENTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L20 | ERROR_REVIEW_TASK_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
-| L21 | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
+| L1 | GATHER_NEEDS_PLAN | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L1.md](responses/lumos_transitions/L1.md) |
+| L2 | GATHER_EDITING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L2.md](responses/lumos_transitions/L2.md) |
+| L3 | ACHIEVE_TASK_DRAFTING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L3.md](responses/lumos_transitions/L3.md) |
+| L4 | ACHIEVE_TASK_EXECUTED | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L4.md](responses/lumos_transitions/L4.md) |
+| L5 | ACHIEVE_COMPLETE | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L5.md](responses/lumos_transitions/L5.md) |
+| L6 | PR_GATHERING_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L6.md](responses/lumos_transitions/L6.md) |
+| L7 | PR_GATHERING_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L7.md](responses/lumos_transitions/L7.md) |
+| L8 | PR_REVIEW_TASK_DRAFT_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L8.md](responses/lumos_transitions/L8.md) |
+| L9 | PR_REVIEW_TASK_DRAFT_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L9.md](responses/lumos_transitions/L9.md) |
+| L10 | PR_APPLIED_PENDING_ARCHIVE_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L10.md](responses/lumos_transitions/L10.md) |
+| L11 | PR_APPLIED_PENDING_ARCHIVE_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L11.md](responses/lumos_transitions/L11.md) |
+| L12 | PR_CONFIRM_RESTART_COMMENTS_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L12.md](responses/lumos_transitions/L12.md) |
+| L13 | PR_CONFIRM_RESTART_COMMENTS_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L13.md](responses/lumos_transitions/L13.md) |
+| L14 | PR_CONFIRM_RESTART_TASK_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L14.md](responses/lumos_transitions/L14.md) |
+| L15 | PR_CONFIRM_RESTART_TASK_A | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L15.md](responses/lumos_transitions/L15.md) |
+| L16 | ERROR_TASK_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L16.md](responses/lumos_transitions/L16.md) |
+| L17 | ERROR_TASK_RESULTS_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L17.md](responses/lumos_transitions/L17.md) |
+| L18 | ERROR_PLAN_MISSING | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L18.md](responses/lumos_transitions/L18.md) |
+| L19 | ERROR_COMMENTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L19.md](responses/lumos_transitions/L19.md) |
+| L20 | ERROR_REVIEW_TASK_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L20.md](responses/lumos_transitions/L20.md) |
+| L21 | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | [L21.md](responses/lumos_transitions/L21.md) |
 
 #### Universal Expecto Transitions
 
@@ -489,6 +489,42 @@ A confirmation is needed: <explanation of what requires confirmation>.
 
 ### Next Steps
 Please choose whether to proceed with the action or cancel it. Use **Reparo** to confirm or **Reverto** to cancel.
+```
+
+#### 5. Lumos Response Format
+
+For the Lumos spell that shows current state and available actions:
+
+```markdown
+> **AI Engineer Workflow** helps you work together with AI on any coding task. This system was built to teach effective collaboration with AI through a guided workflow. You can create plans, break them down into smaller tasks, get information from Jira and Confluence, and improve your code by handling PR comments.
+>
+> For best results, commit your changes often and start new conversations to clear the AI's context when needed. Don't worry about losing progress - this system remembers where you left off!
+
+### Where We Are
+<Human-friendly description of the current phase without using state names>
+
+**Key Files:**
+- `.ai/task/plan.md`: <Brief description if it exists>
+- `.ai/task/task.md`: <Brief description if it exists>
+- `.ai/task/task-results.md`: <Brief description if it exists>
+- `.ai/task/comments.md`: <Brief description if it exists>
+- `.ai/task/review-task.md`: <Brief description if it exists>
+- `.ai/task/review-task-results.md`: <Brief description if it exists>
+
+Only include files that actually exist in the current state.
+
+### Available Spells
+- **Spell1**: <Human-readable description of effect>
+- **Spell2**: <Human-readable description of effect>
+...
+
+### Unavailable Spells
+- **Spell1**: <Clear explanation of why it can't be used>
+- **Spell2**: <Clear explanation of why it can't be used>
+...
+
+### Next Steps
+<Recommendation for what to do next in human-friendly language>
 ```
 
 ### State Persistence
