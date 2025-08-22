@@ -307,20 +307,21 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| F1 | Any state except ACHIEVE_TASK_EXECUTED, ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE, ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A], PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A], PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing | |
-| F2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing with relevant context: for ACHIEVE_TASK_DRAFTING, the drafted task will be preserved; for ACHIEVE_COMPLETE, you will return to plan editing with all acceptance criteria completed. | |
+| F1 | Any state except ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE, ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A], PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A], PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing | [F1.md](responses/finite_transitions/F1.md) |
+| F2 | ACHIEVE_COMPLETE | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing with relevant context: you will return to plan editing with all acceptance criteria completed. | [F2.md](responses/finite_transitions/F2.md) |
 
 #### Blocked Finite Transitions
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| F3 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Must Accio to archive current review results first." | |
+| F3 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Must Accio to archive current review results first." | [F3.md](responses/finite_blocked/F3.md) |
 
 #### Reverto Transitions (Exit PR Review)
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing | |
-| V2 | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | - | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting | |
+| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing | [V1.md](responses/reverto_transitions/V1.md) |
+| V2a | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | task.md exists AND task-results.md doesn't exist | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting | [V2a.md](responses/reverto_transitions/V2a.md) |
+| V2b | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | task.md exists AND task-results.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | Return to executed task with results | [V2b.md](responses/reverto_transitions/V2b.md) |
 
 #### PR Review Phase Blocked Transitions
 

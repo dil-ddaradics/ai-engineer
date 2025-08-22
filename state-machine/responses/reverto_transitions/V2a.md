@@ -1,0 +1,20 @@
+## Response to the AI
+
+Read the `.ai/task/task.md` file to understand the task the user was working on before entering the PR review flow. Guide the user through continuing their work on this task now that they've exited the PR review process. Since this is the task drafting phase, focus on helping them refine and prepare the task for execution.
+
+## Response to the Developer
+
+### What Just Happened
+We've exited the PR review process and returned to your task in progress.
+
+### Where We Are
+We're back in the task drafting phase where we need to define and execute specific steps to make progress on our acceptance criteria.
+
+### Available Spells
+- **Accio**: Execute the current task and document the results
+- **Finite**: Return to plan editing if you need to modify your plan
+- **Reparo**: Begin a new PR review process
+- **Lumos**: Show current state and available actions
+
+### Next Steps
+Let's continue working on the task defined in `.ai/task/task.md`. Review the current task details and use Accio when you're ready to execute it.
