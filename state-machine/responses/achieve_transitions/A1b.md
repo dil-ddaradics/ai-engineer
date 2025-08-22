@@ -16,4 +16,4 @@ We're in an error state where the system expected to find a task file but couldn
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Use Accio to create a new task file based on your plan, or use Finite to return to plan editing if you'd prefer to review your plan first.
+Use Accio to create a new task file based on your plan, or use Finite to return to plan editing if you'd prefer to review the `.ai/task/plan.md` file first.

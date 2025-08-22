@@ -26,7 +26,7 @@ Read the empty `.ai/task/comments.md` file, and then:
 ### Comments Found Response:
 
 ### What Just Happened
-I've recreated the comments file and gathered PR comments for your current branch, saved to `.ai/task/comments.md`.
+I've recreated the `.ai/task/comments.md` file and gathered PR comments for your current branch, saved to `.ai/task/comments.md`.
 
 ### Where We Are
 We're in the PR review process, gathering feedback from your pull request comments.
@@ -38,12 +38,12 @@ We're in the PR review process, gathering feedback from your pull request commen
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Review the comments I've gathered in `.ai/task/comments.md`, then use Accio to create tasks that address this feedback.
+Review the `.ai/task/comments.md` file I've gathered, then use Accio to create tasks that address this feedback.
 
 ### No Comments Found Response:
 
 ### What Just Happened
-I've recreated the comments file but couldn't find any PR comments for your current branch.
+I've recreated the `.ai/task/comments.md` file but couldn't find any PR comments for your current branch.
 
 ### Where We Are
 We're in the PR review process, but no comments were found to process.

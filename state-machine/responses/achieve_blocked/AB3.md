@@ -8,7 +8,7 @@ Inform the developer that Expecto is only allowed in GATHER states because it's 
 You attempted to cast **Expecto** which cannot be used right now because it's only available during the planning phase.
 
 ### Where We Are
-We're currently in the task implementation phase where we're working on completing acceptance criteria, not gathering information for planning.
+We're currently in the `.ai/task/task.md` file implementation phase where we're working on completing acceptance criteria, not gathering information for planning.
 
 ### Available Spells
 - **Accio**: Move forward with task execution or integration

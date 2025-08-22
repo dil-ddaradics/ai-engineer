@@ -19,4 +19,4 @@ We're in the PR review process, with a structured plan to address the feedback f
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Review this plan at `.ai/task/review-task.md` for addressing the PR feedback, then use Accio to execute the review tasks.
+Review the tasks in `.ai/task/review-task.md` for addressing the PR feedback, then use Accio to execute them.

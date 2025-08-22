@@ -1,11 +1,11 @@
 ## Response to the AI
 
-Inform the developer that casting Finite has no effect because they are already in the plan editing state.
+Inform the developer that casting Finite has no effect because they are already in the `.ai/task/plan.md` file editing state.
 
 ## Response to the Developer
 
 ### What Just Happened
-You cast **Finite** which had no effect because you're already in the plan editing state.
+You cast **Finite** which had no effect because you're already in the `.ai/task/plan.md` file editing state.
 
 ### Where We Are
 We're currently in the planning phase where we define project requirements and acceptance criteria.

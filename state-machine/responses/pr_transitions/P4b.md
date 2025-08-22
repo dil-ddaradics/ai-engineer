@@ -18,11 +18,11 @@ Review Task Results Content:
 I've archived the PR review results, updated our plan, and created a new task to move us forward.
 
 ### Where We Are
-We're now in the task drafting phase where we'll define the specific work to be done next.
+We're now drafting a new task in `.ai/task/task.md` where we'll define the specific work to be done next.
 
 ### Available Spells
 - **Accio**: Execute the defined task and document results
-- **Finite**: Return to plan editing if we need to modify our plan
+- **Finite**: Return to plan editing if we need to modify the `.ai/task/plan.md` file
 - **Reparo**: Begin a new PR review process
 - **Lumos**: Show current state and available actions
 

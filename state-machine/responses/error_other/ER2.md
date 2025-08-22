@@ -15,4 +15,4 @@ We're currently in an error state because a review task file is missing or incom
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Use **Accio** to recreate the review task file first. This will allow you to either continue with the review process or properly exit it.
+Use **Accio** to recreate the `.ai/task/review task.md` file first. This will allow you to either continue with the review process or properly exit it.

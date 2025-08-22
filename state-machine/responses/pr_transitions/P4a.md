@@ -14,11 +14,11 @@ Review Task Results Content:
 I've archived the PR review results, updated our plan, and found an existing task that we can continue working on.
 
 ### Where We Are
-We're back in the task drafting phase where we can continue implementing our previous task with insights from the PR feedback.
+We're back in the `.ai/task/task.md` file drafting phase where we can continue implementing our previous task with insights from the PR feedback.
 
 ### Available Spells
 - **Accio**: Execute the current task and document results
-- **Finite**: Return to plan editing if we need to modify our plan
+- **Finite**: Return to plan editing if we need to modify the `.ai/task/plan.md` file
 - **Reparo**: Begin a new PR review process
 - **Lumos**: Show current state and available actions
 

@@ -8,7 +8,7 @@ Inform the developer that Reverto is only available in PR states and explain tha
 You attempted to cast **Reverto** which cannot be used right now because it's only available during PR review operations.
 
 ### Where We Are
-We're currently in the task implementation phase, not responding to PR comments or in a PR review process.
+We're currently in the `.ai/task/task.md` file implementation phase, not responding to PR comments or in a PR review process.
 
 ### Available Spells
 - **Accio**: Move forward with task execution or integration

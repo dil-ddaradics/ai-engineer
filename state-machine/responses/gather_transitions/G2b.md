@@ -1,14 +1,14 @@
 ## Response to the AI
 
-Inform the user that the plan file is missing, which is required for the workflow. Direct them to use Accio to reset and create a new plan.
+Inform the user that the `.ai/task/plan.md` file is missing, which is required for the workflow. Direct them to use Accio to reset and create a new plan.
 
 ## Response to the Developer
 
 ### What Just Happened
-I've detected that your plan file is missing, which is required for the current workflow.
+I've detected that the `.ai/task/plan.md` file is missing, which is required for the current workflow.
 
 ### Where We Are
-You're in an error state because the plan file that should contain your project requirements and acceptance criteria cannot be found.
+You're in an error state because the `.ai/task/plan.md` file that should contain your project requirements and acceptance criteria cannot be found.
 
 ### Available Spells
 - **Accio**: Reset the workflow and create a new plan file

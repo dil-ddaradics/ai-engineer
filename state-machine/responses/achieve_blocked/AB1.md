@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Inform the developer that they cannot use Finite to return to the plan editing state at this time. Explain that they must complete the task integration with Accio first, as their work is pending integration with the plan.
+Inform the developer that they cannot use Finite to return to the `.ai/task/plan.md` file editing state at this time. Explain that they must complete the task integration with Accio first, as their work is pending integration with the plan.
 
 ## Response to the Developer
 
@@ -8,10 +8,10 @@ Inform the developer that they cannot use Finite to return to the plan editing s
 You attempted to cast **Finite** which cannot be used right now because you need to complete your current task integration first.
 
 ### Where We Are
-We're currently in the task execution phase with results that need to be integrated into our plan.
+We're currently in the `.ai/task/task.md` file execution phase with results that need to be integrated into the `.ai/task/plan.md` file.
 
 ### Available Spells
-- **Accio**: Process the task results and integrate them into the plan
+- **Accio**: Process the task results and integrate them into the `.ai/task/plan.md` file
 - **Lumos**: Show current state and available actions
 
 ### Next Steps

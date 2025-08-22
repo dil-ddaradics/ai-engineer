@@ -37,7 +37,7 @@ We've recovered from the error state and are now in the PR review flow where we 
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Review the comments I've gathered, then use Accio to create tasks that address this feedback.
+Review the `.ai/task/comments.md` file I've gathered, then use Accio to create tasks that address this feedback.
 
 ### No Comments Found Response:
 
