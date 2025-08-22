@@ -152,3 +152,18 @@ Note: Reverto was omitted from Available Spells because it's blocked in this sta
 - Don't forget any transitions - every row in every table needs a reformatted response
 
 This task will standardize all responses across the state machine, making the system more consistent and user-friendly.
+
+## Verification
+
+After completing all the response reformatting:
+
+1. Run the state machine verification script to ensure your changes haven't broken anything:
+   ```bash
+   python verify-state-machine.py
+   ```
+
+2. The script should report that the state machine is COMPLETE and VALID with 100% coverage.
+
+3. Some duplicate transitions and condition-based transitions might be reported, but these are expected and are not considered errors.
+
+4. If the script reports any uncovered transitions or other issues, review your changes to ensure you haven't altered any transition rules inadvertently.
