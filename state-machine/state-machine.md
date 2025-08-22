@@ -194,155 +194,157 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Gather Acceptance Criteria Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| G1 | GATHER_NEEDS_PLAN | Accio | - | GATHER_EDITING | Create `.ai/task/plan.md` from template | Guide user in filling out sections, especially Acceptance Criteria |
-| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter | Propose next smallest task toward remaining Acceptance Criteria |
-| G2b | GATHER_EDITING, ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED | Accio | plan.md missing | ERROR_PLAN_MISSING | (1) Update state to ERROR_PLAN_MISSING | Explain: "Plan file is missing. Use Accio to reset and create a new plan." |
-| G3 | GATHER_EDITING | Accio | No AC in plan.md AND plan.md exists | GATHER_EDITING | No state change | Prompt user to add at least one Acceptance Criterion to plan.md |
-| G4 | GATHER_EDITING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory | (1) Summarize the task.md content; (2) Tell the user to continue drafting it |
-| G5 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_G | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_G | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) Format and write comments to comments.md. 'No PR review in progress' means there isn't already a comments.md or review-task.md file present, allowing us to start a fresh PR review process. |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| G1 | GATHER_NEEDS_PLAN | Accio | - | GATHER_EDITING | Create `.ai/task/plan.md` from template | Guide user in filling out sections, especially Acceptance Criteria | |
+| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter | Propose next smallest task toward remaining Acceptance Criteria | |
+| G2b | GATHER_EDITING, ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED | Accio | plan.md missing | ERROR_PLAN_MISSING | (1) Update state to ERROR_PLAN_MISSING | Explain: "Plan file is missing. Use Accio to reset and create a new plan." | |
+| G3 | GATHER_EDITING | Accio | No AC in plan.md AND plan.md exists | GATHER_EDITING | No state change | Prompt user to add at least one Acceptance Criterion to plan.md | |
+| G4 | GATHER_EDITING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory | (1) Summarize the task.md content; (2) Tell the user to continue drafting it | |
+| G5 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_G | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_G | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) If no PR exists for the current branch or no comments found, explicitly document this in comments.md; (5) Format and write comments to comments.md. 'No PR review in progress' means there isn't already a comments.md or review-task.md file present, allowing us to start a fresh PR review process. | |
 
 #### Gather Acceptance Criteria Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GB1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| GB1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states." | |
 
 #### Gather Acceptance Criteria Phase No-op Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GN1 | GATHER_EDITING | Finite | - | Same state | No state change | Explain: "Already in plan editing state, no action needed." |
-| GN2 | GATHER_NEEDS_PLAN | Finite | - | Same state | No state change | Explain: "Cannot return to plan editing since we're already in initial state. Use Accio to create a plan." |
-| GN3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | No Atlassian URLs found | Same state | No state change | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| GN1 | GATHER_EDITING | Finite | - | Same state | No state change | Explain: "Already in plan editing state, no action needed." | |
+| GN2 | GATHER_NEEDS_PLAN | Finite | - | Same state | No state change | Explain: "Cannot return to plan editing since we're already in initial state. Use Accio to create a plan." | |
+| GN3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | No Atlassian URLs found | Same state | No state change | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | |
 
 #### Achieve Acceptance Criteria Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| A1 | ACHIEVE_TASK_DRAFTING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | (1) Execute task in task.md; (2) Document results in task-results.md |
-| A1b | ACHIEVE_TASK_DRAFTING | Accio | task.md missing | ERROR_TASK_MISSING | (1) Update state to ERROR_TASK_MISSING | Explain: "Task file is missing. Use Accio to create a new task or Finite to return to plan editing." |
-| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task toward remaining ACs or note if all ACs appear complete |
-| A2b | ACHIEVE_TASK_EXECUTED | Accio | task-results.md missing | ERROR_TASK_RESULTS_MISSING | (1) Update state to ERROR_TASK_RESULTS_MISSING | Explain: "Task results file is missing. Please ask the AI to recreate task-results.md based on the current git diff." |
-| A3 | ACHIEVE_TASK_DRAFTING | Accio | No unchecked AC in plan.md AND plan.md exists | ACHIEVE_COMPLETE | (1) Check plan.md for remaining unchecked ACs; (2) Update state to ACHIEVE_COMPLETE | Inform user all ACs are complete and suggest Finite (to add more ACs) or Reparo (for PR reviews) |
-| A4 | ACHIEVE_COMPLETE | Accio | - | ACHIEVE_COMPLETE | No state change | Remind user that all ACs are complete and suggest Finite (to add more ACs) or Reparo (for PR reviews) |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| A1 | ACHIEVE_TASK_DRAFTING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | (1) Execute task in task.md; (2) Document results in task-results.md | |
+| A1b | ACHIEVE_TASK_DRAFTING | Accio | task.md missing | ERROR_TASK_MISSING | (1) Update state to ERROR_TASK_MISSING | Explain: "Task file is missing. Use Accio to create a new task or Finite to return to plan editing." | |
+| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task toward remaining ACs or note if all ACs appear complete | |
+| A2b | ACHIEVE_TASK_EXECUTED | Accio | task-results.md missing | ERROR_TASK_RESULTS_MISSING | (1) Update state to ERROR_TASK_RESULTS_MISSING | Explain: "Task results file is missing. Please ask the AI to recreate task-results.md based on the current git diff." | |
+| A3 | ACHIEVE_TASK_DRAFTING | Accio | No unchecked AC in plan.md AND plan.md exists | ACHIEVE_COMPLETE | (1) Check plan.md for remaining unchecked ACs; (2) Update state to ACHIEVE_COMPLETE | Inform user all ACs are complete and suggest Finite (to add more ACs) or Reparo (for PR reviews) | |
+| A4 | ACHIEVE_COMPLETE | Accio | - | ACHIEVE_COMPLETE | No state change | Remind user that all ACs are complete and suggest Finite (to add more ACs) or Reparo (for PR reviews) | |
 
 #### Achieve Acceptance Criteria Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| AB1 | ACHIEVE_TASK_EXECUTED | Finite | - | [BLOCKED] | No state change | Explain: "You must complete task integration with Accio first before returning to gathering. Your work is pending integration with the plan. Running Accio will properly process these results before continuing." |
-| AB2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states. It's used specifically to exit the PR review flow, but you're currently not responding to PR comments or in a PR review process." |
-| AB3 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states because it enriches planning information from external resources. Use Finite to return to plan editing first, then you can use Expecto to enhance your plan with Atlassian resources." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| AB1 | ACHIEVE_TASK_EXECUTED | Finite | - | [BLOCKED] | No state change | Explain: "You must complete task integration with Accio first before returning to gathering. Your work is pending integration with the plan. Running Accio will properly process these results before continuing." | |
+| AB2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states. It's used specifically to exit the PR review flow, but you're currently not responding to PR comments or in a PR review process." | |
+| AB3 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states because it enriches planning information from external resources. Use Finite to return to plan editing first, then you can use Expecto to enhance your plan with Atlassian resources." | |
 
 
 #### PR Review Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| P1 | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A]; (2) Create `.ai/task/review-task.md` template | Propose review tasks covering all comments |
-| P1b | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | (1) Update state to ERROR_COMMENTS_MISSING_[G/A] | Explain: "Comments file is missing. Use Accio to recreate it and gather comments." |
-| P2 | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md exists | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Update state to PR_APPLIED_PENDING_ARCHIVE_[G/A] | (1) Apply review tasks from review-task.md; (2) Document results in review-task-results.md |
-| P2b | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md missing | ERROR_REVIEW_TASK_MISSING_[G/A] | (1) Update state to ERROR_REVIEW_TASK_MISSING_[G/A] | Explain: "Review task file is missing. Use Accio to create a new review task based on the PR comments. Alternatively, if you want to restart the PR review process from the beginning, use Reverto to cancel the current review." |
-| P3 | PR_APPLIED_PENDING_ARCHIVE_G | Accio | review-task-results.md exists | GATHER_EDITING | (1) Archive review files to pr-reviews/pr-review-<date>/; (2) Update state to GATHER_EDITING | Resume plan editing |
-| P3b | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Accio | review-task-results.md missing | ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | (1) Update state to ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Explain: "Review task results file is missing. Please ask the AI to execute the review task again. The review-task-results.md file can also be recreated by asking the AI to summarize the changes it sees in the git diff if it only contains changes based on PR comments." |
-| P4 | PR_APPLIED_PENDING_ARCHIVE_A | Accio | review-task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Archive review files to pr-reviews/pr-review-<date>/; (2) Update state to ACHIEVE_TASK_DRAFTING | If task.md exists, resume with it, otherwise create new task.md. To create a new task: (1) Review plan.md to identify the next acceptance criterion to work on; (2) Create a clearly defined task that can be completed in one session; (3) Focus on the smallest complete unit of work that delivers value toward an acceptance criterion. |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| P1 | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A]; (2) Create `.ai/task/review-task.md` template | Propose review tasks covering all comments | |
+| P1b | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | (1) Update state to ERROR_COMMENTS_MISSING_[G/A] | Explain: "Comments file is missing. Use Accio to recreate it and gather comments." | |
+| P2 | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md exists | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Update state to PR_APPLIED_PENDING_ARCHIVE_[G/A] | (1) Apply review tasks from review-task.md; (2) Document results in review-task-results.md | |
+| P2b | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md missing | ERROR_REVIEW_TASK_MISSING_[G/A] | (1) Update state to ERROR_REVIEW_TASK_MISSING_[G/A] | Explain: "Review task file is missing. Use Accio to create a new review task based on the PR comments. Alternatively, if you want to restart the PR review process from the beginning, use Reverto to cancel the current review." | |
+| P3 | PR_APPLIED_PENDING_ARCHIVE_G | Accio | review-task-results.md exists | GATHER_EDITING | (1) Archive review files to pr-reviews/pr-review-<date>/; (2) Update state to GATHER_EDITING | (1) Update plan.md with a summary of changes made based on review-task-results.md; (2) Resume plan editing | |
+| P3b | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Accio | review-task-results.md missing | ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | (1) Update state to ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Explain: "Review task results file is missing. Please ask the AI to execute the review task again. The review-task-results.md file can also be recreated by asking the AI to summarize the changes it sees in the git diff if it only contains changes based on PR comments." | |
+| P4 | PR_APPLIED_PENDING_ARCHIVE_A | Accio | review-task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Archive review files to pr-reviews/pr-review-<date>/; (2) Update state to ACHIEVE_TASK_DRAFTING | (1) Update plan.md with a summary of changes made based on review-task-results.md; (2) If task.md exists, resume with it, otherwise create new task.md. To create a new task: (a) Review plan.md to identify the next acceptance criterion to work on; (b) Create a clearly defined task that can be completed in one session; (c) Focus on the smallest complete unit of work that delivers value toward an acceptance criterion. | |
 
 
 #### Starting PR Review (Reparo) Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| A5a | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE, ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_A | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_A | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) Format and write comments to comments.md. 'No PR review in progress' means there are no existing PR review files (comments.md or review-task.md) in the workspace, allowing us to start a fresh PR review. |
-| A5b | ERROR_COMMENTS_MISSING_[G/A], ERROR_REVIEW_TASK_MISSING_[G/A] | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_[G/A] | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_[G/A] | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) Format and write comments to comments.md. 'No PR review in progress' means there are no existing PR review files (comments.md or review-task.md) in the workspace, allowing us to start a fresh PR review. |
-| R1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | PR review in progress (comments.md exists) | PR_CONFIRM_RESTART_COMMENTS_G | (1) Update state to PR_CONFIRM_RESTART_COMMENTS_G | Ask user to confirm reset. This will potentially overwrite the existing comments.md file which contains PR comments that are being reviewed. Confirm only if you want to restart the PR review process with fresh comments. |
-| R2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reparo | PR review in progress (comments.md exists) | PR_CONFIRM_RESTART_COMMENTS_A | (1) Update state to PR_CONFIRM_RESTART_COMMENTS_A | Ask user to confirm reset. This will potentially overwrite the existing comments.md file which contains PR comments that are being reviewed. Confirm only if you want to restart the PR review process with fresh comments. |
-| R3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | PR review task in progress (review-task.md exists) | PR_CONFIRM_RESTART_TASK_G | (1) Update state to PR_CONFIRM_RESTART_TASK_G | Ask user to confirm reset. This will potentially discard the current review-task.md file which contains the specific tasks to be performed to address PR comments. Confirm only if you want to restart the review process from gathering comments. |
-| R4 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reparo | PR review task in progress (review-task.md exists) | PR_CONFIRM_RESTART_TASK_A | (1) Update state to PR_CONFIRM_RESTART_TASK_A | Ask user to confirm reset. This will potentially discard the current review-task.md file which contains the specific tasks to be performed to address PR comments. Confirm only if you want to restart the review process from gathering comments. |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| A5a | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE, ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_A | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_A | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) If no PR exists for the current branch or no comments found, explicitly document this in comments.md; (5) Format and write comments to comments.md. 'No PR review in progress' means there are no existing PR review files (comments.md or review-task.md) in the workspace, allowing us to start a fresh PR review. | |
+| A5b | ERROR_COMMENTS_MISSING_[G/A], ERROR_REVIEW_TASK_MISSING_[G/A] | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_[G/A] | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_[G/A] | (1) Check if GitHub MCP is available; (2) If not available, guide user through setup; (3) If available, use GitHub MCP to fetch PR comments for current branch; (4) If no PR exists for the current branch or no comments found, explicitly document this in comments.md; (5) Format and write comments to comments.md. 'No PR review in progress' means there are no existing PR review files (comments.md or review-task.md) in the workspace, allowing us to start a fresh PR review. | |
+| R1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | PR review in progress (comments.md exists) | PR_CONFIRM_RESTART_COMMENTS_G | (1) Update state to PR_CONFIRM_RESTART_COMMENTS_G | Ask user to confirm reset. This will potentially overwrite the existing comments.md file which contains PR comments that are being reviewed. Confirm only if you want to restart the PR review process with fresh comments. | |
+| R2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reparo | PR review in progress (comments.md exists) | PR_CONFIRM_RESTART_COMMENTS_A | (1) Update state to PR_CONFIRM_RESTART_COMMENTS_A | Ask user to confirm reset. This will potentially overwrite the existing comments.md file which contains PR comments that are being reviewed. Confirm only if you want to restart the PR review process with fresh comments. | |
+| R3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reparo | PR review task in progress (review-task.md exists) | PR_CONFIRM_RESTART_TASK_G | (1) Update state to PR_CONFIRM_RESTART_TASK_G | Ask user to confirm reset. This will potentially discard the current review-task.md file which contains the specific tasks to be performed to address PR comments. Confirm only if you want to restart the review process from gathering comments. | |
+| R4 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reparo | PR review task in progress (review-task.md exists) | PR_CONFIRM_RESTART_TASK_A | (1) Update state to PR_CONFIRM_RESTART_TASK_A | Ask user to confirm reset. This will potentially discard the current review-task.md file which contains the specific tasks to be performed to address PR comments. Confirm only if you want to restart the review process from gathering comments. | |
 
 #### PR Review Confirmation Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| C1 | PR_CONFIRM_RESTART_COMMENTS_[G/A] | Reparo | - | PR_GATHERING_COMMENTS_[G/A] | (1) Delete existing comments.md; (2) Create new comments.md; (3) Update state to PR_GATHERING_COMMENTS_[G/A] | Gather PR comments from GitHub |
-| C2 | PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Accio | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing. This cancels the restart operation and maintains your existing PR review files. |
-| C2b | PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Accio | - | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Resume task drafting. This cancels the restart operation and maintains your existing PR review files. |
-| C3 | PR_CONFIRM_RESTART_TASK_[G/A] | Reparo | - | PR_GATHERING_COMMENTS_[G/A] | (1) Delete existing review files; (2) Create new comments.md; (3) Update state to PR_GATHERING_COMMENTS_[G/A] | Gather PR comments from GitHub |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| C1 | PR_CONFIRM_RESTART_COMMENTS_[G/A] | Reparo | - | PR_GATHERING_COMMENTS_[G/A] | (1) Delete existing comments.md; (2) Create new comments.md; (3) Update state to PR_GATHERING_COMMENTS_[G/A] | Gather PR comments from GitHub | |
+| C2 | PR_CONFIRM_RESTART_TASK_[G/A] | Reparo | - | PR_GATHERING_COMMENTS_[G/A] | (1) Delete existing review files; (2) Create new comments.md; (3) Update state to PR_GATHERING_COMMENTS_[G/A] | Gather PR comments from GitHub | |
+| C3a | PR_CONFIRM_RESTART_COMMENTS_[G/A] | Accio | comments.md exists | PR_GATHERING_COMMENTS_[G/A] | Update state to PR_GATHERING_COMMENTS_[G/A] | Continue using existing comments file without resetting. This cancels the restart operation and continues the PR review with the existing comments file. | |
+| C3b | PR_CONFIRM_RESTART_COMMENTS_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | Update state to ERROR_COMMENTS_MISSING_[G/A] | Explain: "Comments file is missing. Use Accio to recreate it and gather comments." | |
+| C3c | PR_CONFIRM_RESTART_TASK_[G/A] | Accio | review-task.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | Update state to PR_REVIEW_TASK_DRAFT_[G/A] | Continue using existing review task without resetting. This cancels the restart operation and continues the PR review with the existing review task file. | |
+| C3d | PR_CONFIRM_RESTART_TASK_[G/A] | Accio | review-task.md missing | ERROR_REVIEW_TASK_MISSING_[G/A] | Update state to ERROR_REVIEW_TASK_MISSING_[G/A] | Explain: "Review task file is missing. Use Accio to create a new review task based on the PR comments. Alternatively, if you want to restart the PR review process from the beginning, use Reverto to cancel the current review." | |
 
 
 #### Error State Recovery Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| R1 | ERROR_TASK_MISSING | Accio | - | ACHIEVE_TASK_DRAFTING | (1) Create new task.md template; (2) Update state to ACHIEVE_TASK_DRAFTING | Propose a task based on plan.md |
-| R2 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to proper location; (3) Load task-results.md content; (4) Create new task.md template; (5) Update state to ACHIEVE_TASK_DRAFTING | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task |
-| R3 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md missing | ACHIEVE_TASK_DRAFTING | (1) Archive task.md to incomplete-task folder; (2) Create new task.md; (3) Load plan.md content; (4) Update state to ACHIEVE_TASK_DRAFTING | (1) Review plan, identify uncompleted ACs, propose next task; (2) Explain to user that incomplete task was archived |
-| R4 | ERROR_PLAN_MISSING | Accio | - | GATHER_NEEDS_PLAN | (1) Create new plan.md template; (2) Update state to GATHER_NEEDS_PLAN | Guide user through creating a new plan |
-| R5a | ERROR_COMMENTS_MISSING_G | Accio | - | PR_GATHERING_COMMENTS_G | (1) Create empty comments.md; (2) Update state to PR_GATHERING_COMMENTS_G | Gather comments using GitHub MCP |
-| R5b | ERROR_COMMENTS_MISSING_A | Accio | - | PR_GATHERING_COMMENTS_A | (1) Create empty comments.md; (2) Update state to PR_GATHERING_COMMENTS_A | Gather comments using GitHub MCP |
-| R6a | ERROR_REVIEW_TASK_MISSING_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Create new review-task.md template; (2) Update state to PR_REVIEW_TASK_DRAFT_[G/A] | Recreate review task based on comments.md |
-| R7a | ERROR_REVIEW_TASK_MISSING_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | (1) Update state to ERROR_COMMENTS_MISSING_[G/A] | Explain: "Cannot create review task because comments.md is also missing. Use Accio to recreate comments.md first." |
-| R8a | ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Accio | review-task.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A] | Re-execute the review task from review-task.md |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| R1 | ERROR_TASK_MISSING | Accio | - | ACHIEVE_TASK_DRAFTING | (1) Create new task.md template; (2) Update state to ACHIEVE_TASK_DRAFTING | Propose a task based on plan.md | |
+| R2 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to proper location; (3) Load task-results.md content; (4) Create new task.md template; (5) Update state to ACHIEVE_TASK_DRAFTING | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task | |
+| R3 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md missing | ACHIEVE_TASK_DRAFTING | (1) Archive task.md to incomplete-task folder; (2) Create new task.md; (3) Load plan.md content; (4) Update state to ACHIEVE_TASK_DRAFTING | (1) Review plan, identify uncompleted ACs, propose next task; (2) Explain to user that incomplete task was archived | |
+| R4 | ERROR_PLAN_MISSING | Accio | - | GATHER_NEEDS_PLAN | (1) Create new plan.md template; (2) Update state to GATHER_NEEDS_PLAN | Guide user through creating a new plan | |
+| R5a | ERROR_COMMENTS_MISSING_G | Accio | - | PR_GATHERING_COMMENTS_G | (1) Create empty comments.md; (2) Update state to PR_GATHERING_COMMENTS_G | Gather comments using GitHub MCP | |
+| R5b | ERROR_COMMENTS_MISSING_A | Accio | - | PR_GATHERING_COMMENTS_A | (1) Create empty comments.md; (2) Update state to PR_GATHERING_COMMENTS_A | Gather comments using GitHub MCP | |
+| R6a | ERROR_REVIEW_TASK_MISSING_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Create new review-task.md template; (2) Update state to PR_REVIEW_TASK_DRAFT_[G/A] | Recreate review task based on comments.md | |
+| R7a | ERROR_REVIEW_TASK_MISSING_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | (1) Update state to ERROR_COMMENTS_MISSING_[G/A] | Explain: "Cannot create review task because comments.md is also missing. Use Accio to recreate comments.md first." | |
+| R8a | ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Accio | review-task.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A] | Re-execute the review task from review-task.md | |
 
 #### Error State Other Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| ER1 | ERROR_PLAN_MISSING | Finite | - | [BLOCKED] | No state change | Explain: "No plan to return to, must Accio to create one first." |
-| ER2 | ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Use Accio to recreate the review task first." |
-| ER3 | ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reparo | - | [BLOCKED] | No state change | Explain: "Cannot start PR review until current task is completed. Use Accio first." |
-| ER4 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_PLAN_MISSING, ERROR_COMMENTS_MISSING_[G/A], ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR review states. Resolve the current error first with Accio or Finite." |
-| ER5 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "You should not return to plan editing until the current error is resolved. Use Accio to fix the missing file issue first." |
-| ER6 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Resolve the current error first with Accio or Finite." |
-| ER7 | ERROR_PLAN_MISSING, PR_APPLIED_PENDING_ARCHIVE | Expecto | - | [BLOCKED] | No state change | Explain: "Cannot run Expecto in the current state. Resolve the current issue with Accio first." |
-| ER8 | ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Resolve the current error first with Accio." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| ER1 | ERROR_PLAN_MISSING | Finite | - | [BLOCKED] | No state change | Explain: "No plan to return to, must Accio to create one first." | |
+| ER2 | ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Use Accio to recreate the review task first." | |
+| ER3 | ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reparo | - | [BLOCKED] | No state change | Explain: "Cannot start PR review until current task is completed. Use Accio first." | |
+| ER4 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_PLAN_MISSING, ERROR_COMMENTS_MISSING_[G/A], ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR review states. Resolve the current error first with Accio or Finite." | |
+| ER5 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "You should not return to plan editing until the current error is resolved. Use Accio to fix the missing file issue first." | |
+| ER6 | ERROR_TASK_MISSING, ERROR_TASK_RESULTS_MISSING, ERROR_COMMENTS_MISSING_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Resolve the current error first with Accio or Finite." | |
+| ER7 | ERROR_PLAN_MISSING, PR_APPLIED_PENDING_ARCHIVE | Expecto | - | [BLOCKED] | No state change | Explain: "Cannot run Expecto in the current state. Resolve the current issue with Accio first." | |
+| ER8 | ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Resolve the current error first with Accio." | |
 
 #### Finite Transitions (Universal Return to Plan)
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| F1 | Any state except ACHIEVE_TASK_EXECUTED, ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE, ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A], PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A], PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing |
-| F2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing with relevant context: for ACHIEVE_TASK_DRAFTING, the drafted task will be preserved; for ACHIEVE_COMPLETE, you will return to plan editing with all acceptance criteria completed. |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| F1 | Any state except ACHIEVE_TASK_EXECUTED, ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE, ERROR_PLAN_MISSING, ERROR_REVIEW_TASK_MISSING_[G/A], ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A], PR_APPLIED_PENDING_ARCHIVE_[G/A], PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A], PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing | |
+| F2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_COMPLETE | Finite | - | GATHER_EDITING | Update state to GATHER_EDITING | Resume plan editing with relevant context: for ACHIEVE_TASK_DRAFTING, the drafted task will be preserved; for ACHIEVE_COMPLETE, you will return to plan editing with all acceptance criteria completed. | |
 
 #### Blocked Finite Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| F3 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Must Accio to archive current review results first." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| F3 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Finite | - | [BLOCKED] | No state change | Explain: "Must Accio to archive current review results first." | |
 
 #### Reverto Transitions (Exit PR Review)
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing |
-| V2 | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | - | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| V1 | PR_GATHERING_COMMENTS_G, PR_REVIEW_TASK_DRAFT_G, PR_CONFIRM_RESTART_COMMENTS_G, PR_CONFIRM_RESTART_TASK_G | Reverto | - | GATHER_EDITING | Update state to GATHER_EDITING | Return to plan editing | |
+| V2 | PR_GATHERING_COMMENTS_A, PR_REVIEW_TASK_DRAFT_A, PR_CONFIRM_RESTART_COMMENTS_A, PR_CONFIRM_RESTART_TASK_A | Reverto | - | ACHIEVE_TASK_DRAFTING | Update state to ACHIEVE_TASK_DRAFTING | Return to task drafting | |
 
 #### PR Review Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| PB1 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reverto | - | [BLOCKED] | No state change | Tell user they must first Accio to archive current review results |
-| PB2 | PR_GATHERING_COMMENTS_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." |
-| PB2b | PR_REVIEW_TASK_DRAFT_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." |
-| PB2d | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Accio to archive current review results first." |
-| PB3 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | [BLOCKED] | No state change | Tell user they must first complete the PR review flow with Accio or exit with Reverto |
-| PB4 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Reparo | - | [BLOCKED] | No state change | Tell user they must complete the current PR review process or use Reverto to cancel it |
-| PB5 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Finite | - | [BLOCKED] | No state change | Tell user they must first confirm or cancel the restart operation using Reparo or Reverto |
-| PB6 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to cancel or Reparo to confirm, then Finite to return to plan editing." |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| PB1 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reverto | - | [BLOCKED] | No state change | Tell user they must first Accio to archive current review results | |
+| PB2 | PR_GATHERING_COMMENTS_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | |
+| PB2b | PR_REVIEW_TASK_DRAFT_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | |
+| PB2d | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Accio to archive current review results first." | |
+| PB3 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | [BLOCKED] | No state change | Tell user they must first complete the PR review flow with Accio or exit with Reverto | |
+| PB4 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Reparo | - | [BLOCKED] | No state change | Tell user they must complete the current PR review process or use Reverto to cancel it | |
+| PB5 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Finite | - | [BLOCKED] | No state change | Tell user they must first confirm or cancel the restart operation using Reparo or Reverto | |
+| PB6 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Expecto | - | [BLOCKED] | No state change | Explain: "Expecto is only allowed in GATHER states. Use Reverto to cancel or Reparo to confirm, then Finite to return to plan editing." | |
 
 
 #### Universal Lumos Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| L1 | Any state | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| L1 | Any state | Lumos | - | Same state | (1) Read state.json; (2) Determine valid actions | Display current state and valid actions for the current state | |
 
 #### Universal Expecto Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| E1 | GATHER_NEEDS_PLAN | Expecto | Atlassian URLs found | GATHER_NEEDS_PLAN | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content |
-| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content |
+| ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
+|----|---------------|---------|-----------|------------|--------|-------------|----------|
+| E1 | GATHER_NEEDS_PLAN | Expecto | Atlassian URLs found | GATHER_NEEDS_PLAN | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content | |
+| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | (1) Extract Atlassian URLs from plan.md; (2) Fetch content via Atlassian MCP; (3) Save content to .ai/task/atlassian/<ID>.md; (4) Update plan.md with references | Enrich plan with Jira/Confluence content | |
 
 
 ### State Guards
