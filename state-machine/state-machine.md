@@ -349,6 +349,8 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
 | E1 | GATHER_NEEDS_PLAN | Expecto | Atlassian URLs found | GATHER_NEEDS_PLAN | (1) MCP reads .ai/task/.atlassian-refs file if it exists; (2) MCP extracts Atlassian URLs from plan.md that are not in .atlassian-refs; (3) MCP passes these new URLs as [ATLASSIAN_URLS_PLACEHOLDER] to the AI | Enrich plan with Jira/Confluence content | [E1.md](responses/universal_expecto/E1.md) |
 | E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | (1) MCP reads .ai/task/.atlassian-refs file if it exists; (2) MCP extracts Atlassian URLs from plan.md that are not in .atlassian-refs; (3) MCP passes these new URLs as [ATLASSIAN_URLS_PLACEHOLDER] to the AI | Enrich plan with Jira/Confluence content | [E2.md](responses/universal_expecto/E2.md) |
+| E3 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | No Atlassian URLs found in plan.md | Same state | No state change | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | [E3.md](responses/universal_expecto/E3.md) |
+| E4 | GATHER_NEEDS_PLAN, GATHER_EDITING | Expecto | All Atlassian URLs in plan.md already processed | Same state | No state change | Explain: "All Atlassian URLs have already been processed. Edit .atlassian-refs to reprocess." | [E4.md](responses/universal_expecto/E4.md) |
 
 
 ### State Guards
