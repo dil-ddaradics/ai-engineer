@@ -52,6 +52,57 @@ For example:
 
 This separation ensures that the AI knows exactly what it needs to do without attempting to perform actions that the system has already handled.
 
+## Template Creation and File Filling
+
+An important workflow pattern in this system:
+
+1. **MCP Creates File Templates**: 
+   - The MCP creates empty or template files (task.md, review-task.md, etc.)
+   - These templates have structure but need content
+
+2. **AI Fills Templates**:
+   - The AI reads the templates created by MCP
+   - The AI fills in appropriate content based on context
+   - The AI should NEVER claim to "create" these files in its responses
+
+This creates a clear delineation of responsibilities:
+- MCP handles file creation and state transitions
+- AI handles content generation and user guidance
+
+### Common Template Filling Language
+
+When instructing the AI to work with files:
+
+- INCORRECT: "Create a new task.md file with details from the plan."
+- CORRECT: "Fill out the template in task.md with details based on the plan."
+
+- INCORRECT: "Create review-task.md based on comments.md."
+- CORRECT: "Read comments.md and fill out the review-task.md template."
+
+## Dynamic Path Handling
+
+When the MCP archives files or references locations that may change:
+
+1. **Use Placeholders for Dynamic Paths**:
+   - Replace hardcoded paths like `.ai/task/tasks/` with placeholders
+   - Format: `[ARCHIVE_PATH_PLACEHOLDER]`, `[INCOMPLETE_ARCHIVE_PATH_PLACEHOLDER]`, etc.
+   - These placeholders will be replaced by actual values at runtime
+
+2. **Path References in Responses**:
+   - Use placeholders in both "Response to the AI" and "Response to the Developer" 
+   - Example: "The previous task has been archived to [ARCHIVE_PATH_PLACEHOLDER]"
+   - Do NOT hardcode path assumptions
+
+### Examples of Placeholder Usage
+
+- INCORRECT: "Archive task.md to .ai/task/incomplete-task/ folder"
+- CORRECT: "Archive task.md to [INCOMPLETE_ARCHIVE_PATH_PLACEHOLDER]"
+
+- INCORRECT: "Files have been moved to .ai/task/tasks/"
+- CORRECT: "Files have been moved to [ARCHIVE_PATH_PLACEHOLDER]"
+
+This ensures flexibility in deployment environments and prevents path assumptions that may not be true in all scenarios.
+
 ## Your Task
 
 Find the first transition table in the document where the Response column entries are empty, then reformat all responses in ONLY that table using the standardized templates defined in the "Response Format Templates" section of the document.
@@ -144,10 +195,19 @@ Find the first transition table in the document where the Response column entrie
      Task Content:
      [TASK_CONTENT_PLACEHOLDER]
      ```
+   - Placeholders for dynamic paths passed by the MCP:
+     ```
+     The previous task has been archived to [ARCHIVE_PATH_PLACEHOLDER]
+     ```
    - Specific guidance on what to look for in files
    - Instructions on what to generate for the user
 
-4. **For conditional scenarios**:
+4. **Use file creation/handling language correctly**:
+   - Use "fill out the template in" rather than "create" when working with MCP-created files
+   - Use "read" and "update" for existing files
+   - Always assume the MCP has created all necessary file structures
+
+5. **For conditional scenarios**:
    - Clearly specify different actions based on conditions
    - Provide distinct response templates for different outcomes
    - Explain how to determine which condition applies
@@ -324,6 +384,43 @@ We're in the PR review flow, but no comments were found to process.
 ### Next Steps
 Since no PR comments were found, use Reverto to exit the PR review process and return to your previous workflow.
 ```
+
+### Example 4: Template Filling (Task Creation)
+
+Original Response: `Fill out template with task details`
+
+INCORRECT Reformatted Response:
+```markdown
+## Response to the AI
+
+Create a new task.md file with details from the plan.md.
+```
+
+CORRECT Reformatted Response:
+```markdown
+## Response to the AI
+
+Read the plan.md to identify the next task. Fill out the template in `.ai/task/task.md` that the MCP has created with appropriate details based on the plan.
+
+## Response to the Developer
+
+### What Just Happened
+I've filled out the task template based on our project plan.
+
+### Where We Are
+We're now in the task drafting phase where we need to define the specific steps for this task.
+
+### Available Spells
+- **Accio**: Execute this task and document the results
+- **Finite**: Return to plan editing if we need to modify our plan
+- **Reparo**: Begin a PR review process
+- **Lumos**: Show current state and available actions
+
+### Next Steps
+Let's review the task details in `.ai/task/task.md` and make any necessary adjustments before using Accio to execute it.
+```
+
+This example demonstrates how to correctly refer to templates being filled rather than claiming to create files.
 
 ## Handling Conditional Responses
 
