@@ -5,7 +5,7 @@ Explain to the developer that the review task file is missing and provide option
 ## Response to the Developer
 
 ### What Just Happened
-I tried to execute review tasks but the review-task.md file is missing. This is likely due to an accidental deletion.
+I tried to execute review tasks but the `.ai/task/review-task.md` file is missing. This is likely due to an accidental deletion.
 
 ### Where We Are
 We're in an error state where we need to recreate the review task file before proceeding with the PR review.

@@ -1,11 +1,11 @@
 ## Response to the AI
 
-Inform the developer that the task.md file is missing, which is needed for task execution. Explain how to recover from this error state.
+Inform the developer that the `.ai/task/task.md` file is missing, which is needed for task execution. Explain how to recover from this error state.
 
 ## Response to the Developer
 
 ### What Just Happened
-I've encountered an error: the task.md file is missing from the workspace.
+I've encountered an error: the `.ai/task/task.md` file is missing from the workspace.
 
 ### Where We Are
 We're in an error state where the system expected to find a task file but couldn't locate it.

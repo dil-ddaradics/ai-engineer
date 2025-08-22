@@ -12,12 +12,12 @@ Read the empty `.ai/task/comments.md` file, and then:
    - If GitHub MCP is not available: Guide the user through setting it up
 
 3. If there are PR comments:
-   - Format and write comments to comments.md
+   - Format and write comments to `.ai/task/comments.md`
    - Provide a summary of the feedback
    - Use the "Comments Found" response to the developer
 
 4. If no PR exists or no comments found:
-   - Explicitly document this in comments.md
+   - Explicitly document this in `.ai/task/comments.md`
    - Explain to the user that no comments were found
    - Use the "No Comments Found" response to the developer
 
@@ -26,7 +26,7 @@ Read the empty `.ai/task/comments.md` file, and then:
 ### Comments Found Response:
 
 ### What Just Happened
-I've gathered PR comments for your current branch and saved them to comments.md.
+I've gathered PR comments for your current branch and saved them to `.ai/task/comments.md`.
 
 ### Where We Are
 We've recovered from the error state and are now in the PR review flow where we need to address the feedback in these comments.

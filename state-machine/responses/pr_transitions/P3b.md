@@ -5,7 +5,7 @@ Explain to the developer that the review task results file is missing and provid
 ## Response to the Developer
 
 ### What Just Happened
-I tried to archive the PR review results, but the review-task-results.md file is missing. This likely happened because the file was accidentally deleted or not properly created.
+I tried to archive the PR review results, but the `.ai/task/review-task-results.md` file is missing. This likely happened because the file was accidentally deleted or not properly created.
 
 ### Where We Are
 We're in an error state where we need to recreate the review task results file before archiving and returning to your regular workflow.

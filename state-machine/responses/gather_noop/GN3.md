@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Inform the developer that casting Expecto had no effect because no Atlassian URLs were found in the plan.md file.
+Inform the developer that casting Expecto had no effect because no Atlassian URLs were found in the `.ai/task/plan.md` file.
 
 ## Response to the Developer
 
@@ -17,4 +17,4 @@ We're in the planning phase, but we need Atlassian resources to enrich the plan.
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
-Add Jira or Confluence URLs to your plan.md file, then use **Expecto** again to enrich your plan with content from these resources.
+Add Jira or Confluence URLs to your `.ai/task/plan.md` file, then use **Expecto** again to enrich your plan with content from these resources.

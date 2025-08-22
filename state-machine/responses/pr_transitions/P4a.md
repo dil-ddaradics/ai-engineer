@@ -1,8 +1,8 @@
 ## Response to the AI
 
 1. Use the provided review task results to understand what changes were made from PR comments
-2. Update plan.md with a summary of these changes
-3. Read the existing task.md file to understand the current task
+2. Update `.ai/task/plan.md` with a summary of these changes
+3. Read the existing `.ai/task/task.md` file to understand the current task
 4. Summarize the current task for the user in the context of the PR feedback
 
 Review Task Results Content:

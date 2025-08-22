@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Inform the developer that this action requires confirmation because it will overwrite the existing comments.md file which contains PR comments that are already being reviewed.
+Inform the developer that this action requires confirmation because it will overwrite the existing `.ai/task/comments.md` file which contains PR comments that are already being reviewed.
 
 ## Response to the Developer
 

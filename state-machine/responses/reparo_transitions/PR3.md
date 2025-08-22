@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Inform the developer that this action requires confirmation because it will discard the current review-task.md file which contains the specific tasks to address PR comments.
+Inform the developer that this action requires confirmation because it will discard the current `.ai/task/review-task.md` file which contains the specific tasks to address PR comments.
 
 ## Response to the Developer
 
