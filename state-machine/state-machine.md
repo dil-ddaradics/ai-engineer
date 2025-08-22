@@ -207,7 +207,7 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Old Response | Response |
 |----|---------------|---------|-----------|------------|--------|-------------|----------|
-| GB1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states." | |
+| GB1 | GATHER_NEEDS_PLAN, GATHER_EDITING | Reverto | - | [BLOCKED] | No state change | Explain: "Reverto is only available in PR states." | [GB1.md](responses/gather_blocked/GB1.md) |
 
 #### Gather Acceptance Criteria Phase No-op Transitions
 
