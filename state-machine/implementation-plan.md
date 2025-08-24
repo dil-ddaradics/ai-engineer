@@ -156,6 +156,15 @@ interface StateMachine {
 ## Folder Structure
 
 ```
+/scripts                          # Build scripts
+  prebuild.ts                     # Master prebuild script
+  build-responses.ts              # Generate responses.ts from response files
+  build-templates.ts              # Generate templates.ts from template files
+
+/state-machine                    # Source files (not compiled)
+  /responses                      # Response template files (markdown)
+  /templates                      # Template files (markdown)
+  
 /src
   /state-machine                  # State machine implementation
     index.ts                      # Main entry point and factory function
@@ -167,7 +176,8 @@ interface StateMachine {
     fileSystem.test.ts            # Tests for file system
     stateRepository.ts            # State repository for persistence
     stateRepository.test.ts       # Tests for state repository
-    responses.ts                  # Generated file with response templates
+    responses.ts                  # Generated file with response templates (auto-generated)
+    templates.ts                  # Generated file with template content (auto-generated)
     
     /transitions                  # Transition definitions organized by phase
       gatherTransitions.ts        # GATHER phase transitions
@@ -185,11 +195,40 @@ interface StateMachine {
     /utils                        # Helper utilities
       responseUtils.ts            # Response processing
       responseUtils.test.ts       # Tests for response utils
+      templateUtils.ts            # Template processing (NEW)
+      templateUtils.test.ts       # Tests for template utils (NEW)
       planUtils.ts                # Plan parsing and operations
       planUtils.test.ts           # Tests for plan utils
       fileUtils.ts                # File operation helpers
       fileUtils.test.ts           # Tests for file utils
 ```
+
+## Build Strategy
+
+### Prebuild Process
+The project uses a prebuild system that generates TypeScript constants from template and response files:
+
+```typescript
+// Package.json scripts
+{
+  "scripts": {
+    "prebuild": "tsx scripts/prebuild.ts",
+    "build": "npm run prebuild && tsc",
+    "dev": "npm run prebuild && tsc --watch",
+    "prepare": "npm run prebuild"
+  }
+}
+```
+
+### Build Scripts Architecture
+- **`scripts/prebuild.ts`**: Master script that imports both build scripts
+- **`scripts/build-responses.ts`**: Generates `src/state-machine/responses.ts` from `state-machine/responses/` folder  
+- **`scripts/build-templates.ts`**: Generates `src/state-machine/templates.ts` from `state-machine/templates/` folder
+
+### Generated Outputs
+- **`src/state-machine/responses.ts`**: Contains `RESPONSES` constant with all response templates
+- **`src/state-machine/templates.ts`**: Contains `TEMPLATES` constant with all file templates
+- Both generated files export Record<string, string> for runtime access
 
 ## Template Management Architecture
 
@@ -207,18 +246,22 @@ The MCP server manages all template files using a two-tier approach that separat
 
 #### Working Template Files
 - **Location**: `.ai/task/` folder (task-specific workspace) 
-- **Behavior**: Created fresh from MCP resources each time needed
+- **Behavior**: Created fresh from embedded templates each time needed
 - **Purpose**: Provide clean templates for each workflow step
 - **Files**:
   - `.ai/task/context.md` - Task context template
   - `.ai/task/plan.md` - Structured plan template
   - `.ai/task/task.md` - Individual task template
+  - `.ai/task/task-results.md` - Task results template
+  - `.ai/task/comments.md` - PR comments template
+  - `.ai/task/review-task.md` - Review task template
+  - `.ai/task/review-task-results.md` - Review task results template
 
 ### Template Resource Management
-- MCP server reads all templates from its own resources folder
-- Similar architecture to response file management
-- Templates are embedded in MCP server for version control and consistency
+- All templates are embedded in the compiled TypeScript via prebuild process
+- Templates are read from `TEMPLATES` constant at runtime
 - File existence checks determine copy vs. create behavior
+- Template utilities handle the embedding and file creation logic
 
 ## Response Management
 
@@ -240,7 +283,53 @@ The MCP server uses this standard header for all Lumos responses:
 ### Response File Format
 Individual response files should NOT include the standard header and should start directly with their content sections.
 
-To handle the response templates efficiently, we'll create a build script that generates a TypeScript file with all response templates:
+### Template Utilities
+
+Template management follows the same pattern as responses:
+
+```typescript
+// src/state-machine/utils/templateUtils.ts
+import { TEMPLATES } from '../templates';
+
+export function getTemplate(name: string): string {
+  const template = TEMPLATES[name];
+  if (!template) {
+    throw new Error(`Template not found: ${name}`);
+  }
+  return template;
+}
+
+export function processTemplate(
+  templateContent: string, 
+  replacements?: Record<string, string>
+): string {
+  let processed = templateContent;
+  
+  if (replacements) {
+    Object.entries(replacements).forEach(([key, value]) => {
+      processed = processed.replace(
+        new RegExp(`{{${key}}}`, 'g'), 
+        value
+      );
+    });
+  }
+  
+  return processed;
+}
+
+export async function writeTemplate(
+  fileSystem: FileSystem, 
+  templateName: string, 
+  filePath: string,
+  replacements?: Record<string, string>
+): Promise<void> {
+  const template = getTemplate(templateName);
+  const content = processTemplate(template, replacements);
+  await fileSystem.write(filePath, content);
+}
+```
+
+To handle both templates and responses efficiently, we use build scripts that generate TypeScript files:
 
 ```typescript
 // scripts/build-responses.ts
@@ -287,6 +376,52 @@ export const RESPONSES: Record<string, string> = ${JSON.stringify(responses, nul
 
 fs.writeFileSync(outputPath, content);
 console.log(`Generated responses module with ${Object.keys(responses).length} templates`);
+
+// scripts/build-templates.ts
+import fs from 'fs';
+import path from 'path';
+
+// Build a map of all template files
+const templates: Record<string, string> = {};
+const templatesDir = path.resolve(__dirname, '../state-machine/templates');
+const outputDir = path.resolve(__dirname, '../src/state-machine');
+
+// Read all template files
+function readTemplates(dir: string): void {
+  const entries = fs.readdirSync(dir);
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry);
+    
+    if (entry.endsWith('.md')) {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      const key = entry.replace(/\.md$/, '').replace(/-/g, '_');
+      templates[key] = content;
+    }
+  }
+}
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+// Read all template files
+readTemplates(templatesDir);
+
+// Write the templates.ts file
+const outputPath = path.join(outputDir, 'templates.ts');
+const content = `// Auto-generated file - do not edit directly
+export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, null, 2)};
+`;
+
+fs.writeFileSync(outputPath, content);
+console.log(`Generated templates module with ${Object.keys(templates).length} templates`);
+
+// scripts/prebuild.ts
+import './build-responses';
+import './build-templates';
+
+console.log('Prebuild completed - responses and templates generated');
 ```
 
 ## Example Implementation
@@ -538,8 +673,9 @@ export function processResponse(
 // src/state-machine/transitions/gatherTransitions.ts
 import { Transition } from '../types';
 import { getResponse, processResponse } from '../utils/responseUtils';
+import { getTemplate, writeTemplate } from '../utils/templateUtils';
 import { hasAcceptanceCriteria, extractFirstAcceptanceCriteria } from '../utils/planUtils';
-import { createTaskTemplate, extractAtlassianUrls } from '../utils/fileUtils';
+import { extractAtlassianUrls } from '../utils/fileUtils';
 
 export const gatherTransitions: Transition[] = [
   // GC1: GATHER_NEEDS_CONTEXT + Accio -> GATHER_EDITING_CONTEXT
@@ -549,25 +685,16 @@ export const gatherTransitions: Transition[] = [
     spell: "Accio",
     // No condition - always applies
     handler: async (context, fileSystem) => {
-      // Create context.md template in task folder
-      await fileSystem.write(
-        ".ai/task/context.md", 
-        "# Task Context\n\n## Goals\n\n## Requirements\n\n## Resources\n\n"
-      );
+      // Create context.md from template
+      await writeTemplate(fileSystem, 'context', '.ai/task/context.md');
       
-      // Copy guide files from MCP resources if they don't exist
+      // Copy guide files from templates if they don't exist
       if (!await fileSystem.exists(".ai/plan-guide.md")) {
-        await fileSystem.write(
-          ".ai/plan-guide.md",
-          "# Planning Guide\n\n## Best Practices\n\n## Template Structure\n\n"
-        );
+        await writeTemplate(fileSystem, 'plan_guide', '.ai/plan-guide.md');
       }
       
       if (!await fileSystem.exists(".ai/task-guide.md")) {
-        await fileSystem.write(
-          ".ai/task-guide.md",
-          "# Task Creation Guide\n\n## Best Practices\n\n## Task Structure\n\n"
-        );
+        await writeTemplate(fileSystem, 'task_guide', '.ai/task-guide.md');
       }
       
       // Get response template

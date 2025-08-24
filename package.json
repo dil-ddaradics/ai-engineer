@@ -4,10 +4,12 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "ts-node --esm src/index.ts",
-    "build": "npx @vercel/ncc build src/index.ts -o dist",
+    "prebuild": "tsx scripts/prebuild.ts",
+    "dev": "npm run prebuild && ts-node --esm src/index.ts",
+    "build": "npm run prebuild && npx @vercel/ncc build src/index.ts -o dist",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "npm run prebuild"
   },
   "keywords": [],
   "author": "",
@@ -24,11 +26,14 @@
     "jest": "^30.0.5",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/test/**/*.test.js"],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
     "verbose": true,
     "testTimeout": 30000
   }

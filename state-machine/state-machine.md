@@ -72,117 +72,117 @@ This workflow is implemented as a strict state machine where transitions occur o
     - *Indicators*: `.ai/task/plan.md` exists
     - *Valid Actions*: Accio, Expecto, Lumos, Reparo, Finite (no-op)
 
-3. **ACHIEVE_TASK_DRAFTING**
+4. **ACHIEVE_TASK_DRAFTING**
     - *Description*: Task is being created/refined but not yet executed
     - *Indicators*: `.ai/task/task.md` exists; `.ai/task/task-results.md` doesn't exist
     - *Valid Actions*: Accio, Finite, Reparo, Lumos
 
-4. **ACHIEVE_TASK_EXECUTED**
+5. **ACHIEVE_TASK_EXECUTED**
     - *Description*: Task has been executed; results ready for review
     - *Indicators*: `.ai/task/task-results.md` exists
     - *Valid Actions*: Accio, Reparo, Lumos
 
-5. **ACHIEVE_COMPLETE**
+6. **ACHIEVE_COMPLETE**
     - *Description*: All acceptance criteria have been met
     - *Indicators*: No unchecked acceptance criteria in `.ai/task/plan.md`
     - *Valid Actions*: Finite, Reparo, Lumos
 
-6. **PR_GATHERING_COMMENTS_G**
+7. **PR_GATHERING_COMMENTS_G**
     - *Description*: PR review comments have been collected (entered from GATHER phase)
     - *Indicators*: `.ai/task/comments.md` exists; `.ai/task/review-task.md` doesn't exist; state.json shows origin from GATHER
     - *Valid Actions*: Accio, Finite, Reverto, Lumos
 
-7. **PR_GATHERING_COMMENTS_A**
+8. **PR_GATHERING_COMMENTS_A**
     - *Description*: PR review comments have been collected (entered from ACHIEVE phase)
     - *Indicators*: `.ai/task/comments.md` exists; `.ai/task/review-task.md` doesn't exist; state.json shows origin from ACHIEVE
     - *Valid Actions*: Accio, Finite, Reverto, Lumos
 
-8. **PR_REVIEW_TASK_DRAFT_G**
+9. **PR_REVIEW_TASK_DRAFT_G**
     - *Description*: Review task is being created/refined (entered from GATHER phase)
     - *Indicators*: `.ai/task/review-task.md` exists; `.ai/task/review-task-results.md` doesn't exist; state.json shows origin from GATHER
     - *Valid Actions*: Accio, Finite, Reverto, Lumos
 
-9. **PR_REVIEW_TASK_DRAFT_A**
+10. **PR_REVIEW_TASK_DRAFT_A**
     - *Description*: Review task is being created/refined (entered from ACHIEVE phase)
     - *Indicators*: `.ai/task/review-task.md` exists; `.ai/task/review-task-results.md` doesn't exist; state.json shows origin from ACHIEVE
     - *Valid Actions*: Accio, Finite, Reverto, Lumos
 
-10. **PR_APPLIED_PENDING_ARCHIVE_G**
+11. **PR_APPLIED_PENDING_ARCHIVE_G**
     - *Description*: Review task has been applied; results ready for archiving (entered from GATHER phase)
     - *Indicators*: `.ai/task/review-task-results.md` exists; state.json shows origin from GATHER
     - *Valid Actions*: Accio, Finite, Lumos
 
-11. **PR_APPLIED_PENDING_ARCHIVE_A**
+12. **PR_APPLIED_PENDING_ARCHIVE_A**
     - *Description*: Review task has been applied; results ready for archiving (entered from ACHIEVE phase)
     - *Indicators*: `.ai/task/review-task-results.md` exists; state.json shows origin from ACHIEVE
     - *Valid Actions*: Accio, Finite, Lumos
 
-12. **PR_CONFIRM_RESTART_COMMENTS_G**
+13. **PR_CONFIRM_RESTART_COMMENTS_G**
     - *Description*: User requested Reparo while comments.md exists (entered from GATHER phase)
     - *Indicators*: `.ai/task/comments.md` exists and state.json marks confirm needed; state.json shows origin from GATHER
     - *Valid Actions*: Reparo (confirm), Lumos, Reverto (cancel)
 
-13. **PR_CONFIRM_RESTART_COMMENTS_A**
+14. **PR_CONFIRM_RESTART_COMMENTS_A**
     - *Description*: User requested Reparo while comments.md exists (entered from ACHIEVE phase)
     - *Indicators*: `.ai/task/comments.md` exists and state.json marks confirm needed; state.json shows origin from ACHIEVE
     - *Valid Actions*: Reparo (confirm), Lumos, Reverto (cancel)
 
-14. **PR_CONFIRM_RESTART_TASK_G**
+15. **PR_CONFIRM_RESTART_TASK_G**
     - *Description*: User requested Reparo while review-task.md exists (entered from GATHER phase)
     - *Indicators*: `.ai/task/review-task.md` exists and state.json marks confirm needed; state.json shows origin from GATHER
     - *Valid Actions*: Reparo (confirm), Lumos, Reverto (cancel)
 
-15. **PR_CONFIRM_RESTART_TASK_A**
+16. **PR_CONFIRM_RESTART_TASK_A**
     - *Description*: User requested Reparo while review-task.md exists (entered from ACHIEVE phase)
     - *Indicators*: `.ai/task/review-task.md` exists and state.json marks confirm needed; state.json shows origin from ACHIEVE
     - *Valid Actions*: Reparo (confirm), Lumos, Reverto (cancel)
 
-11. **ERROR_TASK_MISSING**
+17. **ERROR_TASK_MISSING**
     - *Description*: In ACHIEVE_TASK_DRAFTING state, but task.md is missing
     - *Indicators*: state.json shows ACHIEVE_TASK_DRAFTING but task.md doesn't exist
     - *Valid Actions*: Accio, Finite, Lumos
 
-12. **ERROR_TASK_RESULTS_MISSING**
+18. **ERROR_TASK_RESULTS_MISSING**
     - *Description*: In ACHIEVE_TASK_EXECUTED state, but task-results.md is missing
     - *Indicators*: state.json shows ACHIEVE_TASK_EXECUTED but task-results.md doesn't exist
     - *Valid Actions*: Accio, Finite, Lumos
 
-13. **ERROR_PLAN_MISSING**
+19. **ERROR_PLAN_MISSING**
     - *Description*: Any state except GATHER_NEEDS_CONTEXT and GATHER_EDITING_CONTEXT requires plan.md but it's missing
     - *Indicators*: Any state except GATHER_NEEDS_CONTEXT and GATHER_EDITING_CONTEXT but plan.md doesn't exist
     - *Valid Actions*: Accio, Lumos
 
-14. **ERROR_COMMENTS_MISSING_G**
+20. **ERROR_COMMENTS_MISSING_G**
     - *Description*: In PR_GATHERING_COMMENTS_G state, but comments.md is missing
     - *Indicators*: state.json shows PR_GATHERING_COMMENTS_G but comments.md doesn't exist
     - *Valid Actions*: Accio, Reverto, Lumos
 
-14a. **ERROR_COMMENTS_MISSING_A**
+21. **ERROR_COMMENTS_MISSING_A**
     - *Description*: In PR_GATHERING_COMMENTS_A state, but comments.md is missing
     - *Indicators*: state.json shows PR_GATHERING_COMMENTS_A but comments.md doesn't exist
     - *Valid Actions*: Accio, Reverto, Lumos
 
-15. **ERROR_REVIEW_TASK_MISSING_G**
+22. **ERROR_REVIEW_TASK_MISSING_G**
     - *Description*: In PR_REVIEW_TASK_DRAFT_G state, but review-task.md is missing
     - *Indicators*: state.json shows PR_REVIEW_TASK_DRAFT_G but review-task.md doesn't exist
     - *Valid Actions*: Accio, Lumos
 
-15a. **ERROR_REVIEW_TASK_MISSING_A**
+23. **ERROR_REVIEW_TASK_MISSING_A**
     - *Description*: In PR_REVIEW_TASK_DRAFT_A state, but review-task.md is missing
     - *Indicators*: state.json shows PR_REVIEW_TASK_DRAFT_A but review-task.md doesn't exist
     - *Valid Actions*: Accio, Lumos
 
-16. **ERROR_CONTEXT_MISSING**
+24. **ERROR_CONTEXT_MISSING**
     - *Description*: In GATHER_EDITING_CONTEXT state, but context.md is missing
     - *Indicators*: state.json shows GATHER_EDITING_CONTEXT but context.md doesn't exist
     - *Valid Actions*: Accio, Lumos
 
-17. **ERROR_REVIEW_TASK_RESULTS_MISSING_G**
+25. **ERROR_REVIEW_TASK_RESULTS_MISSING_G**
     - *Description*: In PR_APPLIED_PENDING_ARCHIVE_G state, but review-task-results.md is missing
     - *Indicators*: state.json shows PR_APPLIED_PENDING_ARCHIVE_G but review-task-results.md doesn't exist
     - *Valid Actions*: Accio, Lumos
 
-17a. **ERROR_REVIEW_TASK_RESULTS_MISSING_A**
+26. **ERROR_REVIEW_TASK_RESULTS_MISSING_A**
     - *Description*: In PR_APPLIED_PENDING_ARCHIVE_A state, but review-task-results.md is missing
     - *Indicators*: state.json shows PR_APPLIED_PENDING_ARCHIVE_A but review-task-results.md doesn't exist
     - *Valid Actions*: Accio, Lumos
