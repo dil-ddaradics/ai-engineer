@@ -204,12 +204,12 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Context Gathering Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` and `.ai/task-guide.md` from MCP resources if they don't exist | [GC1.md](responses/gather_transitions/GC1.md) |
-| GC2a | GATHER_EDITING_CONTEXT | Accio | context.md exists AND Atlassian URLs found | GATHER_EDITING | Read context.md, extract Atlassian URLs, provide URLs to AI for processing | [GC2.md](responses/gather_transitions/GC2.md) |
-| GC2b | GATHER_EDITING_CONTEXT | Accio | context.md exists AND no Atlassian URLs found | GATHER_EDITING | Read context.md, provide content to AI for plan generation | [GC2-no-urls.md](responses/gather_transitions/GC2-no-urls.md) |
-| GC2c | GATHER_EDITING_CONTEXT | Accio | context.md missing | ERROR_CONTEXT_MISSING | State updated to ERROR_CONTEXT_MISSING | [GC2b.md](responses/gather_transitions/GC2b.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` and `.ai/task-guide.md` from MCP resources if they don't exist | (1) Creates `.ai/task/context.md` with template; (2) Copies `.ai/plan-guide.md` and `.ai/task-guide.md` from MCP resources if missing | [GC1.md](responses/gather_transitions/GC1.md) |
+| GC2a | GATHER_EDITING_CONTEXT | Accio | context.md exists AND Atlassian URLs found | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds some) | GATHER_EDITING | Read context.md, extract Atlassian URLs, provide URLs to AI for processing | Creates `.ai/task/plan.md` file | [GC2.md](responses/gather_transitions/GC2.md) |
+| GC2b | GATHER_EDITING_CONTEXT | Accio | context.md exists AND no Atlassian URLs found | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none) | GATHER_EDITING | Read context.md, provide content to AI for plan generation | Creates `.ai/task/plan.md` file | [GC2-no-urls.md](responses/gather_transitions/GC2-no-urls.md) |
+| GC2c | GATHER_EDITING_CONTEXT | Accio | context.md missing | Checks `.ai/task/context.md` exists (missing) | ERROR_CONTEXT_MISSING | State updated to ERROR_CONTEXT_MISSING | - | [GC2b.md](responses/gather_transitions/GC2b.md) |
 
 #### Gather Acceptance Criteria Phase Transitions
 
