@@ -30,11 +30,19 @@
     "typescript": "^5.9.2"
   },
   "jest": {
+    "preset": "ts-jest",
     "testEnvironment": "node",
     "testMatch": [
-      "**/test/**/*.test.js"
+      "**/test/**/*.test.js",
+      "**/src/**/*.test.ts"
     ],
     "verbose": true,
-    "testTimeout": 30000
+    "testTimeout": 30000,
+    "extensionsToTreatAsEsm": [".ts"],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    }
   }
 }
