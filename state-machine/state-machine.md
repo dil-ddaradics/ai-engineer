@@ -409,14 +409,14 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Universal Expecto Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| E1b | GATHER_EDITING_CONTEXT | Expecto | Atlassian URLs found | GATHER_EDITING_CONTEXT | Enrich context with Jira/Confluence content | [E1b.md](responses/universal_expecto/E1b.md) |
-| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | GATHER_EDITING | Enrich plan with Jira/Confluence content | [E2.md](responses/universal_expecto/E2.md) |
-| E3 | GATHER_EDITING_CONTEXT | Expecto | No Atlassian URLs found in context.md | Same state | Explain: "No Atlassian URLs found in context.md. Add Jira/Confluence links to enrich." | [E3.md](responses/universal_expecto/E3.md) |
-| E3b | GATHER_EDITING | Expecto | No Atlassian URLs found in plan.md | Same state | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | [E3b.md](responses/universal_expecto/E3b.md) |
-| E4 | GATHER_EDITING_CONTEXT | Expecto | All Atlassian URLs in context.md already processed | Same state | Explain: "All Atlassian URLs have already been processed. Edit .atlassian-refs to reprocess." | [E4.md](responses/universal_expecto/E4.md) |
-| E4b | GATHER_EDITING | Expecto | All Atlassian URLs in plan.md already processed | Same state | Explain: "All Atlassian URLs have already been processed. Edit .atlassian-refs to reprocess." | [E4b.md](responses/universal_expecto/E4b.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| E1b | GATHER_EDITING_CONTEXT | Expecto | Atlassian URLs found | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds some); Checks `.ai/task/.atlassian-refs` for processed URLs (finds unprocessed URLs) | GATHER_EDITING_CONTEXT | Enrich context with Jira/Confluence content | (1) Reads `.ai/task/.atlassian-refs`; (2) Extracts all Atlassian URLs from context.md; (3) Finds URLs not in .atlassian-refs; (4) Replaces `[ATLASSIAN_URLS_PLACEHOLDER]` in response with URL list; (5) Updates `.ai/task/.atlassian-refs` with processed URLs | [E1b.md](responses/universal_expecto/E1b.md) |
+| E2 | GATHER_EDITING | Expecto | Atlassian URLs found | Reads `.ai/task/plan.md` content; Extracts Atlassian URLs from content (finds some); Checks `.ai/task/.atlassian-refs` for processed URLs (finds unprocessed URLs) | GATHER_EDITING | Enrich plan with Jira/Confluence content | (1) Reads `.ai/task/.atlassian-refs`; (2) Extracts all Atlassian URLs from plan.md; (3) Finds URLs not in .atlassian-refs; (4) Replaces `[ATLASSIAN_URLS_PLACEHOLDER]` in response with URL list; (5) Updates `.ai/task/.atlassian-refs` with processed URLs | [E2.md](responses/universal_expecto/E2.md) |
+| E3 | GATHER_EDITING_CONTEXT | Expecto | No Atlassian URLs found in context.md | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none) | Same state | Explain: "No Atlassian URLs found in context.md. Add Jira/Confluence links to enrich." | - | [E3.md](responses/universal_expecto/E3.md) |
+| E3b | GATHER_EDITING | Expecto | No Atlassian URLs found in plan.md | Reads `.ai/task/plan.md` content; Extracts Atlassian URLs from content (finds none) | Same state | Explain: "No Atlassian URLs found in plan.md. Add Jira/Confluence links to enrich." | - | [E3b.md](responses/universal_expecto/E3b.md) |
+| E4 | GATHER_EDITING_CONTEXT | Expecto | All Atlassian URLs in context.md already processed | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds some); Checks `.ai/task/.atlassian-refs` for processed URLs (all already processed) | Same state | Explain: "All Atlassian URLs have already been processed. Edit .atlassian-refs to reprocess." | - | [E4.md](responses/universal_expecto/E4.md) |
+| E4b | GATHER_EDITING | Expecto | All Atlassian URLs in plan.md already processed | Reads `.ai/task/plan.md` content; Extracts Atlassian URLs from content (finds some); Checks `.ai/task/.atlassian-refs` for processed URLs (all already processed) | Same state | Explain: "All Atlassian URLs have already been processed. Edit .atlassian-refs to reprocess." | - | [E4b.md](responses/universal_expecto/E4b.md) |
 
 
 ### State Guards
