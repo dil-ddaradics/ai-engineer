@@ -264,11 +264,11 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Achieve Acceptance Criteria Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| AB1 | ACHIEVE_TASK_EXECUTED | Finite | - | [BLOCKED] | No state change | [AB1.md](responses/achieve_blocked/AB1.md) |
-| AB2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reverto | - | [BLOCKED] | No state change | [AB2.md](responses/achieve_blocked/AB2.md) |
-| AB3 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Expecto | - | [BLOCKED] | No state change | [AB3.md](responses/achieve_blocked/AB3.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| AB1 | ACHIEVE_TASK_EXECUTED | Finite | - | - | [BLOCKED] | No state change | - | [AB1.md](responses/achieve_blocked/AB1.md) |
+| AB2 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Reverto | - | - | [BLOCKED] | No state change | - | [AB2.md](responses/achieve_blocked/AB2.md) |
+| AB3 | ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED, ACHIEVE_COMPLETE | Expecto | - | - | [BLOCKED] | No state change | - | [AB3.md](responses/achieve_blocked/AB3.md) |
 
 
 #### PR Review Phase Transitions
