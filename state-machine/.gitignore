@@ -19,5 +19,5 @@ Thumbs.db
 *.log
 output/
 
-review.md
+../review.md
 missing-transitions.txt
