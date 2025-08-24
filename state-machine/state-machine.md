@@ -213,13 +213,13 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Gather Acceptance Criteria Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter; mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [G2.md](responses/gather_transitions/G2.md) |
-| G2b | GATHER_EDITING, ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED | Accio | plan.md missing | ERROR_PLAN_MISSING | (1) Update state to ERROR_PLAN_MISSING | [G2b.md](responses/gather_transitions/G2b.md) |
-| G3 | GATHER_EDITING | Accio | No AC in plan.md AND plan.md exists | GATHER_EDITING | No state change | [G3.md](responses/gather_transitions/G3.md) |
-| G4 | GATHER_EDITING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory | [G4.md](responses/gather_transitions/G4.md) |
-| G5 | GATHER_EDITING | Reparo | No PR review in progress | PR_GATHERING_COMMENTS_G | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_G | [G5.md](responses/gather_transitions/G5.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | Reads `.ai/task/plan.md` content; Counts acceptance criteria (lines starting with `- [ ]`) (finds ≥1); Checks `.ai/task/task.md` exists (doesn't exist) | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter; mention `.ai/task-guide.md` exists for task creation guidance and can be customized | Creates `.ai/task/task.md` with template | [G2.md](responses/gather_transitions/G2.md) |
+| G2b | GATHER_EDITING, ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED | Accio | plan.md missing | Checks `.ai/task/plan.md` exists (missing) | ERROR_PLAN_MISSING | (1) Update state to ERROR_PLAN_MISSING | - | [G2b.md](responses/gather_transitions/G2b.md) |
+| G3 | GATHER_EDITING | Accio | No AC in plan.md AND plan.md exists | Reads `.ai/task/plan.md` content; Counts acceptance criteria (lines starting with `- [ ]`) (finds 0) | GATHER_EDITING | No state change | - | [G3.md](responses/gather_transitions/G3.md) |
+| G4 | GATHER_EDITING | Accio | task.md exists AND plan.md exists | Checks `.ai/task/task.md` exists (exists); Checks `.ai/task/plan.md` exists (exists) | ACHIEVE_TASK_DRAFTING | (1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory | (1) Reads `.ai/task/task.md` content; (2) Replaces `[TASK_CONTENT_PLACEHOLDER]` in response with task content | [G4.md](responses/gather_transitions/G4.md) |
+| G5 | GATHER_EDITING | Reparo | No PR review in progress | Checks `.ai/task/comments.md` exists (doesn't exist); Checks `.ai/task/review-task.md` exists (doesn't exist) | PR_GATHERING_COMMENTS_G | (1) Create `.ai/task/comments.md` empty file; (2) Update state to PR_GATHERING_COMMENTS_G | Creates `.ai/task/comments.md` file | [G5.md](responses/gather_transitions/G5.md) |
 
 #### Context Gathering Phase Blocked Transitions
 
