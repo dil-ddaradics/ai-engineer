@@ -20,3 +20,5 @@ We're in the PR review process, with a structured plan to address the feedback f
 
 ### Next Steps
 Review the tasks in `.ai/task/review-task.md` for addressing the PR feedback, then use Accio to execute them.
+
+> **💡 Tip**: Consider using Ask/Plan mode in your AI assistant to iterate on this file without accidentally executing the next step. Most AI agents like Cursor or Claude Code have a mode where they cannot edit files, which is useful for planning and refining content collaboratively before proceeding.

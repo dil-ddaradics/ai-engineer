@@ -581,6 +581,14 @@ Only include files that actually exist in the current state.
 
 Note: The MCP server concatenates the Lumos Header Template with individual response files to create the complete user-facing response.
 
+#### 7. Ask/Plan Mode Recommendation Template
+
+For responses where users should iterate on files before advancing, include this recommendation in the Next Steps section:
+
+```markdown
+> **💡 Tip**: Consider using Ask/Plan mode in your AI assistant to iterate on this file without accidentally executing the next step. Most AI agents like Cursor or Claude Code have a mode where they cannot edit files, which is useful for planning and refining content collaboratively before proceeding.
+```
+
 ### Template Management
 
 The MCP server manages template files using a two-tier approach:

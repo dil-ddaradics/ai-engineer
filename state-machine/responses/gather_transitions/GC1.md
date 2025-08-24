@@ -20,3 +20,5 @@ We're now in the context gathering phase where you'll provide all the informatio
 
 ### Next Steps
 Please add your task context, goals, requirements, and any Jira/Confluence links to the `.ai/task/context.md` file. You can review the `.ai/plan-guide.md` file to understand how your context will be structured into a plan, and the `.ai/task-guide.md` file for task creation guidance (both guides can be customized to fit your workflow). Then use **Accio** to generate your structured plan.
+
+> **💡 Tip**: Consider using Ask/Plan mode in your AI assistant to iterate on this file without accidentally executing the next step. Most AI agents like Cursor or Claude Code have a mode where they cannot edit files, which is useful for planning and refining content collaboratively before proceeding.
