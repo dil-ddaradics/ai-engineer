@@ -32,19 +32,23 @@ type StateName =
 
 type Spell = 'Accio' | 'Expecto' | 'Reparo' | 'Reverto' | 'Finite' | 'Lumos';
 
-// State context - minimalist approach with just the current state
+// State history entry
+interface StateHistoryEntry {
+  timestamp: string;
+  transition: string;
+  trigger: Spell;
+}
+
+// State context - minimalist approach with just the current state and history
 interface StateContext {
   currentState: StateName;
-  // No cached file existence or other data
-  // File system will be the source of truth
-  // State transitions can store any needed information in state.json as needed
+  history: StateHistoryEntry[];
 }
 
 // Result returned by transition handlers
 interface TransitionResult {
   nextState: StateName;
   response: string; // The final response string with any placeholders already replaced
-  // File operations are handled by the handler function directly
 }
 
 // Core transition definition
@@ -53,17 +57,10 @@ interface Transition {
   sourceState: StateName;
   spell: Spell;
   // Condition is optional - if not provided, treated as always true
-  condition?: (context: StateContext, fileSystem: FileSystem) => Promise<boolean>;
+  condition?: (fileSystem: FileSystem) => Promise<boolean>;
   handler: (context: StateContext, fileSystem: FileSystem) => Promise<TransitionResult>;
   description?: string;
 }
-
-// We don't need a separate State interface
-// StateName enum already defines all possible states
-// Any state metadata can be stored separately if needed
-
-// Note: Blocked transitions are just regular transitions
-// that return a specific response indicating the action is blocked
 
 // File system abstraction
 interface FileSystem {
@@ -76,8 +73,7 @@ interface FileSystem {
 
 // State repository for persistence
 interface StateRepository {
-  // Much simpler now that StateContext only contains currentState
-  load(): Promise<StateContext>;
+  load(): Promise<StateContext | null>;
   save(state: StateContext): Promise<void>;
   initialize(): Promise<StateContext>;
 }
@@ -152,183 +148,138 @@ interface StateMachine {
 3. All matching transitions' conditions are checked using the FileSystem directly
 4. The first transition with a passing condition is selected and its handler is executed
 5. Handler performs file operations directly and returns new state and response
-7. State is updated and persisted
-8. Response is returned to user
+6. State is updated and persisted
+7. Response is returned to user
 
-## Testing Strategy
+## Folder Structure
 
-1. **Unit Testing**
-   - Test each transition in isolation
-   - Mock file system for deterministic tests
-   - Verify state changes and responses
+```
+/src
+  /state-machine                  # State machine implementation
+    index.ts                      # Main entry point and factory function
+    index.test.ts                 # Tests for main entry point
+    types.ts                      # Core types and interfaces
+    stateMachine.ts               # State machine implementation
+    stateMachine.test.ts          # Tests for state machine
+    fileSystem.ts                 # File system interface and implementation
+    fileSystem.test.ts            # Tests for file system
+    stateRepository.ts            # State repository for persistence
+    stateRepository.test.ts       # Tests for state repository
+    responses.ts                  # Generated file with response templates
+    
+    /transitions                  # Transition definitions organized by phase
+      gatherTransitions.ts        # GATHER phase transitions
+      gatherTransitions.test.ts   # Tests for GATHER transitions
+      achieveTransitions.ts       # ACHIEVE phase transitions
+      achieveTransitions.test.ts  # Tests for ACHIEVE transitions
+      prTransitions.ts            # PR review phase transitions
+      prTransitions.test.ts       # Tests for PR transitions
+      errorTransitions.ts         # Error handling transitions
+      errorTransitions.test.ts    # Tests for error transitions
+      universalTransitions.ts     # Universal transitions (Lumos, etc.)
+      universalTransitions.test.ts # Tests for universal transitions
+      index.ts                    # Exports all transitions
+    
+    /utils                        # Helper utilities
+      responseUtils.ts            # Response processing
+      responseUtils.test.ts       # Tests for response utils
+      planUtils.ts                # Plan parsing and operations
+      planUtils.test.ts           # Tests for plan utils
+      fileUtils.ts                # File operation helpers
+      fileUtils.test.ts           # Tests for file utils
+```
 
-2. **Integration Testing**
-   - Test complete workflows
-   - Verify state persistence
-   - Test error recovery paths
+## Response Management
 
-3. **Verification**
-   - Validate all 96 state-spell combinations are covered
-   - Check for consistent response formatting
-   - Ensure all file operations are safe
+To handle the response templates efficiently, we'll create a build script that generates a TypeScript file with all response templates:
+
+```typescript
+// scripts/build-responses.ts
+import fs from 'fs';
+import path from 'path';
+
+// Build a map of all response files
+const responses: Record<string, string> = {};
+const responsesDir = path.resolve(__dirname, '../state-machine/responses');
+const outputDir = path.resolve(__dirname, '../src/state-machine');
+
+// Recursive function to read all markdown files
+function readResponses(dir: string, base = ''): void {
+  const entries = fs.readdirSync(dir);
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry);
+    const relativePath = path.join(base, entry);
+    
+    if (fs.statSync(fullPath).isDirectory()) {
+      readResponses(fullPath, relativePath);
+    } else if (entry.endsWith('.md')) {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      const key = relativePath
+        .replace(/\.md$/, '')
+        .replace(/\//g, '_');
+      responses[key] = content;
+    }
+  }
+}
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+// Read all response files
+readResponses(responsesDir);
+
+// Write the responses.ts file
+const outputPath = path.join(outputDir, 'responses.ts');
+const content = `// Auto-generated file - do not edit directly
+export const RESPONSES: Record<string, string> = ${JSON.stringify(responses, null, 2)};
+`;
+
+fs.writeFileSync(outputPath, content);
+console.log(`Generated responses module with ${Object.keys(responses).length} templates`);
+```
 
 ## Example Implementation
 
+### State Machine Implementation
+
 ```typescript
-// Example of transition implementations
-const gatherTransitions: Transition[] = [
-  // G1: GATHER_NEEDS_PLAN + Accio -> GATHER_EDITING
-  {
-    id: "G1",
-    sourceState: "GATHER_NEEDS_PLAN",
-    spell: "Accio",
-    // No condition specified - will always apply
-    handler: async (context, fileSystem) => {
-      // Directly perform file operations
-      await fileSystem.write(".ai/task/plan.md", "# Plan\n\n## Acceptance Criteria\n\n- [ ] First criterion\n");
-      
-      // Load and process response
-      const responseContent = await fileSystem.read("responses/gather_transitions/G1.md");
-      
-      return {
-        nextState: "GATHER_EDITING",
-        response: responseContent // Already processed with any needed replacements
-      };
-    }
-  },
-  
-  // G2: GATHER_EDITING + Accio -> ACHIEVE_TASK_DRAFTING (when plan has ACs and task.md doesn't exist)
-  {
-    id: "G2",
-    sourceState: "GATHER_EDITING",
-    spell: "Accio",
-    condition: async (context, fileSystem) => {
-      // Check file existence directly from FileSystem
-      const planExists = await fileSystem.exists(".ai/task/plan.md");
-      const taskExists = await fileSystem.exists(".ai/task/task.md");
-      
-      // If plan exists, read it to check for acceptance criteria
-      if (planExists) {
-        const planContent = await fileSystem.read(".ai/task/plan.md");
-        return hasAcceptanceCriteria(planContent) && !taskExists;
-      }
-      return false;
-    },
-    handler: async (context, fileSystem) => {
-      // Read plan content to create task template
-      const planContent = await fileSystem.read(".ai/task/plan.md");
-      const taskTemplate = createTaskTemplate(planContent);
-      
-      // Directly write the file
-      await fileSystem.write(".ai/task/task.md", taskTemplate);
-      
-      // Load response and replace any placeholders using helper function
-      const responseContent = await loadResponse(
-        fileSystem,
-        "responses/gather_transitions/G2.md",
-        {
-          firstAcceptanceCriteria: extractFirstAcceptanceCriteria(planContent)
-        }
-      );
-      
-      return {
-        nextState: "ACHIEVE_TASK_DRAFTING",
-        response: responseContent
-      };
-    }
-  },
-  
-  // G3: GATHER_EDITING + Accio -> GATHER_EDITING (when plan has no ACs)
-  {
-    id: "G3",
-    sourceState: "GATHER_EDITING",
-    spell: "Accio",
-    condition: async (context, fileSystem) => {
-      // Check if plan exists
-      const planExists = await fileSystem.exists(".ai/task/plan.md");
-      
-      // If plan exists, read it to check for acceptance criteria
-      if (planExists) {
-        const planContent = await fileSystem.read(".ai/task/plan.md");
-        return !hasAcceptanceCriteria(planContent);
-      }
-      return false;
-    },
-    handler: async (context, fileSystem) => {
-      // Load response
-      const responseContent = await fileSystem.read("responses/gather_noop/G3.md");
-      
-      return {
-        nextState: "GATHER_EDITING", // No state change
-        response: responseContent
-      };
-    }
-  },
-  
-  // GB1: GATHER_NEEDS_PLAN + Reverto -> [BLOCKED] (Example of a blocked transition)
-  {
-    id: "GB1",
-    sourceState: "GATHER_NEEDS_PLAN",
-    spell: "Reverto",
-    // No condition needed - will always apply
-    handler: async (context, fileSystem) => {
-      // Load blocked response
-      const responseContent = await fileSystem.read("responses/gather_blocked/GB1.md");
-      
-      return {
-        nextState: "GATHER_NEEDS_PLAN", // State doesn't change for blocked transitions
-        response: responseContent // Special response for blocked transition
-      };
-    }
-  }
-];
+// src/state-machine/stateMachine.ts
+import { 
+  StateMachine, 
+  StateContext, 
+  Spell, 
+  Transition, 
+  TransitionResult,
+  FileSystem,
+  StateRepository
+} from './types';
 
-// Helper function to check if plan content has acceptance criteria
-function hasAcceptanceCriteria(planContent: string): boolean {
-  // Look for checkbox markdown pattern: - [ ] or - [x]
-  return /- \[[ x]\]/.test(planContent);
-}
-
-// Helper function to extract first acceptance criteria from plan content
-function extractFirstAcceptanceCriteria(planContent: string): string {
-  const match = planContent.match(/- \[[ x]\]\s*(.+)/);
-  return match ? match[1] : "No acceptance criteria found";
-}
-
-// Helper function to load response and replace placeholders
-async function loadResponse(fileSystem: FileSystem, responsePath: string, replacements?: Record<string, string>): Promise<string> {
-  let responseContent = await fileSystem.read(responsePath);
-  
-  // Replace placeholders if provided
-  if (replacements) {
-    for (const [key, value] of Object.entries(replacements)) {
-      responseContent = responseContent.replace(
-        new RegExp(`{{${key}}}`, 'g'), 
-        value
-      );
-    }
-  }
-  
-  return responseContent;
-}
-
-// Example implementation of StateMachine
-class StateMachineImpl implements StateMachine {
+export class StateMachineImpl implements StateMachine {
   private context: StateContext;
   private transitions: Transition[];
   private fileSystem: FileSystem;
   private stateRepository: StateRepository;
   
-  constructor(fileSystem: FileSystem, stateRepository: StateRepository) {
+  constructor(
+    fileSystem: FileSystem, 
+    stateRepository: StateRepository, 
+    transitions: Transition[]
+  ) {
     this.fileSystem = fileSystem;
     this.stateRepository = stateRepository;
-    this.transitions = []; // Would be populated with all transitions
-    this.context = { currentState: "GATHER_NEEDS_PLAN" };
+    this.transitions = transitions;
+    this.context = { 
+      currentState: "GATHER_NEEDS_PLAN", 
+      history: [] 
+    };
   }
   
   async initialize(): Promise<void> {
     // Load state or initialize if not exists
-    this.context = await this.stateRepository.load() || { currentState: "GATHER_NEEDS_PLAN" };
+    const loadedState = await this.stateRepository.load();
+    this.context = loadedState || await this.stateRepository.initialize();
   }
   
   // Private method for finding valid transitions
@@ -341,7 +292,7 @@ class StateMachineImpl implements StateMachine {
     // Find the first transition whose condition passes (or has no condition)
     for (const transition of matchingTransitions) {
       // If no condition is specified, treat it as always true
-      if (!transition.condition || await transition.condition(this.context, this.fileSystem)) {
+      if (!transition.condition || await transition.condition(this.fileSystem)) {
         return transition;
       }
     }
@@ -357,11 +308,18 @@ class StateMachineImpl implements StateMachine {
       throw new Error(`No valid transition found for ${this.context.currentState} + ${spell}`);
     }
     
-    // Execute the transition handler - file operations are performed inside the handler
-    const result = await transition.handler(this.context, this.fileSystem);
-    
     // Store the previous state for logging
     const oldState = this.context.currentState;
+    
+    // Execute the transition handler
+    const result = await transition.handler(this.context, this.fileSystem);
+    
+    // Add entry to history
+    this.context.history.push({
+      timestamp: new Date().toISOString(),
+      transition: `${oldState} → ${result.nextState}`,
+      trigger: spell
+    });
     
     // Update state
     this.context.currentState = result.nextState;
@@ -369,105 +327,240 @@ class StateMachineImpl implements StateMachine {
     // Save state
     await this.stateRepository.save(this.context);
     
-    // Return the result (response is already processed inside handler)
+    // Return the result
     return result;
   }
 }
 ```
 
-## File Structure
+### File System Implementation
 
+```typescript
+// src/state-machine/fileSystem.ts
+import { FileSystem } from './types';
+import fs from 'fs/promises';
+import path from 'path';
+
+export class NodeFileSystem implements FileSystem {
+  private basePath: string;
+  
+  constructor(basePath: string = process.cwd()) {
+    this.basePath = basePath;
+  }
+  
+  private resolvePath(filePath: string): string {
+    return path.isAbsolute(filePath) 
+      ? filePath 
+      : path.resolve(this.basePath, filePath);
+  }
+  
+  async exists(filePath: string): Promise<boolean> {
+    try {
+      await fs.access(this.resolvePath(filePath));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  
+  async read(filePath: string): Promise<string> {
+    return fs.readFile(this.resolvePath(filePath), 'utf-8');
+  }
+  
+  async write(filePath: string, content: string): Promise<void> {
+    const fullPath = this.resolvePath(filePath);
+    const directory = path.dirname(fullPath);
+    
+    // Ensure directory exists
+    await fs.mkdir(directory, { recursive: true });
+    
+    // Write the file
+    await fs.writeFile(fullPath, content, 'utf-8');
+  }
+  
+  async delete(filePath: string): Promise<void> {
+    await fs.unlink(this.resolvePath(filePath));
+  }
+  
+  async archive(source: string, destination: string): Promise<void> {
+    const sourceFullPath = this.resolvePath(source);
+    const destFullPath = this.resolvePath(destination);
+    const destDirectory = path.dirname(destFullPath);
+    
+    // Ensure destination directory exists
+    await fs.mkdir(destDirectory, { recursive: true });
+    
+    // Move file
+    await fs.copyFile(sourceFullPath, destFullPath);
+    await fs.unlink(sourceFullPath);
+  }
+}
 ```
-/state-machine
-  types.ts                # Core types and interfaces
-  stateMachine.ts         # Main state machine implementation
-  stateMachine.test.ts    # Tests for the state machine
+
+### State Repository Implementation
+
+```typescript
+// src/state-machine/stateRepository.ts
+import { StateContext, StateRepository } from './types';
+import { FileSystem } from './types';
+
+export class JsonFileStateRepository implements StateRepository {
+  private filePath: string;
+  private fileSystem: FileSystem;
   
-  fileSystem.ts          # File system interface and implementation
-  fileSystem.test.ts     # Tests for file system operations
+  constructor(fileSystem: FileSystem, filePath: string = '.ai/task/state.json') {
+    this.fileSystem = fileSystem;
+    this.filePath = filePath;
+  }
   
-  stateRepository.ts     # State persistence
-  stateRepository.test.ts # Tests for state repository
+  async load(): Promise<StateContext | null> {
+    try {
+      if (await this.fileSystem.exists(this.filePath)) {
+        const content = await this.fileSystem.read(this.filePath);
+        return JSON.parse(content) as StateContext;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to load state:', error);
+      return null;
+    }
+  }
   
-  /transitions
-    gatherTransitions.ts   # Transitions for GATHER phase
-    achieveTransitions.ts  # Transitions for ACHIEVE phase
-    prTransitions.ts       # Transitions for PR review phases
-    errorTransitions.ts    # Error state transitions
-    universalTransitions.ts # Transitions available from multiple states
-    transitions.test.ts    # Tests for all transitions
+  async save(state: StateContext): Promise<void> {
+    try {
+      await this.fileSystem.write(
+        this.filePath, 
+        JSON.stringify(state, null, 2)
+      );
+    } catch (error) {
+      console.error('Failed to save state:', error);
+      throw error;
+    }
+  }
   
-  /utils
-    responseUtils.ts       # Helper functions for response processing
-    fileUtils.ts           # Helper functions for file operations
-    planUtils.ts           # Helper functions for plan.md parsing
-    utils.test.ts          # Tests for utilities
-  
-  index.ts                # Main entry point
-  e2e.test.ts             # End-to-end tests
+  async initialize(): Promise<StateContext> {
+    const initialState: StateContext = {
+      currentState: 'GATHER_NEEDS_PLAN',
+      history: []
+    };
+    
+    await this.save(initialState);
+    return initialState;
+  }
+}
 ```
 
-### Key Files and Their Purpose
+### Response Utilities
 
-1. **types.ts**
-   - Defines core types like `StateName` and `Spell`
-   - Contains interfaces for `StateContext`, `TransitionResult`, and `Transition`
+```typescript
+// src/state-machine/utils/responseUtils.ts
+import { RESPONSES } from '../responses';
 
-2. **stateMachine.ts**
-   - Implements the `StateMachine` interface
-   - Handles finding and executing transitions
-   - Manages state persistence
+export function getResponse(id: string): string {
+  const response = RESPONSES[id];
+  if (!response) {
+    throw new Error(`Response template not found: ${id}`);
+  }
+  return response;
+}
 
-3. **fileSystem.ts**
-   - Implementation of the `FileSystem` interface
-   - Handles file operations with proper error handling
+export function processResponse(
+  responseTemplate: string, 
+  replacements?: Record<string, string>
+): string {
+  let processed = responseTemplate;
+  
+  if (replacements) {
+    Object.entries(replacements).forEach(([key, value]) => {
+      processed = processed.replace(
+        new RegExp(`{{${key}}}`, 'g'), 
+        value
+      );
+    });
+  }
+  
+  return processed;
+}
+```
 
-4. **stateRepository.ts**
-   - Manages loading and saving state
-   - Handles state initialization
+### Transition Example
 
-5. **Transition Files**
-   - Organized by workflow phase
-   - Each file contains related transitions with their conditions and handlers
-   - Clear separation of concerns between different parts of the workflow
+```typescript
+// src/state-machine/transitions/gatherTransitions.ts
+import { Transition } from '../types';
+import { getResponse, processResponse } from '../utils/responseUtils';
+import { hasAcceptanceCriteria, extractFirstAcceptanceCriteria } from '../utils/planUtils';
+import { createTaskTemplate } from '../utils/fileUtils';
 
-6. **Utility Files**
-   - Helper functions for common operations
-   - Response processing and placeholder replacement
-   - File operations and plan parsing
+export const gatherTransitions: Transition[] = [
+  // G1: GATHER_NEEDS_PLAN + Accio -> GATHER_EDITING
+  {
+    id: "G1",
+    sourceState: "GATHER_NEEDS_PLAN",
+    spell: "Accio",
+    // No condition - always applies
+    handler: async (context, fileSystem) => {
+      // Create plan.md file directly in the handler
+      await fileSystem.write(
+        ".ai/task/plan.md", 
+        "# Plan\n\n## Acceptance Criteria\n\n- [ ] First criterion\n"
+      );
+      
+      // Get response template
+      const responseTemplate = getResponse('gather_transitions_G1');
+      
+      return {
+        nextState: "GATHER_EDITING",
+        response: responseTemplate  // No replacements needed
+      };
+    }
+  },
+  
+  // Other transitions would be defined here...
+];
+```
 
-7. **Test Files**
-   - Co-located with the implementation files they test
-   - End-to-end tests for complete workflow scenarios
+## Testing Strategy
+
+1. **Unit Testing**
+   - Test each transition in isolation
+   - Mock file system for deterministic tests
+   - Verify state changes and responses
+
+2. **Testing Focus**
+   - Ensure complete coverage of all transitions
+   - Test conditions and handlers separately
+   - Verify file operations are performed correctly
+
+3. **Co-located Tests**
+   - Keep test files next to the files they test
+   - Make it easy to find and update related tests
+   - Ensure complete test coverage
 
 ## Implementation Roadmap
 
-1. **Core Framework**
-   - Set up project structure
-   - Implement core types and interfaces
-   - Create state machine engine
+1. **Setup Project Structure**
+   - Create necessary directories in `/src/state-machine`
+   - Set up build script for responses
+   - Configure TypeScript and Jest
 
-2. **State and Transition Definitions**
-   - Define all 16 states
-   - Implement transition rules from spec
-   - Create state guards
+2. **Core Implementation**
+   - Implement types.ts with all interfaces
+   - Create FileSystem implementation
+   - Develop StateRepository for persistence
+   - Build core StateMachine implementation
 
-3. **File Operations**
-   - Implement file system adapter
-   - Create file templates
-   - Handle file existence checks
+3. **Transition Definitions**
+   - Implement transition files by category
+   - Create utility functions for file operations
+   - Develop response processing utilities
 
-4. **Response Templates**
-   - Implement response formatter
-   - Create templates for all response types
-   - Add context-specific response generation
+4. **Testing**
+   - Write unit tests for each component
+   - Create tests for each transition
+   - Ensure all state-spell combinations are covered
 
-5. **Testing**
-   - Create test framework
-   - Write unit tests for all transitions
-   - Implement integration tests
-
-6. **Documentation**
-   - Add JSDoc comments
-   - Create usage examples
-   - Document state machine behavior
+5. **Integration with MCP Server**
+   - Expose factory function for state machine creation
+   - Document API for MCP integration
+   - Add final type exports
