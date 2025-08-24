@@ -366,46 +366,46 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### PR Review Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| PB1 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reverto | - | [BLOCKED] | Tell user they must first Accio to archive current review results | [PB1.md](responses/pr_blocked/PB1.md) |
-| PB2 | PR_GATHERING_COMMENTS_[G/A] | Expecto | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | [PB2.md](responses/pr_blocked/PB2.md) |
-| PB2b | PR_REVIEW_TASK_DRAFT_[G/A] | Expecto | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | [PB2b.md](responses/pr_blocked/PB2b.md) |
-| PB2d | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Expecto | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Accio to archive current review results first." | [PB2d.md](responses/pr_blocked/PB2d.md) |
-| PB3 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | [BLOCKED] | Tell user they must first complete the PR review flow with Accio or exit with Reverto | [PB3.md](responses/pr_blocked/PB3.md) |
-| PB4 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Reparo | - | [BLOCKED] | Tell user they must complete the current PR review process or use Reverto to cancel it | [PB4.md](responses/pr_blocked/PB4.md) |
-| PB5 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Finite | - | [BLOCKED] | Tell user they must first confirm or cancel the restart operation using Reparo or Reverto | [PB5.md](responses/pr_blocked/PB5.md) |
-| PB6 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Expecto | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to cancel or Reparo to confirm, then Finite to return to plan editing." | [PB6.md](responses/pr_blocked/PB6.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| PB1 | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Reverto | - | - | [BLOCKED] | Tell user they must first Accio to archive current review results | - | [PB1.md](responses/pr_blocked/PB1.md) |
+| PB2 | PR_GATHERING_COMMENTS_[G/A] | Expecto | - | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | - | [PB2.md](responses/pr_blocked/PB2.md) |
+| PB2b | PR_REVIEW_TASK_DRAFT_[G/A] | Expecto | - | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to exit PR flow first." | - | [PB2b.md](responses/pr_blocked/PB2b.md) |
+| PB2d | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Expecto | - | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Accio to archive current review results first." | - | [PB2d.md](responses/pr_blocked/PB2d.md) |
+| PB3 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Finite | - | - | [BLOCKED] | Tell user they must first complete the PR review flow with Accio or exit with Reverto | - | [PB3.md](responses/pr_blocked/PB3.md) |
+| PB4 | PR_GATHERING_COMMENTS_[G/A], PR_REVIEW_TASK_DRAFT_[G/A] | Reparo | - | - | [BLOCKED] | Tell user they must complete the current PR review process or use Reverto to cancel it | - | [PB4.md](responses/pr_blocked/PB4.md) |
+| PB5 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Finite | - | - | [BLOCKED] | Tell user they must first confirm or cancel the restart operation using Reparo or Reverto | - | [PB5.md](responses/pr_blocked/PB5.md) |
+| PB6 | PR_CONFIRM_RESTART_COMMENTS_[G/A], PR_CONFIRM_RESTART_TASK_[G/A] | Expecto | - | - | [BLOCKED] | Explain: "Expecto is only allowed in GATHER states. Use Reverto to cancel or Reparo to confirm, then Finite to return to plan editing." | - | [PB6.md](responses/pr_blocked/PB6.md) |
 
 
 #### Universal Lumos Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| L1 | GATHER_NEEDS_PLAN | Lumos | - | Same state | Display current state and valid actions for the current state | [L1.md](responses/lumos_transitions/L1.md) |
-| L2 | GATHER_EDITING | Lumos | - | Same state | Display current state and valid actions for the current state | [L2.md](responses/lumos_transitions/L2.md) |
-| L3 | ACHIEVE_TASK_DRAFTING | Lumos | - | Same state | Display current state and valid actions for the current state | [L3.md](responses/lumos_transitions/L3.md) |
-| L4 | ACHIEVE_TASK_EXECUTED | Lumos | - | Same state | Display current state and valid actions for the current state | [L4.md](responses/lumos_transitions/L4.md) |
-| L5 | ACHIEVE_COMPLETE | Lumos | - | Same state | Display current state and valid actions for the current state | [L5.md](responses/lumos_transitions/L5.md) |
-| L6 | PR_GATHERING_COMMENTS_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L6.md](responses/lumos_transitions/L6.md) |
-| L7 | PR_GATHERING_COMMENTS_A | Lumos | - | Same state | Display current state and valid actions for the current state | [L7.md](responses/lumos_transitions/L7.md) |
-| L8 | PR_REVIEW_TASK_DRAFT_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L8.md](responses/lumos_transitions/L8.md) |
-| L9 | PR_REVIEW_TASK_DRAFT_A | Lumos | - | Same state | Display current state and valid actions for the current state | [L9.md](responses/lumos_transitions/L9.md) |
-| L10 | PR_APPLIED_PENDING_ARCHIVE_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L10.md](responses/lumos_transitions/L10.md) |
-| L11 | PR_APPLIED_PENDING_ARCHIVE_A | Lumos | - | Same state | Display current state and valid actions for the current state | [L11.md](responses/lumos_transitions/L11.md) |
-| L12 | PR_CONFIRM_RESTART_COMMENTS_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L12.md](responses/lumos_transitions/L12.md) |
-| L13 | PR_CONFIRM_RESTART_COMMENTS_A | Lumos | - | Same state | Display current state and valid actions for the current state | [L13.md](responses/lumos_transitions/L13.md) |
-| L14 | PR_CONFIRM_RESTART_TASK_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L14.md](responses/lumos_transitions/L14.md) |
-| L15 | PR_CONFIRM_RESTART_TASK_A | Lumos | - | Same state | Display current state and valid actions for the current state | [L15.md](responses/lumos_transitions/L15.md) |
-| L16 | ERROR_TASK_MISSING | Lumos | - | Same state | Display current state and valid actions for the current state | [L16.md](responses/lumos_transitions/L16.md) |
-| L17 | ERROR_TASK_RESULTS_MISSING | Lumos | - | Same state | Display current state and valid actions for the current state | [L17.md](responses/lumos_transitions/L17.md) |
-| L18 | ERROR_PLAN_MISSING | Lumos | - | Same state | Display current state and valid actions for the current state | [L18.md](responses/lumos_transitions/L18.md) |
-| L19 | ERROR_COMMENTS_MISSING_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L19.md](responses/lumos_transitions/L19.md) |
-| L20 | ERROR_REVIEW_TASK_MISSING_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L20.md](responses/lumos_transitions/L20.md) |
-| L21 | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos | - | Same state | Display current state and valid actions for the current state | [L21.md](responses/lumos_transitions/L21.md) |
-| L22 | GATHER_NEEDS_CONTEXT | Lumos | - | Same state | Display current state and valid actions for the current state | [L22.md](responses/lumos_transitions/L22.md) |
-| L23 | GATHER_EDITING_CONTEXT | Lumos | - | Same state | Display current state and valid actions for the current state | [L23.md](responses/lumos_transitions/L23.md) |
-| L24 | ERROR_CONTEXT_MISSING | Lumos | - | Same state | Display current state and valid actions for the current state | [L24.md](responses/lumos_transitions/L24.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| L1 | GATHER_NEEDS_PLAN | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L1.md](responses/lumos_transitions/L1.md) |
+| L2 | GATHER_EDITING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L2.md](responses/lumos_transitions/L2.md) |
+| L3 | ACHIEVE_TASK_DRAFTING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L3.md](responses/lumos_transitions/L3.md) |
+| L4 | ACHIEVE_TASK_EXECUTED | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L4.md](responses/lumos_transitions/L4.md) |
+| L5 | ACHIEVE_COMPLETE | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L5.md](responses/lumos_transitions/L5.md) |
+| L6 | PR_GATHERING_COMMENTS_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L6.md](responses/lumos_transitions/L6.md) |
+| L7 | PR_GATHERING_COMMENTS_A | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L7.md](responses/lumos_transitions/L7.md) |
+| L8 | PR_REVIEW_TASK_DRAFT_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L8.md](responses/lumos_transitions/L8.md) |
+| L9 | PR_REVIEW_TASK_DRAFT_A | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L9.md](responses/lumos_transitions/L9.md) |
+| L10 | PR_APPLIED_PENDING_ARCHIVE_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L10.md](responses/lumos_transitions/L10.md) |
+| L11 | PR_APPLIED_PENDING_ARCHIVE_A | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L11.md](responses/lumos_transitions/L11.md) |
+| L12 | PR_CONFIRM_RESTART_COMMENTS_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L12.md](responses/lumos_transitions/L12.md) |
+| L13 | PR_CONFIRM_RESTART_COMMENTS_A | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L13.md](responses/lumos_transitions/L13.md) |
+| L14 | PR_CONFIRM_RESTART_TASK_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L14.md](responses/lumos_transitions/L14.md) |
+| L15 | PR_CONFIRM_RESTART_TASK_A | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L15.md](responses/lumos_transitions/L15.md) |
+| L16 | ERROR_TASK_MISSING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L16.md](responses/lumos_transitions/L16.md) |
+| L17 | ERROR_TASK_RESULTS_MISSING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L17.md](responses/lumos_transitions/L17.md) |
+| L18 | ERROR_PLAN_MISSING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L18.md](responses/lumos_transitions/L18.md) |
+| L19 | ERROR_COMMENTS_MISSING_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L19.md](responses/lumos_transitions/L19.md) |
+| L20 | ERROR_REVIEW_TASK_MISSING_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L20.md](responses/lumos_transitions/L20.md) |
+| L21 | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L21.md](responses/lumos_transitions/L21.md) |
+| L22 | GATHER_NEEDS_CONTEXT | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L22.md](responses/lumos_transitions/L22.md) |
+| L23 | GATHER_EDITING_CONTEXT | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L23.md](responses/lumos_transitions/L23.md) |
+| L24 | ERROR_CONTEXT_MISSING | Lumos | - | - | Same state | Display current state and valid actions for the current state | - | [L24.md](responses/lumos_transitions/L24.md) |
 
 #### Universal Expecto Transitions
 
