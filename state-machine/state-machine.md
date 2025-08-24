@@ -240,16 +240,16 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Gather Acceptance Criteria Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GB1 | GATHER_EDITING | Reverto | - | [BLOCKED] | No state change | [GB1.md](responses/gather_blocked/GB1.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GB1 | GATHER_EDITING | Reverto | - | - | [BLOCKED] | No state change | - | [GB1.md](responses/gather_blocked/GB1.md) |
 
 #### Gather Acceptance Criteria Phase No-op Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GN1 | GATHER_EDITING | Finite | - | Same state | No state change | [GN1.md](responses/gather_noop/GN1.md) |
-| GN3 | GATHER_EDITING | Expecto | No Atlassian URLs found | Same state | No state change | [GN3.md](responses/gather_noop/GN3.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GN1 | GATHER_EDITING | Finite | - | - | Same state | No state change | - | [GN1.md](responses/gather_noop/GN1.md) |
+| GN3 | GATHER_EDITING | Expecto | No Atlassian URLs found | Reads `.ai/task/plan.md` content; Extracts Atlassian URLs from content (finds none) | Same state | No state change | - | [GN3.md](responses/gather_noop/GN3.md) |
 
 #### Achieve Acceptance Criteria Phase Transitions
 
