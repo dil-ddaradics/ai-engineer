@@ -5,7 +5,8 @@
 ```typescript
 // Core types for states and spells
 type StateName = 
-  | 'GATHER_NEEDS_PLAN' 
+  | 'GATHER_NEEDS_CONTEXT'
+  | 'GATHER_EDITING_CONTEXT'
   | 'GATHER_EDITING'
   | 'ACHIEVE_TASK_DRAFTING'
   | 'ACHIEVE_TASK_EXECUTED'
@@ -23,6 +24,7 @@ type StateName =
   | 'ERROR_TASK_MISSING'
   | 'ERROR_TASK_RESULTS_MISSING'
   | 'ERROR_PLAN_MISSING'
+  | 'ERROR_CONTEXT_MISSING'
   | 'ERROR_COMMENTS_MISSING_G'
   | 'ERROR_COMMENTS_MISSING_A'
   | 'ERROR_REVIEW_TASK_MISSING_G'
@@ -189,7 +191,54 @@ interface StateMachine {
       fileUtils.test.ts           # Tests for file utils
 ```
 
+## Template Management Architecture
+
+The MCP server manages all template files using a two-tier approach that separates persistent guides from working templates:
+
+### Template Categories
+
+#### Persistent Guide Files
+- **Location**: `.ai/` folder (root of AI workspace)
+- **Behavior**: Copied from MCP resources only if they don't exist
+- **Purpose**: Allow developers to customize and reuse across multiple tasks
+- **Files**:
+  - `.ai/plan-guide.md` - Planning guidelines and best practices
+  - `.ai/task-guide.md` - Task creation guidelines
+
+#### Working Template Files
+- **Location**: `.ai/task/` folder (task-specific workspace) 
+- **Behavior**: Created fresh from MCP resources each time needed
+- **Purpose**: Provide clean templates for each workflow step
+- **Files**:
+  - `.ai/task/context.md` - Task context template
+  - `.ai/task/plan.md` - Structured plan template
+  - `.ai/task/task.md` - Individual task template
+
+### Template Resource Management
+- MCP server reads all templates from its own resources folder
+- Similar architecture to response file management
+- Templates are embedded in MCP server for version control and consistency
+- File existence checks determine copy vs. create behavior
+
 ## Response Management
+
+Response templates are handled by the MCP server with a separation of concerns:
+
+### Template Architecture
+- **Individual Response Files**: Contain specific state information starting with "### Where We Are"
+- **Standard Header**: The MCP server maintains a separate Lumos header template 
+- **Concatenation**: The MCP server concatenates the standard header with individual response content
+
+### Lumos Header Template
+The MCP server uses this standard header for all Lumos responses:
+```markdown
+> **AI Engineer Workflow** helps you work together with AI on any coding task. This system was built to teach effective collaboration with AI through a guided workflow. You can create plans, break them down into smaller tasks, get information from Jira and Confluence, and improve your code by handling PR comments.
+>
+> For best results, commit your changes often and start new conversations to clear the AI's context when needed. Don't worry about losing progress - this system remembers where you left off!
+```
+
+### Response File Format
+Individual response files should NOT include the standard header and should start directly with their content sections.
 
 To handle the response templates efficiently, we'll create a build script that generates a TypeScript file with all response templates:
 
@@ -271,7 +320,7 @@ export class StateMachineImpl implements StateMachine {
     this.stateRepository = stateRepository;
     this.transitions = transitions;
     this.context = { 
-      currentState: "GATHER_NEEDS_PLAN", 
+      currentState: "GATHER_NEEDS_CONTEXT", 
       history: [] 
     };
   }
@@ -440,7 +489,7 @@ export class JsonFileStateRepository implements StateRepository {
   
   async initialize(): Promise<StateContext> {
     const initialState: StateContext = {
-      currentState: 'GATHER_NEEDS_PLAN',
+      currentState: 'GATHER_NEEDS_CONTEXT',
       history: []
     };
     
@@ -490,28 +539,65 @@ export function processResponse(
 import { Transition } from '../types';
 import { getResponse, processResponse } from '../utils/responseUtils';
 import { hasAcceptanceCriteria, extractFirstAcceptanceCriteria } from '../utils/planUtils';
-import { createTaskTemplate } from '../utils/fileUtils';
+import { createTaskTemplate, extractAtlassianUrls } from '../utils/fileUtils';
 
 export const gatherTransitions: Transition[] = [
-  // G1: GATHER_NEEDS_PLAN + Accio -> GATHER_EDITING
+  // GC1: GATHER_NEEDS_CONTEXT + Accio -> GATHER_EDITING_CONTEXT
   {
-    id: "G1",
-    sourceState: "GATHER_NEEDS_PLAN",
+    id: "GC1",
+    sourceState: "GATHER_NEEDS_CONTEXT",
     spell: "Accio",
     // No condition - always applies
     handler: async (context, fileSystem) => {
-      // Create plan.md file directly in the handler
+      // Create context.md template in task folder
       await fileSystem.write(
-        ".ai/task/plan.md", 
-        "# Plan\n\n## Acceptance Criteria\n\n- [ ] First criterion\n"
+        ".ai/task/context.md", 
+        "# Task Context\n\n## Goals\n\n## Requirements\n\n## Resources\n\n"
       );
       
+      // Copy plan-guide.md from MCP resources if it doesn't exist
+      if (!await fileSystem.exists(".ai/plan-guide.md")) {
+        await fileSystem.write(
+          ".ai/plan-guide.md",
+          "# Planning Guide\n\n## Best Practices\n\n## Template Structure\n\n"
+        );
+      }
+      
       // Get response template
-      const responseTemplate = getResponse('gather_transitions_G1');
+      const responseTemplate = getResponse('gather_transitions_GC1');
+      
+      return {
+        nextState: "GATHER_EDITING_CONTEXT",
+        response: responseTemplate  // No replacements needed
+      };
+    }
+  },
+  
+  // GC2: GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING
+  {
+    id: "GC2",
+    sourceState: "GATHER_EDITING_CONTEXT",
+    spell: "Accio",
+    condition: async (fileSystem) => {
+      return await fileSystem.exists(".ai/task/context.md");
+    },
+    handler: async (context, fileSystem) => {
+      // Read context.md content
+      const contextContent = await fileSystem.read(".ai/task/context.md");
+      
+      // Extract Atlassian URLs using generic function
+      const atlassianUrls = extractAtlassianUrls(contextContent);
+      
+      // Get response template and replace URL placeholder
+      let responseTemplate = getResponse('gather_transitions_GC2');
+      responseTemplate = responseTemplate.replace(
+        '[ATLASSIAN_URLS_PLACEHOLDER]', 
+        atlassianUrls.join('\n')
+      );
       
       return {
         nextState: "GATHER_EDITING",
-        response: responseTemplate  // No replacements needed
+        response: responseTemplate
       };
     }
   },
