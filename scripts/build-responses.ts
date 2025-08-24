@@ -17,14 +17,12 @@ function readResponses(dir: string, base = ''): void {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry);
     const relativePath = path.join(base, entry);
-    
+
     if (fs.statSync(fullPath).isDirectory()) {
       readResponses(fullPath, relativePath);
     } else if (entry.endsWith('.md')) {
       const content = fs.readFileSync(fullPath, 'utf8');
-      const key = relativePath
-        .replace(/\.md$/, '')
-        .replace(/\//g, '_');
+      const key = relativePath.replace(/\.md$/, '').replace(/\//g, '_');
       responses[key] = content;
     }
   }

@@ -1,11 +1,11 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
-  advanceTool, 
-  advanceInputSchema, 
+  advanceTool,
+  advanceInputSchema,
   resetTool,
   appendLogTool,
-  appendLogInputSchema
-} from "./orchestrator.js";
+  appendLogInputSchema,
+} from './orchestrator.js';
 import {
   accioTool,
   accioInputSchema,
@@ -16,8 +16,8 @@ import {
   revertoTool,
   revertoInputSchema,
   finiteTool,
-  finiteInputSchema
-} from "./spells.js";
+  finiteInputSchema,
+} from './spells.js';
 
 /**
  * Register all tools with the MCP server
@@ -25,162 +25,162 @@ import {
 export function registerTools(server: McpServer): void {
   // Orchestrator tools
   server.registerTool(
-    "advance",
+    'advance',
     {
-      title: "Orchestrator Advance Tool",
-      description: "POC: orchestrate by drafting or executing a task.md.",
-      inputSchema: advanceInputSchema
+      title: 'Orchestrator Advance Tool',
+      description: 'POC: orchestrate by drafting or executing a task.md.',
+      inputSchema: advanceInputSchema,
     },
-    async (params) => {
+    async params => {
       const result = await advanceTool(params);
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "reset",
+    'reset',
     {
-      title: "Orchestrator Reset Tool",
-      description: "Resets the orchestrator by deleting task.md.",
-      inputSchema: {}
+      title: 'Orchestrator Reset Tool',
+      description: 'Resets the orchestrator by deleting task.md.',
+      inputSchema: {},
     },
     async () => {
       const result = await resetTool();
       return {
         content: [
           {
-            type: "text",
-            text: result.message
-          }
-        ]
+            type: 'text',
+            text: result.message,
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "append_log",
+    'append_log',
     {
-      title: "Append Log Tool",
-      description: "Appends a message to the task log file.",
-      inputSchema: appendLogInputSchema
+      title: 'Append Log Tool',
+      description: 'Appends a message to the task log file.',
+      inputSchema: appendLogInputSchema,
     },
-    async (params) => {
+    async params => {
       const result = await appendLogTool(params);
       return {
         content: [
           {
-            type: "text",
-            text: result.message
-          }
-        ]
+            type: 'text',
+            text: result.message,
+          },
+        ],
       };
     }
   );
 
   // Spell tools
   server.registerTool(
-    "accio",
+    'accio',
     {
-      title: "Accio Spell",
-      description: "Advances workflow to next step",
-      inputSchema: accioInputSchema
+      title: 'Accio Spell',
+      description: 'Advances workflow to next step',
+      inputSchema: accioInputSchema,
     },
     async () => {
       const result = await accioTool();
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "expecto",
+    'expecto',
     {
-      title: "Expecto Spell",
-      description: "Enriches plan from Atlassian resources",
-      inputSchema: expectoInputSchema
+      title: 'Expecto Spell',
+      description: 'Enriches plan from Atlassian resources',
+      inputSchema: expectoInputSchema,
     },
     async () => {
       const result = await expectoTool();
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "reparo",
+    'reparo',
     {
-      title: "Reparo Spell",
-      description: "Initiates or continues PR review process",
-      inputSchema: reparoInputSchema
+      title: 'Reparo Spell',
+      description: 'Initiates or continues PR review process',
+      inputSchema: reparoInputSchema,
     },
     async () => {
       const result = await reparoTool();
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "reverto",
+    'reverto',
     {
-      title: "Reverto Spell",
-      description: "Exits PR review flow",
-      inputSchema: revertoInputSchema
+      title: 'Reverto Spell',
+      description: 'Exits PR review flow',
+      inputSchema: revertoInputSchema,
     },
     async () => {
       const result = await revertoTool();
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );
 
   server.registerTool(
-    "finite",
+    'finite',
     {
-      title: "Finite Spell",
-      description: "Returns to plan editing",
-      inputSchema: finiteInputSchema
+      title: 'Finite Spell',
+      description: 'Returns to plan editing',
+      inputSchema: finiteInputSchema,
     },
     async () => {
       const result = await finiteTool();
       return {
         content: [
           {
-            type: "text",
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
       };
     }
   );

@@ -1,29 +1,29 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerResources } from "./resources/index.js";
-import { registerTools } from "./tools/index.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { registerResources } from './resources/index.js';
+import { registerTools } from './tools/index.js';
 
 // CRITICAL: Protect STDOUT from accidental writes
 // Override console.log to use stderr instead
-console.log = function(...args) {
+console.log = function (...args) {
   console.error(...args);
 };
 
 // Create server instance
 const server = new McpServer({
-  name: "ai-engineer",
-  version: "1.0.0"
+  name: 'ai-engineer',
+  version: '1.0.0',
 });
 
 // Start the server
 async function main() {
   // Always log to stderr
   console.error(`[${new Date().toISOString()}] AI Engineer MCP Server initializing`);
-  
+
   // Register all resources and tools
   registerResources(server);
   registerTools(server);
-  
+
   try {
     const transport = new StdioServerTransport();
     await server.connect(transport);

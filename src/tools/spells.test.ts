@@ -3,14 +3,17 @@ import path from 'path';
 
 describe('Spell Tools Tests', () => {
   const serverPath = path.join(__dirname, '../../dist/index.js');
-  
+
   // Helper function to run MCP Inspector commands
-  function runInspector(method: string, options: { toolName?: string; toolArgs?: Record<string, any> } = {}) {
+  function runInspector(
+    method: string,
+    options: { toolName?: string; toolArgs?: Record<string, any> } = {}
+  ) {
     let command = `npx @modelcontextprotocol/inspector --cli node ${serverPath} --method ${method}`;
-    
+
     if (options.toolName) {
       command += ` --tool-name ${options.toolName}`;
-      
+
       if (options.toolArgs) {
         Object.entries(options.toolArgs).forEach(([key, value]) => {
           const argValue = typeof value === 'string' ? `"${value}"` : value;
@@ -18,7 +21,7 @@ describe('Spell Tools Tests', () => {
         });
       }
     }
-    
+
     try {
       const output = execSync(command, { encoding: 'utf8' });
       return JSON.parse(output);
@@ -28,27 +31,27 @@ describe('Spell Tools Tests', () => {
       throw error;
     }
   }
-  
+
   beforeAll(() => {
     // Build the server before running tests
     execSync('npm run build', { stdio: 'inherit' });
   });
-  
+
   describe('Tool Registration Tests', () => {
     test('Tools list should include all spell tools', () => {
       const result = runInspector('tools/list');
       expect(result.tools).toBeDefined();
       expect(result.tools.length).toBeGreaterThan(0);
-      
+
       const toolNames = result.tools.map((tool: any) => tool.name);
-      
+
       // Check for all spell tools (excluding lumos which is now a resource)
       expect(toolNames).toContain('accio');
       expect(toolNames).toContain('expecto');
       expect(toolNames).toContain('reparo');
       expect(toolNames).toContain('reverto');
       expect(toolNames).toContain('finite');
-      
+
       // Check for existing orchestrator tools
       expect(toolNames).toContain('advance');
       expect(toolNames).toContain('reset');
@@ -59,12 +62,12 @@ describe('Spell Tools Tests', () => {
   describe('Spell Tool Execution Tests', () => {
     test('Accio tool should execute successfully', () => {
       const result = runInspector('tools/call', {
-        toolName: 'accio'
+        toolName: 'accio',
       });
-      
+
       expect(result.content).toBeDefined();
       expect(result.content.length).toBe(1);
-      
+
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Accio');
@@ -74,9 +77,9 @@ describe('Spell Tools Tests', () => {
 
     test('Expecto tool should execute successfully', () => {
       const result = runInspector('tools/call', {
-        toolName: 'expecto'
+        toolName: 'expecto',
       });
-      
+
       expect(result.content).toBeDefined();
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
@@ -87,9 +90,9 @@ describe('Spell Tools Tests', () => {
 
     test('Reparo tool should execute successfully', () => {
       const result = runInspector('tools/call', {
-        toolName: 'reparo'
+        toolName: 'reparo',
       });
-      
+
       expect(result.content).toBeDefined();
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
@@ -100,9 +103,9 @@ describe('Spell Tools Tests', () => {
 
     test('Reverto tool should execute successfully', () => {
       const result = runInspector('tools/call', {
-        toolName: 'reverto'
+        toolName: 'reverto',
       });
-      
+
       expect(result.content).toBeDefined();
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
@@ -113,9 +116,9 @@ describe('Spell Tools Tests', () => {
 
     test('Finite tool should execute successfully', () => {
       const result = runInspector('tools/call', {
-        toolName: 'finite'
+        toolName: 'finite',
       });
-      
+
       expect(result.content).toBeDefined();
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);

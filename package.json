@@ -9,7 +9,11 @@
     "build": "npm run prebuild && npx @vercel/ncc build src/index.ts -o dist",
     "start": "node dist/index.js",
     "test": "jest",
-    "prepare": "npm run prebuild"
+    "prepare": "npm run prebuild",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -22,8 +26,14 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
     "@vercel/ncc": "^0.38.3",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.0.5",
+    "prettier": "^3.6.2",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
@@ -38,7 +48,9 @@
     ],
     "verbose": true,
     "testTimeout": 30000,
-    "extensionsToTreatAsEsm": [".ts"],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "globals": {
       "ts-jest": {
         "useESM": true

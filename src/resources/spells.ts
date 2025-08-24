@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 /**
  * Lumos Resource - Shows current state information
@@ -6,33 +6,33 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
  */
 export function registerLumosResource(server: McpServer): void {
   server.registerResource(
-    "lumos",
-    "lumos://current",
+    'lumos',
+    'lumos://current',
     {
-      title: "Current AI Engineer State",
-      description: "Shows the current state of the AI Engineer workflow",
-      mimeType: "application/json"
+      title: 'Current AI Engineer State',
+      description: 'Shows the current state of the AI Engineer workflow',
+      mimeType: 'application/json',
     },
-    async (uri) => {
+    async uri => {
       // Placeholder implementation - will be replaced with actual state machine integration
       // In real implementation, this would read from .ai/task/state.json
       const currentState = {
-        state: "PLACEHOLDER_STATE",
+        state: 'PLACEHOLDER_STATE',
         timestamp: new Date().toISOString(),
-        message: "Lumos resource called - placeholder implementation",
-        availableSpells: ["Accio", "Expecto", "Reparo", "Reverto", "Finite", "Lumos"],
-        description: "State-driven behavior - will read current state from .ai/task/ files",
-        note: "Parameter-less implementation - state determined by file system inspection"
+        message: 'Lumos resource called - placeholder implementation',
+        availableSpells: ['Accio', 'Expecto', 'Reparo', 'Reverto', 'Finite', 'Lumos'],
+        description: 'State-driven behavior - will read current state from .ai/task/ files',
+        note: 'Parameter-less implementation - state determined by file system inspection',
       };
 
       return {
         contents: [
           {
             uri: uri.href,
-            mimeType: "application/json",
-            text: JSON.stringify(currentState, null, 2)
-          }
-        ]
+            mimeType: 'application/json',
+            text: JSON.stringify(currentState, null, 2),
+          },
+        ],
       };
     }
   );

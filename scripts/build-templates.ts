@@ -16,7 +16,7 @@ function readTemplates(dir: string): void {
   const entries = fs.readdirSync(dir);
   for (const entry of entries) {
     const fullPath = path.join(dir, entry);
-    
+
     if (entry.endsWith('.md')) {
       const content = fs.readFileSync(fullPath, 'utf8');
       const key = entry.replace(/\.md$/, '').replace(/-/g, '_');
