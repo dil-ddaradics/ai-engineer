@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 /**
  * Lumos Resource - Shows current state information
@@ -8,20 +7,22 @@ import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 export function registerLumosResource(server: McpServer): void {
   server.registerResource(
     "lumos",
-    new ResourceTemplate("lumos://{state}", { list: undefined }),
+    "lumos://current",
     {
       title: "Current AI Engineer State",
       description: "Shows the current state of the AI Engineer workflow",
       mimeType: "application/json"
     },
-    async (uri, { state }) => {
+    async (uri) => {
       // Placeholder implementation - will be replaced with actual state machine integration
+      // In real implementation, this would read from .ai/task/state.json
       const currentState = {
-        state: state || "PLACEHOLDER_STATE",
+        state: "PLACEHOLDER_STATE",
         timestamp: new Date().toISOString(),
         message: "Lumos resource called - placeholder implementation",
         availableSpells: ["Accio", "Expecto", "Reparo", "Reverto", "Finite", "Lumos"],
-        description: "This is a placeholder response. Will be replaced with actual state machine integration."
+        description: "State-driven behavior - will read current state from .ai/task/ files",
+        note: "Parameter-less implementation - state determined by file system inspection"
       };
 
       return {

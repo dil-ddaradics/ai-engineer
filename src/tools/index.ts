@@ -92,8 +92,8 @@ export function registerTools(server: McpServer): void {
       description: "Advances workflow to next step",
       inputSchema: accioInputSchema
     },
-    async (params) => {
-      const result = await accioTool(params);
+    async () => {
+      const result = await accioTool();
       return {
         content: [
           {
@@ -112,8 +112,8 @@ export function registerTools(server: McpServer): void {
       description: "Enriches plan from Atlassian resources",
       inputSchema: expectoInputSchema
     },
-    async (params) => {
-      const result = await expectoTool(params);
+    async () => {
+      const result = await expectoTool();
       return {
         content: [
           {
@@ -132,8 +132,8 @@ export function registerTools(server: McpServer): void {
       description: "Initiates or continues PR review process",
       inputSchema: reparoInputSchema
     },
-    async (params) => {
-      const result = await reparoTool(params);
+    async () => {
+      const result = await reparoTool();
       return {
         content: [
           {
@@ -152,8 +152,8 @@ export function registerTools(server: McpServer): void {
       description: "Exits PR review flow",
       inputSchema: revertoInputSchema
     },
-    async (params) => {
-      const result = await revertoTool(params);
+    async () => {
+      const result = await revertoTool();
       return {
         content: [
           {
@@ -172,8 +172,8 @@ export function registerTools(server: McpServer): void {
       description: "Returns to plan editing",
       inputSchema: finiteInputSchema
     },
-    async (params) => {
-      const result = await finiteTool(params);
+    async () => {
+      const result = await finiteTool();
       return {
         content: [
           {

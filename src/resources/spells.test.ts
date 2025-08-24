@@ -28,29 +28,28 @@ describe('Spell Resources Tests', () => {
   });
   
   describe('Resource Registration Tests', () => {
-    test('Resources templates list should include Lumos resource template', () => {
-      const result = runInspector('resources/templates/list');
-      expect(result.resourceTemplates).toBeDefined();
-      expect(result.resourceTemplates.length).toBeGreaterThan(0);
+    test('Resources list should include Lumos resource', () => {
+      const result = runInspector('resources/list');
+      expect(result.resources).toBeDefined();
+      expect(result.resources.length).toBeGreaterThan(0);
       
-      const templateNames = result.resourceTemplates.map((template: any) => template.name);
-      expect(templateNames).toContain('lumos');
+      const resourceUris = result.resources.map((resource: any) => resource.uri);
+      expect(resourceUris).toContain('lumos://current');
       
-      // Check the Lumos template has the right properties
-      const lumosTemplate = result.resourceTemplates.find((template: any) => template.name === 'lumos');
-      expect(lumosTemplate.title).toBe('Current AI Engineer State');
-      expect(lumosTemplate.uriTemplate).toBe('lumos://{state}');
-      expect(lumosTemplate.description).toBe('Shows the current state of the AI Engineer workflow');
-      expect(lumosTemplate.mimeType).toBe('application/json');
+      // Check the Lumos resource has the right properties
+      const lumosResource = result.resources.find((resource: any) => resource.uri === 'lumos://current');
+      expect(lumosResource.name).toBe('lumos');
+      expect(lumosResource.description).toBe('Shows the current state of the AI Engineer workflow');
+      expect(lumosResource.mimeType).toBe('application/json');
     });
 
     test('Lumos resource should return current state information', () => {
-      const result = runInspector('resources/read', { uri: 'lumos://current-state' });
+      const result = runInspector('resources/read', { uri: 'lumos://current' });
       expect(result.contents).toBeDefined();
       expect(result.contents.length).toBe(1);
       
       const content = result.contents[0];
-      expect(content.uri).toBe('lumos://current-state');
+      expect(content.uri).toBe('lumos://current');
       expect(content.mimeType).toBe('application/json');
       
       const stateData = JSON.parse(content.text);
@@ -59,6 +58,7 @@ describe('Spell Resources Tests', () => {
       expect(stateData.message).toBeDefined();
       expect(stateData.availableSpells).toBeDefined();
       expect(stateData.description).toBeDefined();
+      expect(stateData.note).toContain('Parameter-less implementation');
     });
   });
 });

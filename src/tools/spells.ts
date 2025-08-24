@@ -1,78 +1,66 @@
-import { z } from "zod";
+// Input schemas for spell tools (MCP format) - All spells are parameter-less
+export const accioInputSchema = {};
 
-// Input schemas for spell tools (MCP format)
-export const accioInputSchema = {
-  reason: z.string().describe("Free text; why we're advancing")
-};
+export const expectoInputSchema = {};
 
-export const expectoInputSchema = {
-  planUpdate: z.string().optional().describe("Optional plan update from Atlassian resources")
-};
+export const reparoInputSchema = {};
 
-export const reparoInputSchema = {
-  reviewType: z.string().optional().describe("Type of review to initiate")
-};
+export const revertoInputSchema = {};
 
-export const revertoInputSchema = {
-  reason: z.string().optional().describe("Reason for exiting PR review flow")
-};
+export const finiteInputSchema = {};
 
-export const finiteInputSchema = {
-  reason: z.string().optional().describe("Reason for returning to plan editing")
-};
-
-// Tool implementation functions (placeholders)
-export async function accioTool(params: { reason: string }) {
+// Tool implementation functions (placeholders) - All spells are parameter-less and state-driven
+export async function accioTool() {
   return {
     success: true,
     spell: "Accio",
     message: "Accio spell cast - advancing workflow to next step",
-    reason: params.reason,
     timestamp: new Date().toISOString(),
-    placeholder: true
+    placeholder: true,
+    note: "State-driven behavior - reads current state from .ai/task/ files"
   };
 }
 
-export async function expectoTool(params: { planUpdate?: string }) {
+export async function expectoTool() {
   return {
     success: true,
     spell: "Expecto",
     message: "Expecto spell cast - enriching plan from Atlassian resources",
-    planUpdate: params.planUpdate,
     timestamp: new Date().toISOString(),
-    placeholder: true
+    placeholder: true,
+    note: "State-driven behavior - reads current state from .ai/task/ files"
   };
 }
 
-export async function reparoTool(params: { reviewType?: string }) {
+export async function reparoTool() {
   return {
     success: true,
     spell: "Reparo",
     message: "Reparo spell cast - initiating PR review process",
-    reviewType: params.reviewType,
     timestamp: new Date().toISOString(),
-    placeholder: true
+    placeholder: true,
+    note: "State-driven behavior - reads current state from .ai/task/ files"
   };
 }
 
-export async function revertoTool(params: { reason?: string }) {
+export async function revertoTool() {
   return {
     success: true,
     spell: "Reverto",
     message: "Reverto spell cast - exiting PR review flow",
-    reason: params.reason,
     timestamp: new Date().toISOString(),
-    placeholder: true
+    placeholder: true,
+    note: "State-driven behavior - reads current state from .ai/task/ files"
   };
 }
 
-export async function finiteTool(params: { reason?: string }) {
+export async function finiteTool() {
   return {
     success: true,
     spell: "Finite",
     message: "Finite spell cast - returning to plan editing",
-    reason: params.reason,
     timestamp: new Date().toISOString(),
-    placeholder: true
+    placeholder: true,
+    note: "State-driven behavior - reads current state from .ai/task/ files"
   };
 }
