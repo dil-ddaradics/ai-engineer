@@ -1,21 +1,21 @@
-# Cleanup: Remove Old Action Column from State Machine Tables
+# Cleanup: Remove Old Condition and Action Columns from State Machine Tables
 
-This command is used AFTER the MCP Actions column has been added and reviewed in all transition tables.
+This command is used AFTER the MCP Condition and MCP Actions columns have been added and reviewed in all transition tables.
 
 ## Your Task
 
-Remove the old "Action" column from all transition tables in `state-machine/state-machine.md`, leaving only the new "MCP Actions" column.
+Remove the old "Condition" and "Action" columns from all transition tables in `state-machine/state-machine.md`, leaving only the new "MCP Condition" and "MCP Actions" columns.
 
 ## Process
 
 1. **Find All Transition Tables**: Look for tables with this format:
    ```
-   | ID | Current State | Trigger | Condition | Next State | Action | MCP Actions | Response |
+   | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
    ```
 
-2. **Remove Action Column**: Transform to:
+2. **Remove Old Columns**: Transform to:
    ```
-   | ID | Current State | Trigger | Condition | Next State | MCP Actions | Response |
+   | ID | Current State | Trigger | MCP Condition | Next State | MCP Actions | Response |
    ```
 
 3. **Work Systematically**: Go through each section:
@@ -39,26 +39,26 @@ Remove the old "Action" column from all transition tables in `state-machine/stat
    - Universal Lumos Transitions
    - Universal Expecto Transitions
 
-4. **Preserve Everything Else**: Keep all other content identical, only remove the Action column and its data
+4. **Preserve Everything Else**: Keep all other content identical, only remove the old Condition and Action columns and their data
 
 ## Example Transformation
 
 **Before:**
 ```
-| ID | Current State | Trigger | Condition | Next State | Action | MCP Actions | Response |
-|----|---------------|---------|-----------|------------|--------|-------------|----------|
-| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` from MCP resources if it doesn't exist | (1) Creates `.ai/task/context.md` with template; (2) Copies `.ai/plan-guide.md` from MCP resources if missing | [GC1.md](responses/gather_transitions/GC1.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` from MCP resources if it doesn't exist | (1) Creates `.ai/task/context.md` with template; (2) Copies `.ai/plan-guide.md` from MCP resources if missing | [GC1.md](responses/gather_transitions/GC1.md) |
 ```
 
 **After:**
 ```
-| ID | Current State | Trigger | Condition | Next State | MCP Actions | Response |
-|----|---------------|---------|-----------|------------|-------------|----------|
+| ID | Current State | Trigger | MCP Condition | Next State | MCP Actions | Response |
+|----|---------------|---------|---------------|------------|-------------|----------|
 | GC1 | GATHER_NEEDS_CONTEXT | Accio | - | GATHER_EDITING_CONTEXT | (1) Creates `.ai/task/context.md` with template; (2) Copies `.ai/plan-guide.md` from MCP resources if missing | [GC1.md](responses/gather_transitions/GC1.md) |
 ```
 
 ## Important Notes
 
-- Only proceed with this cleanup AFTER all tables have been reviewed with both columns
-- Double-check that all MCP Actions content is finalized before removing the Action column
-- This is a one-way operation - make sure the MCP Actions column is complete and accurate
+- Only proceed with this cleanup AFTER all tables have been reviewed with both new columns
+- Double-check that all MCP Condition and MCP Actions content is finalized before removing the old columns
+- This is a one-way operation - make sure the MCP Condition and MCP Actions columns are complete and accurate

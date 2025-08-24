@@ -25,7 +25,7 @@ def preprocess_transitions(content, states):
     # Updated pattern to handle Any state (specifically for L1)
     transition_pattern = r'\|\s*([A-Z0-9][A-Za-z0-9]*)\s*\|\s*([A-Za-z_ ][A-Za-z0-9_ ,\[\|\/\]]+)\s*\|\s*([A-Za-z]+)\s*\|[^|]*\|\s*([^|]*)\s*\|'
     
-    # Extract condition from transition line
+    # Extract MCP condition from transition line (now in 4th column after cleanup)
     def extract_condition(line):
         condition_match = re.search(r'\|\s*[^|]+\|\s*[^|]+\|\s*[^|]+\|\s*([^|]*)\|', line)
         if condition_match:
@@ -336,13 +336,13 @@ def build_coverage_matrix(states, spells, content):
             action = "-"
             response = "-"
             
-            # Extract condition, action, and response from the line
+            # Extract MCP condition, MCP action, and response from the line
             fields = line.split('|')
             if len(fields) >= 7:  # Ensure we have enough fields
-                condition = fields[4].strip()
-                next_state = fields[5].strip()
-                action = fields[6].strip()
-                response = fields[7].strip() if len(fields) > 7 else "-"
+                condition = fields[3].strip()  # MCP Condition column
+                next_state = fields[4].strip()
+                action = fields[5].strip()      # MCP Actions column
+                response = fields[6].strip() if len(fields) > 6 else "-"
                 
                 # If the condition is empty, set it to match the spell
                 if condition.strip() == "-":
@@ -352,9 +352,9 @@ def build_coverage_matrix(states, spells, content):
             transition_details[transition_id] = {
                 'state': state_text,
                 'spell': spell,
-                'condition': condition,
+                'condition': condition,  # Now MCP Condition
                 'next_state': next_state_text,
-                'action': action,
+                'action': action,        # Now MCP Actions
                 'response': response
             }
     
@@ -632,7 +632,7 @@ def main():
     duplicate_transitions = []
     condition_based_transitions = []
     
-    # Helper function to extract condition from transition line
+    # Helper function to extract MCP condition from transition line
     def extract_condition(transition_id, line_num):
         for line_idx, line in enumerate(content.split('\n')):
             if line_idx + 1 == line_num:
