@@ -253,14 +253,14 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Achieve Acceptance Criteria Phase Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| A1 | ACHIEVE_TASK_DRAFTING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | [A1.md](responses/achieve_transitions/A1.md) |
-| A1b | ACHIEVE_TASK_DRAFTING | Accio | task.md missing | ERROR_TASK_MISSING | (1) Update state to ERROR_TASK_MISSING | [A1b.md](responses/achieve_transitions/A1b.md) |
-| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter; (5) Mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [A2.md](responses/achieve_transitions/A2.md) |
-| A2b | ACHIEVE_TASK_EXECUTED | Accio | task-results.md missing | ERROR_TASK_RESULTS_MISSING | (1) Update state to ERROR_TASK_RESULTS_MISSING | [A2b.md](responses/achieve_transitions/A2b.md) |
-| A3 | ACHIEVE_TASK_DRAFTING | Accio | No unchecked AC in plan.md AND plan.md exists | ACHIEVE_COMPLETE | (1) Check plan.md for remaining unchecked ACs; (2) Update state to ACHIEVE_COMPLETE | [A3.md](responses/achieve_transitions/A3.md) |
-| A4 | ACHIEVE_COMPLETE | Accio | - | ACHIEVE_COMPLETE | No state change | [A4.md](responses/achieve_transitions/A4.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| A1 | ACHIEVE_TASK_DRAFTING | Accio | task.md exists AND plan.md exists | Checks `.ai/task/task.md` exists (exists); Checks `.ai/task/plan.md` exists (exists) | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | - | [A1.md](responses/achieve_transitions/A1.md) |
+| A1b | ACHIEVE_TASK_DRAFTING | Accio | task.md missing | Checks `.ai/task/task.md` exists (missing) | ERROR_TASK_MISSING | (1) Update state to ERROR_TASK_MISSING | - | [A1b.md](responses/achieve_transitions/A1b.md) |
+| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | Checks `.ai/task/task.md` exists (exists); Checks `.ai/task/task-results.md` exists (exists); Checks `.ai/task/plan.md` exists (exists) | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter; (5) Mention `.ai/task-guide.md` exists for task creation guidance and can be customized | (1) Reads `.ai/task/task.md` frontmatter; (2) Reads `.ai/task/task-results.md` content; (3) Archives task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (4) Replaces `[TASK_RESULTS_PLACEHOLDER]` in response with results content; (5) Creates `.ai/task/task.md` with template | [A2.md](responses/achieve_transitions/A2.md) |
+| A2b | ACHIEVE_TASK_EXECUTED | Accio | task-results.md missing | Checks `.ai/task/task-results.md` exists (missing) | ERROR_TASK_RESULTS_MISSING | (1) Update state to ERROR_TASK_RESULTS_MISSING | - | [A2b.md](responses/achieve_transitions/A2b.md) |
+| A3 | ACHIEVE_TASK_DRAFTING | Accio | No unchecked AC in plan.md AND plan.md exists | Reads `.ai/task/plan.md` content; Counts unchecked acceptance criteria (lines starting with `- [ ]`) (finds 0); Checks `.ai/task/plan.md` exists (exists) | ACHIEVE_COMPLETE | (1) Check plan.md for remaining unchecked ACs; (2) Update state to ACHIEVE_COMPLETE | - | [A3.md](responses/achieve_transitions/A3.md) |
+| A4 | ACHIEVE_COMPLETE | Accio | - | - | ACHIEVE_COMPLETE | No state change | - | [A4.md](responses/achieve_transitions/A4.md) |
 
 #### Achieve Acceptance Criteria Phase Blocked Transitions
 
