@@ -223,20 +223,20 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Context Gathering Phase Blocked Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GCB1 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Reverto | - | [BLOCKED] | No state change | [GCB1.md](responses/gather_blocked/GCB1.md) |
-| GCB2 | GATHER_NEEDS_CONTEXT | Expecto | - | [BLOCKED] | No state change | [GCB2.md](responses/gather_blocked/GCB2.md) |
-| GCB3 | GATHER_NEEDS_CONTEXT | Reparo | - | [BLOCKED] | No state change | [GCB3.md](responses/gather_blocked/GCB3.md) |
-| GCB4 | GATHER_EDITING_CONTEXT | Reparo | - | [BLOCKED] | No state change | [GCB4.md](responses/gather_blocked/GCB4.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GCB1 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Reverto | - | - | [BLOCKED] | No state change | - | [GCB1.md](responses/gather_blocked/GCB1.md) |
+| GCB2 | GATHER_NEEDS_CONTEXT | Expecto | - | - | [BLOCKED] | No state change | - | [GCB2.md](responses/gather_blocked/GCB2.md) |
+| GCB3 | GATHER_NEEDS_CONTEXT | Reparo | - | - | [BLOCKED] | No state change | - | [GCB3.md](responses/gather_blocked/GCB3.md) |
+| GCB4 | GATHER_EDITING_CONTEXT | Reparo | - | - | [BLOCKED] | No state change | - | [GCB4.md](responses/gather_blocked/GCB4.md) |
 
 #### Context Gathering Phase No-op Transitions
 
-| ID | Current State | Trigger | Condition | Next State | Action | Response |
-|----|---------------|---------|-----------|------------|--------|----------|
-| GCN1 | GATHER_EDITING_CONTEXT | Finite | - | Same state | No state change | [GCN1.md](responses/gather_noop/GCN1.md) |
-| GCN2 | GATHER_NEEDS_CONTEXT | Finite | - | Same state | No state change | [GCN2.md](responses/gather_noop/GCN2.md) |
-| GCN3 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Expecto | No Atlassian URLs found | Same state | No state change | [GCN3.md](responses/gather_noop/GCN3.md) |
+| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+|----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
+| GCN1 | GATHER_EDITING_CONTEXT | Finite | - | - | Same state | No state change | - | [GCN1.md](responses/gather_noop/GCN1.md) |
+| GCN2 | GATHER_NEEDS_CONTEXT | Finite | - | - | Same state | No state change | - | [GCN2.md](responses/gather_noop/GCN2.md) |
+| GCN3 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Expecto | No Atlassian URLs found | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none) | Same state | No state change | - | [GCN3.md](responses/gather_noop/GCN3.md) |
 
 #### Gather Acceptance Criteria Phase Blocked Transitions
 
