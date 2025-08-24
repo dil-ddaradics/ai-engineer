@@ -555,11 +555,18 @@ export const gatherTransitions: Transition[] = [
         "# Task Context\n\n## Goals\n\n## Requirements\n\n## Resources\n\n"
       );
       
-      // Copy plan-guide.md from MCP resources if it doesn't exist
+      // Copy guide files from MCP resources if they don't exist
       if (!await fileSystem.exists(".ai/plan-guide.md")) {
         await fileSystem.write(
           ".ai/plan-guide.md",
           "# Planning Guide\n\n## Best Practices\n\n## Template Structure\n\n"
+        );
+      }
+      
+      if (!await fileSystem.exists(".ai/task-guide.md")) {
+        await fileSystem.write(
+          ".ai/task-guide.md",
+          "# Task Creation Guide\n\n## Best Practices\n\n## Task Structure\n\n"
         );
       }
       

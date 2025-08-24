@@ -206,7 +206,7 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 |----|---------------|---------|-----------|------------|--------|----------|
-| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` from MCP resources if it doesn't exist | [GC1.md](responses/gather_transitions/GC1.md) |
+| GC1 | GATHER_NEEDS_CONTEXT | Accio | - | GATHER_EDITING_CONTEXT | (1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` and `.ai/task-guide.md` from MCP resources if they don't exist | [GC1.md](responses/gather_transitions/GC1.md) |
 | GC2a | GATHER_EDITING_CONTEXT | Accio | context.md exists AND Atlassian URLs found | GATHER_EDITING | Read context.md, extract Atlassian URLs, provide URLs to AI for processing | [GC2.md](responses/gather_transitions/GC2.md) |
 | GC2b | GATHER_EDITING_CONTEXT | Accio | context.md exists AND no Atlassian URLs found | GATHER_EDITING | Read context.md, provide content to AI for plan generation | [GC2-no-urls.md](responses/gather_transitions/GC2-no-urls.md) |
 | GC2c | GATHER_EDITING_CONTEXT | Accio | context.md missing | ERROR_CONTEXT_MISSING | State updated to ERROR_CONTEXT_MISSING | [GC2b.md](responses/gather_transitions/GC2b.md) |
@@ -215,7 +215,7 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 |----|---------------|---------|-----------|------------|--------|----------|
-| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter | [G2.md](responses/gather_transitions/G2.md) |
+| G2 | GATHER_EDITING | Accio | ≥1 AC in plan.md AND task.md doesn't exist AND plan.md exists | ACHIEVE_TASK_DRAFTING | Create `.ai/task/task.md` template with YAML frontmatter; mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [G2.md](responses/gather_transitions/G2.md) |
 | G2b | GATHER_EDITING, ACHIEVE_TASK_DRAFTING, ACHIEVE_TASK_EXECUTED | Accio | plan.md missing | ERROR_PLAN_MISSING | (1) Update state to ERROR_PLAN_MISSING | [G2b.md](responses/gather_transitions/G2b.md) |
 | G3 | GATHER_EDITING | Accio | No AC in plan.md AND plan.md exists | GATHER_EDITING | No state change | [G3.md](responses/gather_transitions/G3.md) |
 | G4 | GATHER_EDITING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory | [G4.md](responses/gather_transitions/G4.md) |
@@ -257,7 +257,7 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 |----|---------------|---------|-----------|------------|--------|----------|
 | A1 | ACHIEVE_TASK_DRAFTING | Accio | task.md exists AND plan.md exists | ACHIEVE_TASK_EXECUTED | Update state to ACHIEVE_TASK_EXECUTED | [A1.md](responses/achieve_transitions/A1.md) |
 | A1b | ACHIEVE_TASK_DRAFTING | Accio | task.md missing | ERROR_TASK_MISSING | (1) Update state to ERROR_TASK_MISSING | [A1b.md](responses/achieve_transitions/A1b.md) |
-| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter | [A2.md](responses/achieve_transitions/A2.md) |
+| A2 | ACHIEVE_TASK_EXECUTED | Accio | task.md exists AND task-results.md exists AND plan.md exists | ACHIEVE_TASK_DRAFTING | (1) Extract task_name from task.md frontmatter; (2) Archive task.md and task-results.md to `.ai/task/tasks/task-${task_name}-${date}/`; (3) Load task-results.md content into memory; (4) Create new task.md template with YAML frontmatter; (5) Mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [A2.md](responses/achieve_transitions/A2.md) |
 | A2b | ACHIEVE_TASK_EXECUTED | Accio | task-results.md missing | ERROR_TASK_RESULTS_MISSING | (1) Update state to ERROR_TASK_RESULTS_MISSING | [A2b.md](responses/achieve_transitions/A2b.md) |
 | A3 | ACHIEVE_TASK_DRAFTING | Accio | No unchecked AC in plan.md AND plan.md exists | ACHIEVE_COMPLETE | (1) Check plan.md for remaining unchecked ACs; (2) Update state to ACHIEVE_COMPLETE | [A3.md](responses/achieve_transitions/A3.md) |
 | A4 | ACHIEVE_COMPLETE | Accio | - | ACHIEVE_COMPLETE | No state change | [A4.md](responses/achieve_transitions/A4.md) |
@@ -312,9 +312,9 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 |----|---------------|---------|-----------|------------|--------|----------|
-| R1 | ERROR_TASK_MISSING | Accio | - | ACHIEVE_TASK_DRAFTING | Propose a task based on plan.md | [R1.md](responses/error_recovery/R1.md) |
-| R2 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task | [R2.md](responses/error_recovery/R2.md) |
-| R3 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md missing | ACHIEVE_TASK_DRAFTING | (1) Review plan, identify uncompleted ACs, fill out template; (2) Explain to user that incomplete task was archived | [R3.md](responses/error_recovery/R3.md) |
+| R1 | ERROR_TASK_MISSING | Accio | - | ACHIEVE_TASK_DRAFTING | Propose a task based on plan.md; mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [R1.md](responses/error_recovery/R1.md) |
+| R2 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md exists | ACHIEVE_TASK_DRAFTING | (1) Update plan.md with results and mark completed ACs; (2) Fill template with next task; (3) Mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [R2.md](responses/error_recovery/R2.md) |
+| R3 | ERROR_TASK_RESULTS_MISSING | Accio | task-results.md missing | ACHIEVE_TASK_DRAFTING | (1) Review plan, identify uncompleted ACs, fill out template; (2) Explain to user that incomplete task was archived; (3) Mention `.ai/task-guide.md` exists for task creation guidance and can be customized | [R3.md](responses/error_recovery/R3.md) |
 | R4 | ERROR_PLAN_MISSING | Accio | - | GATHER_NEEDS_CONTEXT | Guide user through creating a new context | [R4.md](responses/error_recovery/R4.md) |
 | R5a | ERROR_COMMENTS_MISSING_G | Accio | - | PR_GATHERING_COMMENTS_G | Gather comments using GitHub MCP | [R5a.md](responses/error_recovery/R5a.md) |
 | R5b | ERROR_COMMENTS_MISSING_A | Accio | - | PR_GATHERING_COMMENTS_A | Gather comments using GitHub MCP | [R5b.md](responses/error_recovery/R5b.md) |
