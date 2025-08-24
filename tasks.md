@@ -1,5 +1,3 @@
-
 [] Add beginning all lumos with System explanation by concatenating as a feature when we start implementing.
 
-
-[] The task guide should be used by the review-task as well.
+[] Add the recommendation to use Ask / Plan mode while iterating a task to avoid executing it accidentally.
