@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Read the `.ai/task/comments.md` file to understand the PR feedback. Fill out the review task template in `.ai/task/review-task.md` that has been created by the system. The review task should include:
+Read the `.ai/task/comments.md` file to understand the PR feedback. Fill out the review task template in `.ai/task/review-task.md` that has been created by the system. Use the `.ai/task-guide.md` file for task execution guidance. The review task should include:
 1. A summary of the PR comments
 2. Specific tasks to address each comment
 3. Acceptance criteria for those tasks

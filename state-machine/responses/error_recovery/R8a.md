@@ -1,6 +1,6 @@
 ## Response to the AI
 
-Read the `.ai/task/review-task.md` file to understand what PR feedback needs to be addressed. Execute the review task again since the results file was missing.
+Read the `.ai/task/review-task.md` file to understand what PR feedback needs to be addressed. Use the `.ai/task-guide.md` file for task execution guidance. Execute the review task again since the results file was missing.
 
 ## Response to the Developer
 

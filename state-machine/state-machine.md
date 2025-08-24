@@ -275,7 +275,7 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 |----|---------------|---------|-----------|------------|--------|----------|
-| P1 | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A]; (2) Create `.ai/task/review-task.md` with structured template including sections for task summary, specific tasks, and acceptance criteria | [P1.md](responses/pr_transitions/P1.md) |
+| P1 | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md exists | PR_REVIEW_TASK_DRAFT_[G/A] | (1) Update state to PR_REVIEW_TASK_DRAFT_[G/A]; (2) Create `.ai/task/review-task.md` with structured template including sections for task summary, specific tasks, and acceptance criteria; (3) Mention `.ai/task-guide.md` exists for task execution guidance and can be customized | [P1.md](responses/pr_transitions/P1.md) |
 | P1b | PR_GATHERING_COMMENTS_[G/A] | Accio | comments.md missing | ERROR_COMMENTS_MISSING_[G/A] | (1) Update state to ERROR_COMMENTS_MISSING_[G/A] | [P1b.md](responses/pr_transitions/P1b.md) |
 | P2 | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md exists | PR_APPLIED_PENDING_ARCHIVE_[G/A] | Update state to PR_APPLIED_PENDING_ARCHIVE_[G/A] | [P2.md](responses/pr_transitions/P2.md) |
 | P2b | PR_REVIEW_TASK_DRAFT_[G/A] | Accio | review-task.md missing | ERROR_REVIEW_TASK_MISSING_[G/A] | (1) Update state to ERROR_REVIEW_TASK_MISSING_[G/A] | [P2b.md](responses/pr_transitions/P2b.md) |
@@ -588,7 +588,7 @@ The MCP server manages template files using a two-tier approach:
 #### Persistent Guide Files
 Located in `.ai/` folder, copied only if they don't exist, allowing developers to customize and reuse across tasks:
 - `.ai/plan-guide.md` - Planning guidelines and best practices
-- `.ai/task-guide.md` - Task creation guidelines
+- `.ai/task-guide.md` - Task execution guidelines for both regular tasks and review tasks
 
 #### Working Template Files  
 Located in `.ai/task/` folder, created fresh from MCP resources for each workflow step:
