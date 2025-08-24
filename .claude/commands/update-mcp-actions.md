@@ -4,7 +4,7 @@ You are tasked with updating the transition tables in `state-machine/state-machi
 
 ## Your Task
 
-Work through the transition tables **one table at a time** and add both "MCP Condition" and "MCP Actions" columns. After updating each table, **STOP** and wait for user review before proceeding to the next table.
+Work through the transition tables **one table at a time** and ensure each table has both "MCP Condition" and "MCP Actions" columns. If a table is missing either column, add it. If a table already has both columns, skip it and move to the next table. After updating each table, **STOP** and wait for user review before proceeding to the next table.
 
 > ⚠️ **CRITICAL**: Both MCP Condition AND MCP Actions columns must be added together. Do not proceed with only one column. The target table must have exactly 9 columns total.
 
@@ -79,7 +79,7 @@ Regardless of how the replacement content is obtained (file reading, URL extract
 
 ## Table Format
 
-Transform tables from:
+Transform tables that are missing MCP columns from:
 ```
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 ```
@@ -172,6 +172,6 @@ Before making any changes to a table, confirm:
 
 ## Start Here
 
-Find the first table that needs both MCP Condition and MCP Actions columns added, then **STOP** and wait for user review after updating it.
+Scan through all tables starting with the **Context Gathering Phase Transitions** table (around line 207) and find the FIRST table that is missing either the "MCP Condition" or "MCP Actions" columns. Add the missing column(s) to that table, then **STOP** and wait for user review.
 
 Remember: Only update ONE table at a time, then stop for user review.
