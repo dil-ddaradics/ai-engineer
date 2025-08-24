@@ -111,8 +111,24 @@ Examples 2 and 3 above show how different condition evaluation results (URLs fou
 ### Condition Column Analysis Is Critical  
 Many conditions like "Atlassian URLs found" require significant MCP work (reading files, extracting data) that was previously overlooked when only analyzing the Action column.
 
+## Table Selection Process
+
+Before starting, identify which table needs updating:
+
+1. **Check for existing columns**: Look for tables that already have both MCP Condition and MCP Actions columns in this format:
+   ```
+   | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
+   ```
+
+2. **Find tables needing updates**: Look for tables with the old format missing these columns:
+   ```
+   | ID | Current State | Trigger | Condition | Next State | Action | Response |
+   ```
+
+3. **Skip processed tables**: If a table already has MCP Condition and MCP Actions columns, it's been processed - move to the next one.
+
 ## Start Here
 
-Begin with the **Context Gathering Phase Transitions** table (around line 207). Add both the MCP Condition and MCP Actions columns to that table, then **STOP** and wait for user review.
+Find the first table that needs both MCP Condition and MCP Actions columns added, then **STOP** and wait for user review after updating it.
 
 Remember: Only update ONE table at a time, then stop for user review.
