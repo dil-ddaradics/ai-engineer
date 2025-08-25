@@ -1,10 +1,3 @@
 {
-  "currentState": "GATHER_NO_PLAN",
-  "timestamp": "2025-08-25T06:23:55.935Z",
-  "sessionId": "meqqemn3-i53vj4djy6",
-  "workingDirectory": "/Users/ddaradics/IdeaProjects/ai-engineer",
-  "metadata": {
-    "createdAt": "2025-08-25T06:23:55.935Z",
-    "version": "1.0.0"
-  }
+  "currentState": "GATHER_NO_PLAN"
 }

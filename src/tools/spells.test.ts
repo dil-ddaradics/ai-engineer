@@ -66,7 +66,6 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(false); // No transitions defined, so blocked
       expect(response.spell).toBe('Accio');
-      expect(response.newState).toBeDefined();
       expect(response.message).toBeDefined();
       expect(response.message).toContain('not available in the current state');
     });
@@ -80,7 +79,6 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(false); // No transitions defined, so blocked
       expect(response.spell).toBe('Expecto');
-      expect(response.newState).toBeDefined();
       expect(response.message).toBeDefined();
       expect(response.message).toContain('not available in the current state');
     });
@@ -94,7 +92,6 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(false); // No transitions defined, so blocked
       expect(response.spell).toBe('Reparo');
-      expect(response.newState).toBeDefined();
       expect(response.message).toBeDefined();
       expect(response.message).toContain('not available in the current state');
     });
@@ -108,7 +105,6 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(false); // No transitions defined, so blocked
       expect(response.spell).toBe('Reverto');
-      expect(response.newState).toBeDefined();
       expect(response.message).toBeDefined();
       expect(response.message).toContain('not available in the current state');
     });
@@ -122,7 +118,6 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(false); // No transitions defined, so blocked
       expect(response.spell).toBe('Finite');
-      expect(response.newState).toBeDefined();
       expect(response.message).toBeDefined();
       expect(response.message).toContain('not available in the current state');
     });

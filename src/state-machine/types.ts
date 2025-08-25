@@ -57,7 +57,6 @@ export interface StateContext {
 // Result of a transition execution
 export interface TransitionResult {
   readonly success: boolean;
-  readonly newState: StateName;
   readonly message: string;
 }
 

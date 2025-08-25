@@ -42,9 +42,10 @@ export class AiEngineerStateMachine implements StateMachine {
 
       return this.handleTransition(context, spell);
     } catch (error) {
+      // Save error state
+      const errorContext = await this.stateRepository.initialize('ERROR_NO_PLAN', this.fileSystem.getBaseDirectory());
       return {
         success: false,
-        newState: 'ERROR_NO_PLAN',
         message: `Failed to execute spell ${spell}: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
@@ -67,18 +68,23 @@ export class AiEngineerStateMachine implements StateMachine {
       // Execute the transition and update state
       const result = await transition.execute(context);
 
-      // Update the state repository with new state
-      if (result.success && result.newState !== context.currentState) {
-        await this.stateRepository.updateState(context, result.newState);
+      // Always save state after transition attempt
+      if (result.success) {
+        // For successful transitions, the transition.execute should have already updated the state
+        // But we ensure it's saved here
+        await this.stateRepository.save(context);
       }
 
-      return result;
+      return {
+        success: result.success,
+        message: result.message,
+      };
     }
 
-    // No valid transition found
+    // No valid transition found - save current state to ensure persistence
+    await this.stateRepository.save(context);
     return {
       success: false,
-      newState: context.currentState,
       message: `The spell ${spell} is not available in the current state ${context.currentState}`,
     };
   }

@@ -19,6 +19,16 @@ describe('AiEngineerStateMachine', () => {
     stateMachine = new AiEngineerStateMachine(stateRepository, fileSystem);
   });
 
+  // Helper function to read current state from file
+  async function getCurrentStateFromFile(): Promise<StateContext | null> {
+    try {
+      const stateContent = await fileSystem.read('.ai/task/state.json');
+      return JSON.parse(stateContent);
+    } catch {
+      return null;
+    }
+  }
+
   afterEach(async () => {
     // Clean up test directory
     try {
@@ -35,8 +45,12 @@ describe('AiEngineerStateMachine', () => {
       const result = await stateMachine.executeSpell('Accio');
 
       expect(result.success).toBe(false);
-      expect(result.newState).toBe('GATHER_NO_PLAN');
       expect(result.message).toContain('not available in the current state');
+      
+      // Check that state was saved to file
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState).not.toBeNull();
+      expect(savedState!.currentState).toBe('GATHER_NO_PLAN');
     });
 
     it('should return blocked message for any spell since no transitions are defined', async () => {
@@ -68,11 +82,14 @@ describe('AiEngineerStateMachine', () => {
       it(`should handle ${spell} spell and return proper response structure`, async () => {
         const result = await stateMachine.executeSpell(spell);
         expect(result).toHaveProperty('success');
-        expect(result).toHaveProperty('newState');
         expect(result).toHaveProperty('message');
         // All spells should be blocked since no transitions are defined
         expect(result.success).toBe(false);
         expect(result.message).toContain('not available in the current state');
+        
+        // Verify state was saved to file
+        const savedState = await getCurrentStateFromFile();
+        expect(savedState).not.toBeNull();
       });
     });
   });

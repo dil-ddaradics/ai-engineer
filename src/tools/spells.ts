@@ -38,7 +38,6 @@ export async function accioTool() {
       success: result.success,
       spell: 'Accio',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -60,7 +59,6 @@ export async function expectoTool() {
       success: result.success,
       spell: 'Expecto',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -82,7 +80,6 @@ export async function reparoTool() {
       success: result.success,
       spell: 'Reparo',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -104,7 +101,6 @@ export async function revertoTool() {
       success: result.success,
       spell: 'Reverto',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -126,7 +122,6 @@ export async function finiteTool() {
       success: result.success,
       spell: 'Finite',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -149,7 +144,6 @@ export async function lumosTool() {
       success: result.success,
       spell: 'Lumos',
       message: result.message,
-      newState: result.newState,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
