@@ -23,70 +23,58 @@ const TRANSITIONS: Transition[] = [
 export class AiEngineerStateMachine implements StateMachine {
   constructor(
     private readonly stateRepository: StateRepository,
-    private readonly fileSystem: FileSystem
+    private readonly fileSystem: FileSystem,
+    private readonly transitions: readonly Transition[] = TRANSITIONS
   ) {}
 
   async executeSpell(spell: Spell): Promise<TransitionResult> {
+    let context: StateContext | null = null;
+    let resultMessage: string;
+    let resultSuccess: boolean = false;
+
     try {
-      // Load current state context
-      const context = await this.stateRepository.load();
-
+      // Load or initialize context
+      context = await this.stateRepository.load();
       if (!context) {
-        // No state exists, start with initial state
-        const initialContext = await this.stateRepository.initialize(
-          'GATHER_NO_PLAN',
-          this.fileSystem.getBaseDirectory()
-        );
-        return this.handleTransition(initialContext, spell);
+        context = { currentState: 'GATHER_NO_PLAN' };
       }
 
-      return this.handleTransition(context, spell);
+      // Find matching transition using injected transitions
+      const transition = this.transitions.find(
+        t =>
+          t.fromState === context!.currentState &&
+          t.spell === spell &&
+          (!t.condition || t.condition(context!))
+      );
+
+      if (transition) {
+        // Transition found - always successful
+        const result = await transition.execute(context);
+        resultSuccess = true;
+        resultMessage = result.message;
+        
+        // Update context to the new state defined by transition
+        context = { currentState: transition.toState };
+      } else {
+        // No transition found - blocked
+        resultSuccess = false;
+        resultMessage = `The spell ${spell} is not available in the current state ${context.currentState}`;
+      }
+
+      // Single save operation - only for successful processing
+      await this.stateRepository.save(context);
+
     } catch (error) {
-      // Save error state
-      const errorContext = await this.stateRepository.initialize('ERROR_NO_PLAN', this.fileSystem.getBaseDirectory());
-      return {
-        success: false,
-        message: `Failed to execute spell ${spell}: ${error instanceof Error ? error.message : String(error)}`,
-      };
-    }
-  }
-
-
-  /**
-   * Handle spell execution using explicit transitions
-   */
-  private async handleTransition(context: StateContext, spell: Spell): Promise<TransitionResult> {
-    // Find matching transition
-    const transition = TRANSITIONS.find(
-      t =>
-        t.fromState === context.currentState &&
-        t.spell === spell &&
-        (!t.condition || t.condition(context))
-    );
-
-    if (transition) {
-      // Execute the transition and update state
-      const result = await transition.execute(context);
-
-      // Always save state after transition attempt
-      if (result.success) {
-        // For successful transitions, the transition.execute should have already updated the state
-        // But we ensure it's saved here
-        await this.stateRepository.save(context);
-      }
-
-      return {
-        success: result.success,
-        message: result.message,
-      };
+      // No state modification on error - preserve existing state
+      resultSuccess = false;
+      resultMessage = `Failed to execute spell ${spell}: ${error instanceof Error ? error.message : String(error)}`;
     }
 
-    // No valid transition found - save current state to ensure persistence
-    await this.stateRepository.save(context);
     return {
-      success: false,
-      message: `The spell ${spell} is not available in the current state ${context.currentState}`,
+      success: resultSuccess,
+      message: resultMessage,
     };
   }
+
 
 }

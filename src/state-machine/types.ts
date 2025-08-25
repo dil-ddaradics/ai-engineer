@@ -66,7 +66,7 @@ export interface Transition {
   readonly spell: Spell;
   readonly toState: StateName;
   readonly condition?: (context: StateContext) => boolean;
-  readonly execute: (context: StateContext) => Promise<TransitionResult>;
+  readonly execute: (context: StateContext) => Promise<{ message: string }>;
 }
 
 // File system interface for abstracting file operations

@@ -1,7 +1,7 @@
 import { AiEngineerStateMachine } from './stateMachine';
 import { JsonFileStateRepository } from './stateRepository';
 import { NodeFileSystem } from './fileSystem';
-import { StateContext, StateName, Spell } from './types';
+import { StateContext, StateName, Spell, Transition } from './types';
 import { jest } from '@jest/globals';
 import path from 'path';
 import { tmpdir } from 'os';
@@ -60,17 +60,62 @@ describe('AiEngineerStateMachine', () => {
       expect(result.message).toContain('not available in the current state');
     });
 
-    it('should block all spells since no transitions are defined', async () => {
-      const spells: Spell[] = ['Accio', 'Expecto', 'Reparo', 'Reverto', 'Finite', 'Lumos'];
+    it('should execute successful transition with injected transitions', async () => {
+      const testTransitions: Transition[] = [{
+        fromState: 'GATHER_NO_PLAN',
+        spell: 'Accio',
+        toState: 'GATHER_PLAN_DRAFT',
+        execute: async (context: StateContext) => {
+          return { message: 'Plan creation started' };
+        }
+      }];
       
-      for (const spell of spells) {
-        const result = await stateMachine.executeSpell(spell);
-        expect(result.success).toBe(false);
-        expect(result.message).toContain('not available in the current state');
-      }
+      const testStateMachine = new AiEngineerStateMachine(stateRepository, fileSystem, testTransitions);
+      const result = await testStateMachine.executeSpell('Accio');
+      
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Plan creation started');
+      
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('GATHER_PLAN_DRAFT');
     });
 
+    it('should handle conditional transitions', async () => {
+      const testTransitions: Transition[] = [{
+        fromState: 'GATHER_NO_PLAN',
+        spell: 'Accio',
+        toState: 'GATHER_PLAN_DRAFT',
+        condition: (context: StateContext) => context.currentState === 'GATHER_NO_PLAN',
+        execute: async (context: StateContext) => ({ message: 'Condition met' })
+      }];
+      
+      const testStateMachine = new AiEngineerStateMachine(stateRepository, fileSystem, testTransitions);
+      const result = await testStateMachine.executeSpell('Accio');
+      
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Condition met');
+    });
 
+    it('should handle errors without corrupting state', async () => {
+      const testTransitions: Transition[] = [{
+        fromState: 'GATHER_NO_PLAN',
+        spell: 'Accio',
+        toState: 'GATHER_PLAN_DRAFT',
+        execute: async (context: StateContext) => {
+          throw new Error('Transition execution failed');
+        }
+      }];
+      
+      const testStateMachine = new AiEngineerStateMachine(stateRepository, fileSystem, testTransitions);
+      const result = await testStateMachine.executeSpell('Accio');
+      
+      expect(result.success).toBe(false);
+      expect(result.message).toContain('Transition execution failed');
+      
+      // State should not be saved on error - file should not exist
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState).toBeNull();
+    });    
 
   });
 
