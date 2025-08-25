@@ -40,7 +40,7 @@ describe('Spell Resources Tests', () => {
       const lumosResource = result.resources.find(
         (resource: any) => resource.uri === 'lumos://current'
       );
-      expect(lumosResource.name).toBe('lumos');
+      expect(lumosResource.name).toBe('lumos-current');
       expect(lumosResource.description).toBe('Shows the current state of the AI Engineer workflow');
       expect(lumosResource.mimeType).toBe('application/json');
     });

@@ -111,9 +111,11 @@ claude mcp add-json ai-engineer '{
 The `advance` tool is part of the MCP Orchestrator, which helps coordinate task execution between users and the AI agent. This tool either creates a task template or executes an existing task.
 
 Parameters:
+
 - `reason`: String (free text) explaining why you're advancing the task
 
 When called:
+
 - If `.ai/task/task.md` doesn't exist: Creates a task template file and enters "draft" mode
 - If `.ai/task/task.md` exists: Enters "execute" mode to carry out the steps in the file
 
@@ -128,6 +130,7 @@ No parameters required.
 Appends a message to the task log file.
 
 Parameters:
+
 - `message`: The message to add to the log
 
 ## Troubleshooting

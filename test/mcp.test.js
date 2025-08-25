@@ -41,15 +41,17 @@ describe('MCP Server Tests', () => {
   // No resource tests needed since resources were removed
   
   describe('Tool Tests', () => {
-    test('Tools list should include orchestrator tools', () => {
+    test('Tools list should include spell tools', () => {
       const result = runInspector('tools/list');
       expect(result.tools).toBeDefined();
       expect(result.tools.length).toBeGreaterThan(0);
       
       const toolNames = result.tools.map(tool => tool.name);
-      expect(toolNames).toContain('advance');
-      expect(toolNames).toContain('reset');
-      expect(toolNames).toContain('append_log');
+      expect(toolNames).toContain('accio');
+      expect(toolNames).toContain('expecto');
+      expect(toolNames).toContain('reparo');
+      expect(toolNames).toContain('reverto');
+      expect(toolNames).toContain('finite');
     });
   });
 });

@@ -9,18 +9,20 @@ Remove the old "Condition" and "Action" columns from all transition tables in `s
 ## Process
 
 1. **Find All Transition Tables**: Look for tables with this format:
+
    ```
    | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
    ```
 
 2. **Remove Old Columns**: Transform to:
+
    ```
    | ID | Current State | Trigger | MCP Condition | Next State | MCP Actions | Response |
    ```
 
 3. **Work Systematically**: Go through each section:
    - Context Gathering Phase Transitions
-   - Gather Acceptance Criteria Phase Transitions  
+   - Gather Acceptance Criteria Phase Transitions
    - Context Gathering Phase Blocked Transitions
    - Context Gathering Phase No-op Transitions
    - Gather Acceptance Criteria Phase Blocked Transitions
@@ -44,6 +46,7 @@ Remove the old "Condition" and "Action" columns from all transition tables in `s
 ## Example Transformation
 
 **Before:**
+
 ```
 | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
 |----|---------------|---------|-----------|---------------|------------|--------|-------------|----------|
@@ -51,6 +54,7 @@ Remove the old "Condition" and "Action" columns from all transition tables in `s
 ```
 
 **After:**
+
 ```
 | ID | Current State | Trigger | MCP Condition | Next State | MCP Actions | Response |
 |----|---------------|---------|---------------|------------|-------------|----------|

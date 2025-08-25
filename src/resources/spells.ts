@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 /**
  * Lumos Resource - Shows current state information
@@ -7,7 +7,17 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 export function registerLumosResource(server: McpServer): void {
   server.registerResource(
     'lumos',
-    'lumos://current',
+    new ResourceTemplate('lumos://current', {
+      list: async () => ({
+        resources: [
+          {
+            name: 'lumos-current',
+            uri: 'lumos://current',
+            title: 'Current AI Engineer State',
+          },
+        ],
+      }),
+    }),
     {
       title: 'Current AI Engineer State',
       description: 'Shows the current state of the AI Engineer workflow',

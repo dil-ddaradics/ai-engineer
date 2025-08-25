@@ -51,11 +51,6 @@ describe('Spell Tools Tests', () => {
       expect(toolNames).toContain('reparo');
       expect(toolNames).toContain('reverto');
       expect(toolNames).toContain('finite');
-
-      // Check for existing orchestrator tools
-      expect(toolNames).toContain('advance');
-      expect(toolNames).toContain('reset');
-      expect(toolNames).toContain('append_log');
     });
   });
 
@@ -71,8 +66,8 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Accio');
-      expect(response.placeholder).toBe(true);
-      expect(response.note).toContain('State-driven behavior');
+      expect(response.newState).toBeDefined();
+      expect(response.message).toBeDefined();
     });
 
     test('Expecto tool should execute successfully', () => {
@@ -84,8 +79,8 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Expecto');
-      expect(response.placeholder).toBe(true);
-      expect(response.note).toContain('State-driven behavior');
+      expect(response.newState).toBeDefined();
+      expect(response.message).toBeDefined();
     });
 
     test('Reparo tool should execute successfully', () => {
@@ -97,8 +92,8 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Reparo');
-      expect(response.placeholder).toBe(true);
-      expect(response.note).toContain('State-driven behavior');
+      expect(response.newState).toBeDefined();
+      expect(response.message).toBeDefined();
     });
 
     test('Reverto tool should execute successfully', () => {
@@ -110,8 +105,8 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Reverto');
-      expect(response.placeholder).toBe(true);
-      expect(response.note).toContain('State-driven behavior');
+      expect(response.newState).toBeDefined();
+      expect(response.message).toBeDefined();
     });
 
     test('Finite tool should execute successfully', () => {
@@ -123,8 +118,8 @@ describe('Spell Tools Tests', () => {
       const response = JSON.parse(result.content[0].text);
       expect(response.success).toBe(true);
       expect(response.spell).toBe('Finite');
-      expect(response.placeholder).toBe(true);
-      expect(response.note).toContain('State-driven behavior');
+      expect(response.newState).toBeDefined();
+      expect(response.message).toBeDefined();
     });
 
     // Lumos is now a resource, not a tool, so it's tested in the resources test file

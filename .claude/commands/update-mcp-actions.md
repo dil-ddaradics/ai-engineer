@@ -20,18 +20,21 @@ Work through the transition tables **one table at a time** and ensure each table
 ### What the MCP Does:
 
 #### For MCP Condition Column:
+
 - **File Existence Checks**: Verifying if files exist to evaluate conditions
 - **Content Reading**: Reading file contents to extract information for condition evaluation
 - **Data Extraction**: Extracting URLs, parsing content, checking for patterns needed by conditions
 - **Validation**: Checking file structure, content format, etc. required by conditional logic
 
 #### For MCP Actions Column:
+
 - **File Operations**: Creating, reading, writing, deleting, archiving files
 - **Directory Operations**: Creating directories, managing file structure
 - **Template Management**: Copying templates, creating template files from resources
 - **File I/O**: Writing AI-generated content to files, reading file contents
 
 ### What the AI Does (DO NOT include in MCP Actions):
+
 - **Intelligent Content Generation**: Creating text content, processing information
 - **External Service Integration**: Gathering GitHub comments, fetching data
 - **User Communication**: All interactions described in response files
@@ -39,6 +42,7 @@ Work through the transition tables **one table at a time** and ensure each table
 - **Content Processing**: Analyzing content, extracting information
 
 ### Key Insight: Response Files Show Post-MCP Activities
+
 The response files are vetted and describe what the AI does AFTER the MCP has completed its file operations. If something is described in the response file, it's likely an AI responsibility, not an MCP action.
 
 ## Placeholder Replacement in Response Files
@@ -46,6 +50,7 @@ The response files are vetted and describe what the AI does AFTER the MCP has co
 Many response files contain placeholders that need to be replaced with dynamic content during execution. When you encounter placeholders in response files, the MCP Actions must include the replacement operation.
 
 ### Common Placeholder Types:
+
 - **`[TASK_CONTENT_PLACEHOLDER]`** - Replaced with content from task.md file
 - **`[ATLASSIAN_URLS_PLACEHOLDER]`** - Replaced with extracted Atlassian URLs
 - **`[ARCHIVE_PATH_PLACEHOLDER]`** - Replaced with generated archive path
@@ -53,9 +58,11 @@ Many response files contain placeholders that need to be replaced with dynamic c
 - **`[INCOMPLETE_ARCHIVE_PATH_PLACEHOLDER]`** - Replaced with generated incomplete task archive path
 
 ### Placeholder Replacement Principle:
+
 Regardless of how the replacement content is obtained (file reading, URL extraction, path generation, etc.), if a response file contains placeholders, the MCP Actions should include a step for replacing them with the appropriate content.
 
 ### Examples:
+
 - **File Content Placeholder**: "(1) Reads `.ai/task/task.md` content; (2) Replaces `[TASK_CONTENT_PLACEHOLDER]` in response with task content"
 - **Generated Path Placeholder**: "(1) Generates archive path; (2) Replaces `[ARCHIVE_PATH_PLACEHOLDER]` in response with generated path"
 - **Extracted Data Placeholder**: "(1) Extracts Atlassian URLs; (2) Replaces `[ATLASSIAN_URLS_PLACEHOLDER]` in response with URL list"
@@ -80,12 +87,14 @@ Regardless of how the replacement content is obtained (file reading, URL extract
 ## Table Format
 
 Transform tables that are missing MCP columns from:
+
 ```
 | ID | Current State | Trigger | Condition | Next State | Action | Response |
 ```
 
 To:
-```  
+
+```
 | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
 ```
 
@@ -101,47 +110,55 @@ To:
 ## Example Transformations
 
 **Example 1: Simple file creation (no condition evaluation)**
+
 - **Condition**: "-"
 - **MCP Condition**: "-"
 - **Action**: "(1) Create `.ai/task/context.md` from template; (2) Copy `.ai/plan-guide.md` from MCP resources if it doesn't exist"
 - **MCP Actions**: "(1) Creates `.ai/task/context.md` with template; (2) Copies `.ai/plan-guide.md` from MCP resources if missing"
 
 **Example 2: Condition requires file operations + post-activation actions**
-- **Condition**: "context.md exists AND Atlassian URLs found" 
+
+- **Condition**: "context.md exists AND Atlassian URLs found"
 - **MCP Condition**: "Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds some)"
 - **Action**: "Read context.md, extract Atlassian URLs, provide URLs to AI for processing"
 - **MCP Actions**: "Creates `.ai/task/plan.md` file"
 
 **Example 3: Condition requires file operations + different post-activation actions**
+
 - **Condition**: "context.md exists AND no Atlassian URLs found"
-- **MCP Condition**: "Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none)" 
+- **MCP Condition**: "Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none)"
 - **Action**: "Read context.md, provide content to AI for plan generation"
 - **MCP Actions**: "Creates `.ai/task/plan.md` file"
 
 **Example 4: Simple condition check**
+
 - **Condition**: "context.md missing"
 - **MCP Condition**: "Checks `.ai/task/context.md` exists (missing)"
 - **Action**: "State updated to ERROR_CONTEXT_MISSING"
 - **MCP Actions**: "-"
 
 **Example 5: No MCP operations**
+
 - **Condition**: "-"
-- **MCP Condition**: "-"  
+- **MCP Condition**: "-"
 - **Action**: "No state change"
 - **MCP Actions**: "-"
 
 **Example 6: Placeholder replacement with file content**
+
 - **Condition**: "task.md exists AND plan.md exists"
 - **MCP Condition**: "Checks `.ai/task/task.md` exists (exists); Checks `.ai/task/plan.md` exists (exists)"
-- **Action**: "(1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory"  
+- **Action**: "(1) Update state to ACHIEVE_TASK_DRAFTING; (2) Load task.md content into memory"
 - **MCP Actions**: "(1) Reads `.ai/task/task.md` content; (2) Replaces `[TASK_CONTENT_PLACEHOLDER]` in response with task content"
 
 ## Key Insights from Implementation Experience
 
 ### Multiple Condition Paths Can Lead to Same MCP Actions
+
 Examples 2 and 3 above show how different condition evaluation results (URLs found vs not found) can both require the same MCP action (creating plan.md file). This is because both transitions lead to the same end state (GATHER_EDITING) which requires the same file structure.
 
-### Condition Column Analysis Is Critical  
+### Condition Column Analysis Is Critical
+
 Many conditions like "Atlassian URLs found" require significant MCP work (reading files, extracting data) that was previously overlooked when only analyzing the Action column.
 
 ## Table Selection Process
@@ -149,11 +166,13 @@ Many conditions like "Atlassian URLs found" require significant MCP work (readin
 Before starting, identify which table needs updating:
 
 1. **Check for existing columns**: Look for tables that already have both MCP Condition and MCP Actions columns in this format:
+
    ```
    | ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |
    ```
 
 2. **Find tables needing updates**: Look for tables with the old format missing these columns:
+
    ```
    | ID | Current State | Trigger | Condition | Next State | Action | Response |
    ```
@@ -163,8 +182,9 @@ Before starting, identify which table needs updating:
 ## Pre-execution Checklist
 
 Before making any changes to a table, confirm:
+
 - [ ] Target table format will have exactly 9 columns
-- [ ] MCP Condition column will be positioned after Condition column  
+- [ ] MCP Condition column will be positioned after Condition column
 - [ ] MCP Actions column will be positioned after Action column
 - [ ] Header structure will match: `| ID | Current State | Trigger | Condition | MCP Condition | Next State | Action | MCP Actions | Response |`
 - [ ] You have read the corresponding response files for the transitions you're updating

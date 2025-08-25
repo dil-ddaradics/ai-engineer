@@ -98,32 +98,32 @@ mcp-server/
 Create `src/index.ts`:
 
 ```typescript
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerResources } from "./resources/index.js";
-import { registerTools } from "./tools/index.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { registerResources } from './resources/index.js';
+import { registerTools } from './tools/index.js';
 
 // CRITICAL: Protect STDOUT from accidental writes
 // Override console.log to use stderr instead
-console.log = function(...args) {
+console.log = function (...args) {
   console.error(...args);
 };
 
 // Create server instance
 const server = new McpServer({
-  name: "ai-engineer",
-  version: "1.0.0"
+  name: 'ai-engineer',
+  version: '1.0.0',
 });
 
 // Start the server
 async function main() {
   // Always log to stderr
   console.error(`[${new Date().toISOString()}] AI Engineer MCP Server initializing`);
-  
+
   // Register all resources and tools
   registerResources(server);
   registerTools(server);
-  
+
   try {
     const transport = new StdioServerTransport();
     await server.connect(transport);
@@ -159,32 +159,36 @@ Resources provide data to AI assistants. Here's how to implement a simple resour
 ### Basic Resource Implementation
 
 ```typescript
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 // Register a greeting resource
 server.registerResource(
-  "greeting",
-  new ResourceTemplate("greeting://{name}", { 
+  'greeting',
+  new ResourceTemplate('greeting://{name}', {
     list: async () => ({
-      resources: [{ 
-        name: "greeting-world", 
-        uri: "greeting://world",
-        title: "Default Greeting"
-      }]
-    })
+      resources: [
+        {
+          name: 'greeting-world',
+          uri: 'greeting://world',
+          title: 'Default Greeting',
+        },
+      ],
+    }),
   }),
-  { 
-    title: "Greeting Resource",
-    description: "Provides a personalized greeting"
+  {
+    title: 'Greeting Resource',
+    description: 'Provides a personalized greeting',
   },
   async (uri, { name }) => {
     const nameStr = typeof name === 'string' ? name : 'world';
-    
+
     return {
-      contents: [{
-        uri: uri.href,
-        text: `Hello, ${nameStr}! Welcome to AI Sandbox MCP Server.`
-      }]
+      contents: [
+        {
+          uri: uri.href,
+          text: `Hello, ${nameStr}! Welcome to AI Sandbox MCP Server.`,
+        },
+      ],
     };
   }
 );
@@ -202,13 +206,15 @@ The `list` callback must return a specific structure:
 // CORRECT list callback implementation
 {
   list: async () => ({
-    resources: [{ 
-      name: "resource-name", // Required
-      uri: "resource://uri",  // Required
-      title: "Human-readable title", // Optional but recommended
-      description: "Resource description" // Optional
-    }]
-  })
+    resources: [
+      {
+        name: 'resource-name', // Required
+        uri: 'resource://uri', // Required
+        title: 'Human-readable title', // Optional but recommended
+        description: 'Resource description', // Optional
+      },
+    ],
+  });
 }
 ```
 
@@ -220,9 +226,9 @@ Always check parameter types since they can be undefined or non-string:
 async (uri, { param }) => {
   // Always check parameter type
   const paramValue = typeof param === 'string' ? param : 'defaultValue';
-  
+
   // Rest of implementation...
-}
+};
 ```
 
 #### 3. Error Handling
@@ -235,34 +241,40 @@ async (uri, { id }) => {
     // Parameter validation
     if (typeof id !== 'string' || !id.match(/^\d+$/)) {
       return {
-        contents: [{
-          uri: uri.href,
-          text: `Error: Invalid ID format. Must be numeric.`
-        }],
-        status: 400
+        contents: [
+          {
+            uri: uri.href,
+            text: `Error: Invalid ID format. Must be numeric.`,
+          },
+        ],
+        status: 400,
       };
     }
-    
+
     // Resource implementation
     const data = await fetchData(id);
-    
+
     return {
-      contents: [{
-        uri: uri.href,
-        text: `Data: ${JSON.stringify(data)}`
-      }]
+      contents: [
+        {
+          uri: uri.href,
+          text: `Data: ${JSON.stringify(data)}`,
+        },
+      ],
     };
   } catch (error) {
     console.error(`Error processing resource: ${error}`);
     return {
-      contents: [{
-        uri: uri.href,
-        text: `Error processing request: ${error.message}`
-      }],
-      status: 500
+      contents: [
+        {
+          uri: uri.href,
+          text: `Error processing request: ${error.message}`,
+        },
+      ],
+      status: 500,
     };
   }
-}
+};
 ```
 
 #### 4. Default Values
@@ -271,21 +283,21 @@ Always provide default values for optional parameters:
 
 ```typescript
 // Good practice for resource with multiple parameters
-new ResourceTemplate("data://{category}/{format}", {
+(new ResourceTemplate('data://{category}/{format}', {
   list: async () => ({
     resources: [
-      { name: "data-json", uri: "data://products/json", title: "Products (JSON)" },
-      { name: "data-csv", uri: "data://products/csv", title: "Products (CSV)" }
-    ]
-  })
+      { name: 'data-json', uri: 'data://products/json', title: 'Products (JSON)' },
+      { name: 'data-csv', uri: 'data://products/csv', title: 'Products (CSV)' },
+    ],
+  }),
 }),
-{ title: "Data Resource", description: "Product data in various formats" },
-async (uri, { category, format }) => {
-  const categoryValue = typeof category === 'string' ? category : 'products';
-  const formatValue = typeof format === 'string' ? format : 'json';
-  
-  // Implementation...
-}
+  { title: 'Data Resource', description: 'Product data in various formats' },
+  async (uri, { category, format }) => {
+    const categoryValue = typeof category === 'string' ? category : 'products';
+    const formatValue = typeof format === 'string' ? format : 'json';
+
+    // Implementation...
+  });
 ```
 
 #### 5. Resource Naming Conventions
@@ -303,8 +315,8 @@ Tools allow AI assistants to perform actions. Here's how to implement tools:
 ### Basic Tool Implementation
 
 ```typescript
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
 
 /**
  * Register all tools with the MCP server
@@ -312,23 +324,25 @@ import { z } from "zod";
 export function registerTools(server: McpServer): void {
   // Simple addition tool
   server.registerTool(
-    "add",
+    'add',
     {
-      title: "Addition Tool",
-      description: "Adds two numbers together",
+      title: 'Addition Tool',
+      description: 'Adds two numbers together',
       inputSchema: {
-        a: z.number().describe("First number"),
-        b: z.number().describe("Second number")
-      }
+        a: z.number().describe('First number'),
+        b: z.number().describe('Second number'),
+      },
     },
     async ({ a, b }) => {
       const sum = a + b;
-      
+
       return {
-        content: [{ 
-          type: "text", 
-          text: `${a} + ${b} = ${sum}` 
-        }]
+        content: [
+          {
+            type: 'text',
+            text: `${a} + ${b} = ${sum}`,
+          },
+        ],
       };
     }
   );
@@ -343,33 +357,37 @@ Always validate your tool inputs:
 
 ```typescript
 server.registerTool(
-  "search",
+  'search',
   {
-    title: "Search Tool",
-    description: "Search for content",
+    title: 'Search Tool',
+    description: 'Search for content',
     inputSchema: {
-      query: z.string().min(1).describe("Search query"),
-      limit: z.number().optional().default(10).describe("Maximum results")
-    }
+      query: z.string().min(1).describe('Search query'),
+      limit: z.number().optional().default(10).describe('Maximum results'),
+    },
   },
   async ({ query, limit }) => {
     // Input validation is handled by zod schema
     try {
       const results = await performSearch(query, limit);
       return {
-        content: [{ 
-          type: "text", 
-          text: `Found ${results.length} results for "${query}":\n\n${results.join("\n")}`
-        }]
+        content: [
+          {
+            type: 'text',
+            text: `Found ${results.length} results for "${query}":\n\n${results.join('\n')}`,
+          },
+        ],
       };
     } catch (error) {
       console.error(`Search error: ${error}`);
       return {
-        content: [{ 
-          type: "text", 
-          text: `Error performing search: ${error.message}`
-        }],
-        isError: true
+        content: [
+          {
+            type: 'text',
+            text: `Error performing search: ${error.message}`,
+          },
+        ],
+        isError: true,
       };
     }
   }
@@ -384,33 +402,39 @@ Use the `isError` property to indicate error states:
 async ({ id }) => {
   try {
     const data = await fetchData(id);
-    
+
     if (!data) {
       return {
-        content: [{ 
-          type: "text", 
-          text: `No data found for ID: ${id}`
-        }],
-        isError: true  // Mark as error
+        content: [
+          {
+            type: 'text',
+            text: `No data found for ID: ${id}`,
+          },
+        ],
+        isError: true, // Mark as error
       };
     }
-    
+
     return {
-      content: [{ 
-        type: "text", 
-        text: `Data: ${JSON.stringify(data, null, 2)}`
-      }]
+      content: [
+        {
+          type: 'text',
+          text: `Data: ${JSON.stringify(data, null, 2)}`,
+        },
+      ],
     };
   } catch (error) {
     return {
-      content: [{ 
-        type: "text", 
-        text: `Error: ${error.message}`
-      }],
-      isError: true
+      content: [
+        {
+          type: 'text',
+          text: `Error: ${error.message}`,
+        },
+      ],
+      isError: true,
     };
   }
-}
+};
 ```
 
 #### 3. Proper Description for Parameters
@@ -422,11 +446,11 @@ inputSchema: {
   longitude: z.number()
     .min(-180).max(180)
     .describe("Longitude coordinate (-180 to 180)"),
-  
+
   latitude: z.number()
     .min(-90).max(90)
     .describe("Latitude coordinate (-90 to 90)"),
-  
+
   radius: z.number()
     .positive()
     .describe("Search radius in kilometers")
@@ -440,18 +464,18 @@ Use multiple content types to provide rich responses:
 ```typescript
 return {
   content: [
-    { 
-      type: "text", 
-      text: "Here are the search results:" 
+    {
+      type: 'text',
+      text: 'Here are the search results:',
     },
     {
-      type: "resource_link",
-      uri: "files://results/search.csv",
-      name: "search-results.csv",
-      mimeType: "text/csv",
-      description: "CSV file with search results"
-    }
-  ]
+      type: 'resource_link',
+      uri: 'files://results/search.csv',
+      name: 'search-results.csv',
+      mimeType: 'text/csv',
+      description: 'CSV file with search results',
+    },
+  ],
 };
 ```
 
@@ -498,46 +522,50 @@ When developing MCP servers with TypeScript, there are several common issues tha
 
 ```typescript
 // ERROR: Type 'string[]' is not assignable to type 'ListResourcesCallback'
-new ResourceTemplate("greeting://{name}", {
-  list: () => ["greeting://world"]
-})
+new ResourceTemplate('greeting://{name}', {
+  list: () => ['greeting://world'],
+});
 ```
 
 **Solution**: Return the correct structure:
 
 ```typescript
-new ResourceTemplate("greeting://{name}", {
+new ResourceTemplate('greeting://{name}', {
   list: async () => ({
-    resources: [{ 
-      name: "greeting-world", 
-      uri: "greeting://world" 
-    }]
-  })
-})
+    resources: [
+      {
+        name: 'greeting-world',
+        uri: 'greeting://world',
+      },
+    ],
+  }),
+});
 ```
 
 #### Issue: Missing Required Properties
 
 ```typescript
 // ERROR: Property 'name' is missing in type '{ uri: string; }'
-new ResourceTemplate("greeting://{name}", {
+new ResourceTemplate('greeting://{name}', {
   list: async () => ({
-    resources: [{ uri: "greeting://world" }]
-  })
-})
+    resources: [{ uri: 'greeting://world' }],
+  }),
+});
 ```
 
 **Solution**: Include all required properties:
 
 ```typescript
-new ResourceTemplate("greeting://{name}", {
+new ResourceTemplate('greeting://{name}', {
   list: async () => ({
-    resources: [{ 
-      name: "greeting-world", // Required
-      uri: "greeting://world" // Required
-    }]
-  })
-})
+    resources: [
+      {
+        name: 'greeting-world', // Required
+        uri: 'greeting://world', // Required
+      },
+    ],
+  }),
+});
 ```
 
 ### Parameter Handling Errors
@@ -548,12 +576,14 @@ new ResourceTemplate("greeting://{name}", {
 // ERROR: Object is possibly 'undefined'
 async (uri, { name }) => {
   return {
-    contents: [{
-      uri: uri.href,
-      text: `Hello, ${name.toUpperCase()}!` // Runtime error if name is undefined
-    }]
+    contents: [
+      {
+        uri: uri.href,
+        text: `Hello, ${name.toUpperCase()}!`, // Runtime error if name is undefined
+      },
+    ],
   };
-}
+};
 ```
 
 **Solution**: Always check parameter types:
@@ -562,12 +592,14 @@ async (uri, { name }) => {
 async (uri, { name }) => {
   const nameStr = typeof name === 'string' ? name : 'world';
   return {
-    contents: [{
-      uri: uri.href,
-      text: `Hello, ${nameStr.toUpperCase()}!`
-    }]
+    contents: [
+      {
+        uri: uri.href,
+        text: `Hello, ${nameStr.toUpperCase()}!`,
+      },
+    ],
   };
-}
+};
 ```
 
 ### ESM Import Issues
@@ -578,14 +610,14 @@ When using ESM, TypeScript requires explicit `.js` extensions in import statemen
 
 ```typescript
 // ERROR: Cannot find module './resources/index' or its corresponding type declarations
-import { registerResources } from "./resources/index";
+import { registerResources } from './resources/index';
 ```
 
 **Solution**: Add `.js` extension to import statements:
 
 ```typescript
 // CORRECT: TypeScript will resolve this correctly in ESM mode
-import { registerResources } from "./resources/index.js";
+import { registerResources } from './resources/index.js';
 ```
 
 ### Tool Schema Type Errors
@@ -595,30 +627,34 @@ import { registerResources } from "./resources/index.js";
 ```typescript
 // ERROR: Type 'z.ZodObject<...>' is not assignable to type 'InputObjectSchema'
 server.registerTool(
-  "add",
+  'add',
   {
     inputSchema: z.object({
       a: z.number(),
-      b: z.number()
-    })
+      b: z.number(),
+    }),
   },
-  async (args) => { /* implementation */ }
-)
+  async args => {
+    /* implementation */
+  }
+);
 ```
 
 **Solution**: Use the object literal syntax:
 
 ```typescript
 server.registerTool(
-  "add",
+  'add',
   {
     inputSchema: {
       a: z.number(),
-      b: z.number()
-    }
+      b: z.number(),
+    },
   },
-  async ({ a, b }) => { /* implementation */ }
-)
+  async ({ a, b }) => {
+    /* implementation */
+  }
+);
 ```
 
 ### Build Configuration Issues
@@ -657,7 +693,7 @@ The most common MCP connection issue is STDOUT contamination. With stdio transpo
 
 // CRITICAL: Protect STDOUT from accidental writes
 // Override console.log to use stderr instead
-console.log = function(...args) {
+console.log = function (...args) {
   console.error(...args);
 };
 
@@ -691,8 +727,9 @@ claude mcp add-json my-mcp-server '{
 ```
 
 This approach avoids:
+
 - Command line parsing/quoting issues
-- Path resolution problems 
+- Path resolution problems
 - Environment variable inconsistencies
 
 ### 3. Using Absolute Paths
@@ -705,7 +742,7 @@ claude mcp add --transport stdio my-mcp -- 'node index.js'
 
 # Good (fully specified paths)
 claude mcp add-json my-mcp '{
-  "type": "stdio", 
+  "type": "stdio",
   "command": "/usr/local/bin/node",
   "args": ["/Users/username/projects/mcp-server/dist/index.js"]
 }'
@@ -737,14 +774,14 @@ const SERVER_SCRIPT = path.resolve(__dirname, '../dist/index.js');
 const NODE_PATH = process.execPath;
 
 const serverProcess = spawn(NODE_PATH, [SERVER_SCRIPT], {
-  stdio: ['pipe', 'pipe', 'inherit'] // Pipe stdin/stdout, inherit stderr
+  stdio: ['pipe', 'pipe', 'inherit'], // Pipe stdin/stdout, inherit stderr
 });
 
 // Listen for server output
-serverProcess.stdout.on('data', (data) => {
+serverProcess.stdout.on('data', data => {
   const output = data.toString().trim();
   console.log(`[SERVER OUT] ${output}`);
-  
+
   try {
     // Try to parse as JSON to verify protocol compliance
     JSON.parse(output);
@@ -758,7 +795,7 @@ serverProcess.stdout.on('data', (data) => {
 const request = {
   jsonrpc: '2.0',
   method: 'tools/list',
-  id: 1
+  id: 1,
 };
 
 console.log('Sending test request...');

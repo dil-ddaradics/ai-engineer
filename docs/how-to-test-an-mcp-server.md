@@ -5,32 +5,37 @@ A practical, copy‑pasteable guide for exercising any MCP server with **@modelc
 ---
 
 ## 0) Prerequisites
+
 - **Node.js** ≥ 22.7 (Inspector requirement).
 - Your MCP server entrypoint (e.g., `node build/index.js`) or a remote SSE/HTTP endpoint.
 - macOS/Linux/WSL terminal.
 
 > Tip: The Inspector runs two processes:
+>
 > - **Client UI** on port **6274**
 > - **Proxy** on port **6277**
-    > You can override via `CLIENT_PORT` and `SERVER_PORT`.
+>   You can override via `CLIENT_PORT` and `SERVER_PORT`.
 
 ---
 
 ## 1) Quick Start
 
 ### UI (manual testing)
+
 ```bash
 # Open the Inspector UI
 npx @modelcontextprotocol/inspector
 ```
+
 - The browser opens at `http://localhost:6274` (first run will include a session token in the URL).
 - In the left sidebar, choose a **transport** and configure:
-    - **stdio**: Command, Args, Env
-    - **sse**: Remote URL (and optional auth header in UI)
-    - **streamable-http**: Remote URL
+  - **stdio**: Command, Args, Env
+  - **sse**: Remote URL (and optional auth header in UI)
+  - **streamable-http**: Remote URL
 - Click **Connect**.
 
 ### CLI (scriptable/CI)
+
 ```bash
 # Connect to a local stdio server entrypoint and list tools
 npx @modelcontextprotocol/inspector --cli node build/index.js --method tools/list
@@ -51,37 +56,42 @@ npx @modelcontextprotocol/inspector --cli https://your-server.example/mcp \
 ---
 
 ## 2) Manual Testing Workflow (UI)
+
 1. **Launch**
+
    ```bash
    npx @modelcontextprotocol/inspector
    ```
-    - Keep the terminal open; it shows proxy logs and your one‑time session token.
+
+   - Keep the terminal open; it shows proxy logs and your one‑time session token.
 
 2. **Pick a transport** in the left sidebar:
-    - **stdio**: Fill **Command** (e.g., `node`) and **Args** (e.g., `build/index.js --debug`). Use the **Env** table to inject variables (e.g., `API_KEY`).
-    - **sse**: Paste your server’s SSE endpoint (e.g., `http://localhost:8787/sse`). If your server requires **Bearer auth**, enter the token and (if needed) a custom header name.
-    - **streamable-http**: Paste the base HTTP endpoint (e.g., `http://localhost:8787/mcp`).
+   - **stdio**: Fill **Command** (e.g., `node`) and **Args** (e.g., `build/index.js --debug`). Use the **Env** table to inject variables (e.g., `API_KEY`).
+   - **sse**: Paste your server’s SSE endpoint (e.g., `http://localhost:8787/sse`). If your server requires **Bearer auth**, enter the token and (if needed) a custom header name.
+   - **streamable-http**: Paste the base HTTP endpoint (e.g., `http://localhost:8787/mcp`).
 
 3. **Connect** then explore tabs:
-    - **Resources**: View metadata, `uri`, `mimeType`, and **open content**. Use **Subscribe** to test live updates if supported.
-    - **Prompts**: Inspect prompt definitions, fill parameters, and preview rendered messages.
-    - **Tools**: Browse tool list; each tool shows input schema. Use the form to invoke and inspect **results**, **errors**, and **progress** events.
-    - **Notifications**: Live feed of server logs/diagnostics (MCP `notifications/logMessage`, etc.).
+   - **Resources**: View metadata, `uri`, `mimeType`, and **open content**. Use **Subscribe** to test live updates if supported.
+   - **Prompts**: Inspect prompt definitions, fill parameters, and preview rendered messages.
+   - **Tools**: Browse tool list; each tool shows input schema. Use the form to invoke and inspect **results**, **errors**, and **progress** events.
+   - **Notifications**: Live feed of server logs/diagnostics (MCP `notifications/logMessage`, etc.).
 
 4. **Export configuration** (top-right):
-    - **Server Entry** → copies one server block you can paste into a `mcp.json`.
-    - **Servers File** → copies a full `mcp.json` with the current server as `default-server`.
+   - **Server Entry** → copies one server block you can paste into a `mcp.json`.
+   - **Servers File** → copies a full `mcp.json` with the current server as `default-server`.
 
 5. **Reconnect quickly** via URL params (optional), e.g.:
-    - `http://localhost:6274/?transport=sse&serverUrl=http://localhost:8787/sse`
-    - `http://localhost:6274/?transport=stdio&serverCommand=npx&serverArgs=@modelcontextprotocol/server-everything`
+   - `http://localhost:6274/?transport=sse&serverUrl=http://localhost:8787/sse`
+   - `http://localhost:6274/?transport=stdio&serverCommand=npx&serverArgs=@modelcontextprotocol/server-everything`
 
 ---
 
 ## 3) Automated Testing (CLI)
+
 The Inspector’s **`--cli`** mode creates a short‑lived MCP client, prints machine‑readable output, and exits. Great for smoke tests and CI.
 
 ### 3.1 Minimal commands
+
 ```bash
 # Use a config file (see §6) and pick a server by name
 npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver --method tools/list
@@ -96,6 +106,7 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver --
 ```
 
 ### 3.2 Assert with `jq`
+
 ```bash
 # Verify a required tool exists
 npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver --method tools/list \
@@ -106,9 +117,11 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver \
   --method tools/call --tool-name search --tool-arg q=ping \
   | jq -e 'has("content") or has("result")'
 ```
+
 Non‑zero `jq -e` exit codes will **fail** your shell/CI step.
 
 ### 3.3 Golden output tests
+
 ```bash
 # Generate a golden file once
 npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver \
@@ -121,6 +134,7 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver \
 ```
 
 ### 3.4 Exit codes
+
 - **0** on success (method call completed)
 - **≠0** on connection/protocol error or tool error propagated as failure (useful for CI gates)
 
@@ -129,6 +143,7 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server myserver \
 ## 4) CI Integration Examples
 
 ### 4.1 GitHub Actions (stdio server)
+
 ```yaml
 name: mcp-smoke
 on: [push]
@@ -149,6 +164,7 @@ jobs:
 ```
 
 ### 4.2 GitHub Actions (remote SSE / HTTP)
+
 ```yaml
 - name: SSE server smoke
   run: |
@@ -167,6 +183,7 @@ jobs:
 ## 5) Local Dev Shortcuts
 
 ### 5.1 One‑liners for common servers
+
 ```bash
 # Filesystem reference server (browse local files)
 npx -y @modelcontextprotocol/inspector npx @modelcontextprotocol/server-filesystem "$HOME"
@@ -176,12 +193,14 @@ npx -y @modelcontextprotocol/inspector npx @modelcontextprotocol/server-everythi
 ```
 
 ### 5.2 Port & host overrides
+
 ```bash
 CLIENT_PORT=8080 SERVER_PORT=9000 \
 npx @modelcontextprotocol/inspector node build/index.js
 ```
 
 ### 5.3 Env injection & flag separation
+
 ```bash
 # Inject env vars into your server
 npx @modelcontextprotocol/inspector -e API_KEY=$MY_KEY -e DEBUG=true node build/index.js
@@ -191,6 +210,7 @@ npx @modelcontextprotocol/inspector -e FOO=bar -- node build/index.js --server-f
 ```
 
 ### 5.4 Reproducible configs (mcp.json)
+
 ```json
 {
   "mcpServers": {
@@ -210,7 +230,9 @@ npx @modelcontextprotocol/inspector -e FOO=bar -- node build/index.js --server-f
   }
 }
 ```
+
 Use it with:
+
 ```bash
 npx @modelcontextprotocol/inspector --cli --config mcp.json --server default-server --method tools/list
 ```
@@ -218,6 +240,7 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server default-ser
 ---
 
 ## 6) Security Checklist (highly recommended)
+
 - **Upgrade** Inspector to a **patched version** (0.14.1+). Use latest available.
 - **Keep auth enabled** (session token is on by default). **Do not** set `DANGEROUSLY_OMIT_AUTH=true`.
 - **Bind to localhost** (default). Only use `HOST=0.0.0.0` on trusted networks.
@@ -227,6 +250,7 @@ npx @modelcontextprotocol/inspector --cli --config mcp.json --server default-ser
 ---
 
 ## 7) Troubleshooting
+
 - **CLI can’t connect**: verify transport (SSE vs HTTP), endpoint path, and that the server is listening.
 - **stdio server never responds**: ensure your server writes **only protocol frames to stdout** and logs to **stderr**; otherwise stdio will jam.
 - **Tool schema mismatch**: validate your JSON input matches the tool’s JSON schema (use the UI to preview required fields).
@@ -316,9 +340,7 @@ Resource list responses have a specific structure:
 ```javascript
 // The list callback must return this structure:
 {
-  resources: [
-    { name: "resource-name", uri: "resource://uri", title: "Optional Title" }
-  ]
+  resources: [{ name: 'resource-name', uri: 'resource://uri', title: 'Optional Title' }];
 }
 ```
 
@@ -328,7 +350,7 @@ Ensure stdout is used only for JSON-RPC protocol messages:
 
 ```typescript
 // Add this to prevent accidental stdout usage
-console.log = function(...args) {
+console.log = function (...args) {
   console.error(...args);
 };
 ```
@@ -367,14 +389,14 @@ const path = require('path');
 
 function runInspector(method, options = {}) {
   let command = `npx @modelcontextprotocol/inspector --cli node ${serverPath} --method ${method}`;
-  
+
   if (options.uri) {
     command += ` --uri "${options.uri}"`;
   }
-  
+
   if (options.toolName) {
     command += ` --tool-name ${options.toolName}`;
-    
+
     if (options.toolArgs) {
       Object.entries(options.toolArgs).forEach(([key, value]) => {
         const argValue = typeof value === 'string' ? `"${value}"` : value;
@@ -382,7 +404,7 @@ function runInspector(method, options = {}) {
       });
     }
   }
-  
+
   const output = execSync(command, { encoding: 'utf8' });
   return JSON.parse(output);
 }
@@ -393,39 +415,39 @@ function runInspector(method, options = {}) {
 ```javascript
 describe('MCP Server Tests', () => {
   const serverPath = path.join(__dirname, '../dist/index.js');
-  
+
   beforeAll(() => {
     // Build the server before running tests
     execSync('npm run build', { stdio: 'inherit' });
   });
-  
+
   describe('Resource Tests', () => {
     test('Resources list should include greeting resource', () => {
       const result = runInspector('resources/list');
       expect(result.resources).toBeDefined();
       expect(result.resources.length).toBeGreaterThan(0);
-      
+
       const resourceNames = result.resources.map(resource => resource.name);
       expect(resourceNames).toContain('greeting-world');
     });
-    
+
     test('Should read greeting resource with custom name', () => {
       const result = runInspector('resources/read', { uri: 'greeting://Alice' });
       expect(result.contents).toBeDefined();
       expect(result.contents[0].text).toContain('Hello, Alice!');
     });
   });
-  
+
   describe('Tool Tests', () => {
     test('Should call add tool with positive numbers', () => {
       const result = runInspector('tools/call', {
         toolName: 'add',
         toolArgs: {
           a: 5,
-          b: 7
-        }
+          b: 7,
+        },
       });
-      
+
       expect(result.content[0].text).toBe('5 + 7 = 12');
     });
   });
@@ -433,6 +455,7 @@ describe('MCP Server Tests', () => {
 ```
 
 ## 11) Reference: Common MCP methods
+
 - `tools/list`, `tools/call`
 - `resources/list`, `resources/read`, `resources/subscribe`
 - `prompts/list`, `prompts/get`
@@ -441,6 +464,7 @@ describe('MCP Server Tests', () => {
 ---
 
 ## 9) Appendix: Example smoke script (bash)
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
@@ -470,7 +494,7 @@ echo "All MCP smoke tests passed."
 ---
 
 ### TL;DR
+
 - **UI mode** for exploration, prompt/tool shaping, and quick debugging.
 - **CLI mode** for repeatable smoke tests and CI gates.
 - Prefer **localhost with auth**, keep Inspector **up‑to‑date**, and export a `mcp.json` for reproducible runs.
-
