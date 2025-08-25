@@ -5,15 +5,19 @@ Explain to the developer that the `.ai/task/review task.md` file is missing and 
 ## Response to the Developer
 
 ### What Just Happened
+
 I tried to execute review tasks but the `.ai/task/review-task.md` file is missing. This is likely due to an accidental deletion.
 
 ### Where We Are
+
 We're in an error state where we need to recreate the `.ai/task/review task.md` file before proceeding with the PR review.
 
 ### Available Spells
+
 - **Accio**: Recreate the `.ai/task/review task.md` file based on the existing PR comments
 - **Reverto**: Cancel this PR review process and return to your previous workflow
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
+
 Use Accio to recreate the `.ai/task/review task.md` file based on the PR comments we've already collected. Alternatively, if you want to restart the PR review process from the beginning, use Reverto to cancel the current review.

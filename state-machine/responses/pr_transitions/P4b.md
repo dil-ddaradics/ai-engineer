@@ -15,16 +15,20 @@ Review Task Results Content:
 ## Response to the Developer
 
 ### What Just Happened
+
 I've archived the PR review results, updated our plan, and created a new task to move us forward.
 
 ### Where We Are
+
 We're now drafting a new task in `.ai/task/task.md` where we'll define the specific work to be done next.
 
 ### Available Spells
+
 - **Accio**: Execute the defined task and document results
 - **Finite**: Return to plan editing if we need to modify the `.ai/task/plan.md` file
 - **Reparo**: Begin a new PR review process
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
+
 Let's review and refine the proposed task I've created, then use Accio to execute it when we're ready.

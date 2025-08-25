@@ -2,10 +2,10 @@
 
 ## Summary
 
-
 ## Acceptance Criteria
-- [ ] 
-- [ ] 
-- [ ] 
+
+- [ ]
+- [ ]
+- [ ]
 
 ## Technical Approach

@@ -3,7 +3,8 @@
 For best results, commit your changes often and start new conversations to clear the AI's context when needed. Don't worry about losing progress - this system remembers where you left off!
 
 **Key Concepts:**
+
 - **Plans**: Define what you want to accomplish with acceptance criteria
-- **Tasks**: Break plans into small, focused work sessions  
+- **Tasks**: Break plans into small, focused work sessions
 - **Reviews**: Handle PR feedback systematically
 - **Spells**: Commands to navigate the workflow (Accio, Expecto, Reparo, etc.)

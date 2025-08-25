@@ -4,7 +4,7 @@
 
 ```typescript
 // Core types for states and spells
-type StateName = 
+type StateName =
   | 'GATHER_NEEDS_CONTEXT'
   | 'GATHER_EDITING_CONTEXT'
   | 'GATHER_EDITING'
@@ -164,7 +164,7 @@ interface StateMachine {
 /state-machine                    # Source files (not compiled)
   /responses                      # Response template files (markdown)
   /templates                      # Template files (markdown)
-  
+
 /src
   /state-machine                  # State machine implementation
     index.ts                      # Main entry point and factory function
@@ -178,7 +178,7 @@ interface StateMachine {
     stateRepository.test.ts       # Tests for state repository
     responses.ts                  # Generated file with response templates (auto-generated)
     templates.ts                  # Generated file with template content (auto-generated)
-    
+
     /transitions                  # Transition definitions organized by phase
       gatherTransitions.ts        # GATHER phase transitions
       gatherTransitions.test.ts   # Tests for GATHER transitions
@@ -191,7 +191,7 @@ interface StateMachine {
       universalTransitions.ts     # Universal transitions (Lumos, etc.)
       universalTransitions.test.ts # Tests for universal transitions
       index.ts                    # Exports all transitions
-    
+
     /utils                        # Helper utilities
       responseUtils.ts            # Response processing
       responseUtils.test.ts       # Tests for response utils
@@ -206,6 +206,7 @@ interface StateMachine {
 ## Build Strategy
 
 ### Prebuild Process
+
 The project uses a prebuild system that generates TypeScript constants from template and response files:
 
 ```typescript
@@ -221,11 +222,13 @@ The project uses a prebuild system that generates TypeScript constants from temp
 ```
 
 ### Build Scripts Architecture
+
 - **`scripts/prebuild.ts`**: Master script that imports both build scripts
-- **`scripts/build-responses.ts`**: Generates `src/state-machine/responses.ts` from `state-machine/responses/` folder  
+- **`scripts/build-responses.ts`**: Generates `src/state-machine/responses.ts` from `state-machine/responses/` folder
 - **`scripts/build-templates.ts`**: Generates `src/state-machine/templates.ts` from `state-machine/templates/` folder
 
 ### Generated Outputs
+
 - **`src/state-machine/responses.ts`**: Contains `RESPONSES` constant with all response templates
 - **`src/state-machine/templates.ts`**: Contains `TEMPLATES` constant with all file templates
 - Both generated files export Record<string, string> for runtime access
@@ -237,6 +240,7 @@ The MCP server manages all template files using a two-tier approach that separat
 ### Template Categories
 
 #### Persistent Guide Files
+
 - **Location**: `.ai/` folder (root of AI workspace)
 - **Behavior**: Copied from MCP resources only if they don't exist
 - **Purpose**: Allow developers to customize and reuse across multiple tasks
@@ -245,7 +249,8 @@ The MCP server manages all template files using a two-tier approach that separat
   - `.ai/task-guide.md` - Task creation guidelines
 
 #### Working Template Files
-- **Location**: `.ai/task/` folder (task-specific workspace) 
+
+- **Location**: `.ai/task/` folder (task-specific workspace)
 - **Behavior**: Created fresh from embedded templates each time needed
 - **Purpose**: Provide clean templates for each workflow step
 - **Files**:
@@ -258,6 +263,7 @@ The MCP server manages all template files using a two-tier approach that separat
   - `.ai/task/review-task-results.md` - Review task results template
 
 ### Template Resource Management
+
 - All templates are embedded in the compiled TypeScript via prebuild process
 - Templates are read from `TEMPLATES` constant at runtime
 - File existence checks determine copy vs. create behavior
@@ -268,12 +274,15 @@ The MCP server manages all template files using a two-tier approach that separat
 Response templates are handled by the MCP server with a separation of concerns:
 
 ### Template Architecture
+
 - **Individual Response Files**: Contain specific state information starting with "### Where We Are"
-- **Standard Header**: The MCP server maintains a separate Lumos header template 
+- **Standard Header**: The MCP server maintains a separate Lumos header template
 - **Concatenation**: The MCP server concatenates the standard header with individual response content
 
 ### Lumos Header Template
+
 The MCP server uses this standard header for all Lumos responses:
+
 ```markdown
 > **AI Engineer Workflow** helps you work together with AI on any coding task. This system was built to teach effective collaboration with AI through a guided workflow. You can create plans, break them down into smaller tasks, get information from Jira and Confluence, and improve your code by handling PR comments.
 >
@@ -281,6 +290,7 @@ The MCP server uses this standard header for all Lumos responses:
 ```
 
 ### Response File Format
+
 Individual response files should NOT include the standard header and should start directly with their content sections.
 
 ### Template Utilities
@@ -300,26 +310,23 @@ export function getTemplate(name: string): string {
 }
 
 export function processTemplate(
-  templateContent: string, 
+  templateContent: string,
   replacements?: Record<string, string>
 ): string {
   let processed = templateContent;
-  
+
   if (replacements) {
     Object.entries(replacements).forEach(([key, value]) => {
-      processed = processed.replace(
-        new RegExp(`{{${key}}}`, 'g'), 
-        value
-      );
+      processed = processed.replace(new RegExp(`{{${key}}}`, 'g'), value);
     });
   }
-  
+
   return processed;
 }
 
 export async function writeTemplate(
-  fileSystem: FileSystem, 
-  templateName: string, 
+  fileSystem: FileSystem,
+  templateName: string,
   filePath: string,
   replacements?: Record<string, string>
 ): Promise<void> {
@@ -347,14 +354,12 @@ function readResponses(dir: string, base = ''): void {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry);
     const relativePath = path.join(base, entry);
-    
+
     if (fs.statSync(fullPath).isDirectory()) {
       readResponses(fullPath, relativePath);
     } else if (entry.endsWith('.md')) {
       const content = fs.readFileSync(fullPath, 'utf8');
-      const key = relativePath
-        .replace(/\.md$/, '')
-        .replace(/\//g, '_');
+      const key = relativePath.replace(/\.md$/, '').replace(/\//g, '_');
       responses[key] = content;
     }
   }
@@ -391,7 +396,7 @@ function readTemplates(dir: string): void {
   const entries = fs.readdirSync(dir);
   for (const entry of entries) {
     const fullPath = path.join(dir, entry);
-    
+
     if (entry.endsWith('.md')) {
       const content = fs.readFileSync(fullPath, 'utf8');
       const key = entry.replace(/\.md$/, '').replace(/-/g, '_');
@@ -430,14 +435,14 @@ console.log('Prebuild completed - responses and templates generated');
 
 ```typescript
 // src/state-machine/stateMachine.ts
-import { 
-  StateMachine, 
-  StateContext, 
-  Spell, 
-  Transition, 
+import {
+  StateMachine,
+  StateContext,
+  Spell,
+  Transition,
   TransitionResult,
   FileSystem,
-  StateRepository
+  StateRepository,
 } from './types';
 
 export class StateMachineImpl implements StateMachine {
@@ -445,72 +450,68 @@ export class StateMachineImpl implements StateMachine {
   private transitions: Transition[];
   private fileSystem: FileSystem;
   private stateRepository: StateRepository;
-  
-  constructor(
-    fileSystem: FileSystem, 
-    stateRepository: StateRepository, 
-    transitions: Transition[]
-  ) {
+
+  constructor(fileSystem: FileSystem, stateRepository: StateRepository, transitions: Transition[]) {
     this.fileSystem = fileSystem;
     this.stateRepository = stateRepository;
     this.transitions = transitions;
-    this.context = { 
-      currentState: "GATHER_NEEDS_CONTEXT", 
-      history: [] 
+    this.context = {
+      currentState: 'GATHER_NEEDS_CONTEXT',
+      history: [],
     };
   }
-  
+
   async initialize(): Promise<void> {
     // Load state or initialize if not exists
     const loadedState = await this.stateRepository.load();
-    this.context = loadedState || await this.stateRepository.initialize();
+    this.context = loadedState || (await this.stateRepository.initialize());
   }
-  
+
   // Private method for finding valid transitions
   private async findValidTransition(spell: Spell): Promise<Transition | undefined> {
     // Find all transitions matching the current state and spell
-    const matchingTransitions = this.transitions.filter(t => 
-      t.sourceState === this.context.currentState && t.spell === spell
+    const matchingTransitions = this.transitions.filter(
+      t => t.sourceState === this.context.currentState && t.spell === spell
     );
-    
+
     // Find the first transition whose condition passes (or has no condition)
     for (const transition of matchingTransitions) {
       // If no condition is specified, treat it as always true
-      if (!transition.condition || await transition.condition(this.fileSystem)) {
+      if (!transition.condition || (await transition.condition(this.fileSystem))) {
         return transition;
       }
     }
-    
+
     return undefined;
   }
-  
+
   async executeSpell(spell: Spell): Promise<TransitionResult> {
     // Find a valid transition using the private method
     const transition = await this.findValidTransition(spell);
-    
+
     if (!transition) {
       throw new Error(`No valid transition found for ${this.context.currentState} + ${spell}`);
     }
-    
+
     // Store the previous state for logging
     const oldState = this.context.currentState;
-    
+
     // Execute the transition handler
     const result = await transition.handler(this.context, this.fileSystem);
-    
+
     // Add entry to history
     this.context.history.push({
       timestamp: new Date().toISOString(),
       transition: `${oldState} → ${result.nextState}`,
-      trigger: spell
+      trigger: spell,
     });
-    
+
     // Update state
     this.context.currentState = result.nextState;
-    
+
     // Save state
     await this.stateRepository.save(this.context);
-    
+
     // Return the result
     return result;
   }
@@ -527,17 +528,15 @@ import path from 'path';
 
 export class NodeFileSystem implements FileSystem {
   private basePath: string;
-  
+
   constructor(basePath: string = process.cwd()) {
     this.basePath = basePath;
   }
-  
+
   private resolvePath(filePath: string): string {
-    return path.isAbsolute(filePath) 
-      ? filePath 
-      : path.resolve(this.basePath, filePath);
+    return path.isAbsolute(filePath) ? filePath : path.resolve(this.basePath, filePath);
   }
-  
+
   async exists(filePath: string): Promise<boolean> {
     try {
       await fs.access(this.resolvePath(filePath));
@@ -546,34 +545,34 @@ export class NodeFileSystem implements FileSystem {
       return false;
     }
   }
-  
+
   async read(filePath: string): Promise<string> {
     return fs.readFile(this.resolvePath(filePath), 'utf-8');
   }
-  
+
   async write(filePath: string, content: string): Promise<void> {
     const fullPath = this.resolvePath(filePath);
     const directory = path.dirname(fullPath);
-    
+
     // Ensure directory exists
     await fs.mkdir(directory, { recursive: true });
-    
+
     // Write the file
     await fs.writeFile(fullPath, content, 'utf-8');
   }
-  
+
   async delete(filePath: string): Promise<void> {
     await fs.unlink(this.resolvePath(filePath));
   }
-  
+
   async archive(source: string, destination: string): Promise<void> {
     const sourceFullPath = this.resolvePath(source);
     const destFullPath = this.resolvePath(destination);
     const destDirectory = path.dirname(destFullPath);
-    
+
     // Ensure destination directory exists
     await fs.mkdir(destDirectory, { recursive: true });
-    
+
     // Move file
     await fs.copyFile(sourceFullPath, destFullPath);
     await fs.unlink(sourceFullPath);
@@ -591,12 +590,12 @@ import { FileSystem } from './types';
 export class JsonFileStateRepository implements StateRepository {
   private filePath: string;
   private fileSystem: FileSystem;
-  
+
   constructor(fileSystem: FileSystem, filePath: string = '.ai/task/state.json') {
     this.fileSystem = fileSystem;
     this.filePath = filePath;
   }
-  
+
   async load(): Promise<StateContext | null> {
     try {
       if (await this.fileSystem.exists(this.filePath)) {
@@ -609,25 +608,22 @@ export class JsonFileStateRepository implements StateRepository {
       return null;
     }
   }
-  
+
   async save(state: StateContext): Promise<void> {
     try {
-      await this.fileSystem.write(
-        this.filePath, 
-        JSON.stringify(state, null, 2)
-      );
+      await this.fileSystem.write(this.filePath, JSON.stringify(state, null, 2));
     } catch (error) {
       console.error('Failed to save state:', error);
       throw error;
     }
   }
-  
+
   async initialize(): Promise<StateContext> {
     const initialState: StateContext = {
       currentState: 'GATHER_NEEDS_CONTEXT',
-      history: []
+      history: [],
     };
-    
+
     await this.save(initialState);
     return initialState;
   }
@@ -649,20 +645,17 @@ export function getResponse(id: string): string {
 }
 
 export function processResponse(
-  responseTemplate: string, 
+  responseTemplate: string,
   replacements?: Record<string, string>
 ): string {
   let processed = responseTemplate;
-  
+
   if (replacements) {
     Object.entries(replacements).forEach(([key, value]) => {
-      processed = processed.replace(
-        new RegExp(`{{${key}}}`, 'g'), 
-        value
-      );
+      processed = processed.replace(new RegExp(`{{${key}}}`, 'g'), value);
     });
   }
-  
+
   return processed;
 }
 ```
@@ -680,62 +673,62 @@ import { extractAtlassianUrls } from '../utils/fileUtils';
 export const gatherTransitions: Transition[] = [
   // GC1: GATHER_NEEDS_CONTEXT + Accio -> GATHER_EDITING_CONTEXT
   {
-    id: "GC1",
-    sourceState: "GATHER_NEEDS_CONTEXT",
-    spell: "Accio",
+    id: 'GC1',
+    sourceState: 'GATHER_NEEDS_CONTEXT',
+    spell: 'Accio',
     // No condition - always applies
     handler: async (context, fileSystem) => {
       // Create context.md from template
       await writeTemplate(fileSystem, 'context', '.ai/task/context.md');
-      
+
       // Copy guide files from templates if they don't exist
-      if (!await fileSystem.exists(".ai/plan-guide.md")) {
+      if (!(await fileSystem.exists('.ai/plan-guide.md'))) {
         await writeTemplate(fileSystem, 'plan_guide', '.ai/plan-guide.md');
       }
-      
-      if (!await fileSystem.exists(".ai/task-guide.md")) {
+
+      if (!(await fileSystem.exists('.ai/task-guide.md'))) {
         await writeTemplate(fileSystem, 'task_guide', '.ai/task-guide.md');
       }
-      
+
       // Get response template
       const responseTemplate = getResponse('gather_transitions_GC1');
-      
+
       return {
-        nextState: "GATHER_EDITING_CONTEXT",
-        response: responseTemplate  // No replacements needed
+        nextState: 'GATHER_EDITING_CONTEXT',
+        response: responseTemplate, // No replacements needed
       };
-    }
+    },
   },
-  
+
   // GC2: GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING
   {
-    id: "GC2",
-    sourceState: "GATHER_EDITING_CONTEXT",
-    spell: "Accio",
-    condition: async (fileSystem) => {
-      return await fileSystem.exists(".ai/task/context.md");
+    id: 'GC2',
+    sourceState: 'GATHER_EDITING_CONTEXT',
+    spell: 'Accio',
+    condition: async fileSystem => {
+      return await fileSystem.exists('.ai/task/context.md');
     },
     handler: async (context, fileSystem) => {
       // Read context.md content
-      const contextContent = await fileSystem.read(".ai/task/context.md");
-      
+      const contextContent = await fileSystem.read('.ai/task/context.md');
+
       // Extract Atlassian URLs using generic function
       const atlassianUrls = extractAtlassianUrls(contextContent);
-      
+
       // Get response template and replace URL placeholder
       let responseTemplate = getResponse('gather_transitions_GC2');
       responseTemplate = responseTemplate.replace(
-        '[ATLASSIAN_URLS_PLACEHOLDER]', 
+        '[ATLASSIAN_URLS_PLACEHOLDER]',
         atlassianUrls.join('\n')
       );
-      
+
       return {
-        nextState: "GATHER_EDITING",
-        response: responseTemplate
+        nextState: 'GATHER_EDITING',
+        response: responseTemplate,
       };
-    }
+    },
   },
-  
+
   // Other transitions would be defined here...
 ];
 ```

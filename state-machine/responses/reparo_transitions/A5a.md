@@ -26,30 +26,38 @@ Read the empty `.ai/task/comments.md` file, and then:
 ### Comments Found Response:
 
 ### What Just Happened
+
 I've gathered PR comments for your current branch and saved them to `.ai/task/comments.md`.
 
 ### Where We Are
+
 We're now in the PR review flow where we need to address the feedback in these comments.
 
 ### Available Spells
+
 - **Accio**: Process these PR comments and create tasks to address them
 - **Reverto**: Cancel the PR review process and return to previous state
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
+
 Review the `.ai/task/comments.md` file I've gathered, then use Accio to create tasks that address this feedback.
 
 ### No Comments Found Response:
 
 ### What Just Happened
+
 I've checked for PR comments but couldn't find any for your current branch.
 
 ### Where We Are
+
 We're in the PR review flow, but no comments were found to process.
 
 ### Available Spells
+
 - **Reverto**: Cancel the PR review process and return to previous state
 - **Lumos**: Show current state and available actions
 
 ### Next Steps
+
 Since no PR comments were found, use Reverto to exit the PR review process and return to your previous workflow.
