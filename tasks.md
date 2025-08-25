@@ -14,6 +14,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
 - [ ] Configure ts-jest for proper TypeScript test execution
 - [ ] Create sample test file `src/sample.test.ts` to verify ts-jest configuration works
 - [ ] Run sample test: `npm run test`
+- [ ] Run linting verification: `npm run lint`
 - [ ] Remove sample test file after verification
 
 ## Step 1: MCP Layout with Spell Tools
@@ -29,6 +30,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
 - [ ] Create `src/resources/spells.test.ts` using MCP Inspector pattern
 - [ ] Test tool/resource registration and basic functionality with placeholder responses
 - [ ] **Testing command**: `npm run test`
+- [ ] **Linting command**: `npm run lint`
 
 ## Step 2: Base State Machine Infrastructure
 ### 2.1 Core Types and Interfaces
@@ -49,6 +51,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - Path resolution and directory creation
   - Add `src/state-machine/fileSystem.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 - [ ] Create `src/state-machine/stateRepository.ts`
   - JsonFileStateRepository class
@@ -56,6 +59,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - Load, save, initialize methods
   - Add `src/state-machine/stateRepository.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 - [ ] Create `src/state-machine/stateMachine.ts`
   - StateMachineImpl class with single `executeSpell(spell: Spell)` function
@@ -65,6 +69,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - State machine is NOT exposed as MCP tool/resource - it's internal infrastructure
   - Add `src/state-machine/stateMachine.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 ### 2.3 Utility Modules
 - [ ] Create `src/state-machine/utils/responseUtils.ts`
@@ -72,6 +77,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - processResponse() function with placeholder replacement
   - Add `src/state-machine/utils/responseUtils.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 - [ ] Create `src/state-machine/utils/templateUtils.ts`
   - getTemplate() function  
@@ -79,24 +85,28 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - writeTemplate() function
   - Add `src/state-machine/utils/templateUtils.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 - [ ] Create `src/state-machine/utils/planUtils.ts`
   - hasAcceptanceCriteria() function
   - extractFirstAcceptanceCriteria() function
   - Add `src/state-machine/utils/planUtils.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 - [ ] Create `src/state-machine/utils/fileUtils.ts`
   - extractAtlassianUrls() function
   - Other file operation helpers
   - Add `src/state-machine/utils/fileUtils.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 ### 2.4 Build System Testing
 - [ ] Add tests for existing build scripts (build-responses.ts, build-templates.ts, prebuild.ts)
 - [ ] Verify script functionality and generated output
 - [ ] Test prebuild system generates proper constants
 - [ ] **Testing command**: `npm run test`
+- [ ] **Linting command**: `npm run lint`
 
 ### 2.5 Entry Pointst
 - [ ] Create `src/state-machine/index.ts`
@@ -104,6 +114,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - Export core types
   - Integration point for MCP server (internal use only)
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 ### 2.6 Integration Layer
 - [ ] Bind state machine's `executeSpell()` function to all spell tools/resources
@@ -112,6 +123,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
 - [ ] Update spell tools/resources from Step 1 to use state machine
 - [ ] Test integration between MCP tools/resources and state machine
 - [ ] **Testing command**: `npm run test`
+- [ ] **Linting command**: `npm run lint`
 
 ## Step 3: Transition Implementation System
 ### 3.1 Implementation Command
@@ -142,6 +154,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
   - `src/state-machine/transitions/errorTransitions.test.ts` 
   - `src/state-machine/transitions/universalTransitions.test.ts`
   - **Testing command**: `npm run test`
+  - **Linting command**: `npm run lint`
 
 ## Step 4: Remove POC Implementation
 ### 4.1 Clean Up Legacy Code
@@ -151,6 +164,7 @@ Implementation plan for the complete AI Engineering state machine system with sp
 - [ ] Clean up any POC-related code that's no longer needed
 - [ ] Verify MCP server works with only the new spell-based tools/resources
 - [ ] **Testing command**: `npm run test`
+- [ ] **Linting command**: `npm run lint`
 
 ## Key Architecture Notes
 - State machine is internal infrastructure that exposes single `executeSpell(spell)` function
