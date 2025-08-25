@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 // Build a map of all response files
 const responses: Record<string, string> = {};
 const responsesDir = path.resolve(__dirname, '../state-machine/responses');
-const outputDir = path.resolve(__dirname, '../src/state-machine');
+const outputDir = path.resolve(__dirname, '../src/state-machine/constants');
 
 // Recursive function to read all markdown files
 function readResponses(dir: string, base = ''): void {
@@ -41,6 +41,7 @@ if (fs.existsSync(responsesDir)) {
 // Write the responses.ts file
 const outputPath = path.join(outputDir, 'responses.ts');
 const content = `// Auto-generated file - do not edit directly
+// Generated responses should be output to src/state-machine/constants/responses.ts
 export const RESPONSES: Record<string, string> = ${JSON.stringify(responses, null, 2)};
 `;
 

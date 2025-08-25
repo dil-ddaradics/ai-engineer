@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 // Build a map of all template files
 const templates: Record<string, string> = {};
 const templatesDir = path.resolve(__dirname, '../state-machine/templates');
-const outputDir = path.resolve(__dirname, '../src/state-machine');
+const outputDir = path.resolve(__dirname, '../src/state-machine/constants');
 
 // Read all template files
 function readTemplates(dir: string): void {
@@ -36,6 +36,7 @@ readTemplates(templatesDir);
 // Write the templates.ts file
 const outputPath = path.join(outputDir, 'templates.ts');
 const content = `// Auto-generated file - do not edit directly
+// Generated templates should be output to src/state-machine/constants/templates.ts
 export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, null, 2)};
 `;
 

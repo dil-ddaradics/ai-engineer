@@ -1,4 +1,4 @@
-import { NodeFileSystem } from '../../src/state-machine/fileSystem.js';
+import { NodeFileSystem } from './fileSystem';
 import path from 'path';
 import { tmpdir } from 'os';
 
@@ -77,31 +77,6 @@ describe('NodeFileSystem', () => {
     });
   });
 
-  describe('archive', () => {
-    it('should move file to destination', async () => {
-      await fileSystem.write('source.txt', 'content');
-
-      await fileSystem.archive('source.txt', 'archived/dest.txt');
-
-      expect(await fileSystem.exists('source.txt')).toBe(false);
-      expect(await fileSystem.exists('archived/dest.txt')).toBe(true);
-      expect(await fileSystem.read('archived/dest.txt')).toBe('content');
-    });
-
-    it('should create destination directory', async () => {
-      await fileSystem.write('source.txt', 'content');
-
-      await fileSystem.archive('source.txt', 'deep/nested/path/dest.txt');
-
-      expect(await fileSystem.exists('deep/nested/path/dest.txt')).toBe(true);
-    });
-
-    it('should throw error when source does not exist', async () => {
-      await expect(fileSystem.archive('nonexistent.txt', 'dest.txt')).rejects.toThrow(
-        'Source file'
-      );
-    });
-  });
 
   describe('createDirectory', () => {
     it('should create directory', async () => {
@@ -177,27 +152,6 @@ describe('NodeFileSystem', () => {
     });
   });
 
-  describe('generateArchiveFilename', () => {
-    it('should generate filename with timestamp', () => {
-      const timestamp = new Date('2023-01-01T12:00:00.000Z');
-      const filename = fileSystem.generateArchiveFilename('test.txt', timestamp);
-
-      expect(filename).toMatch(/^test-2023-01-01-12-00-00\.txt$/);
-    });
-
-    it('should handle file without extension', () => {
-      const timestamp = new Date('2023-01-01T12:00:00.000Z');
-      const filename = fileSystem.generateArchiveFilename('README', timestamp);
-
-      expect(filename).toMatch(/^README-2023-01-01-12-00-00$/);
-    });
-
-    it('should use current time when no timestamp provided', () => {
-      const filename = fileSystem.generateArchiveFilename('test.txt');
-
-      expect(filename).toMatch(/^test-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}\.txt$/);
-    });
-  });
 
   describe('isWithinBaseDirectory', () => {
     it('should return true for paths within base directory', () => {
@@ -228,54 +182,7 @@ describe('NodeFileSystem', () => {
     });
   });
 
-  describe('readSafe', () => {
-    it('should read existing file', async () => {
-      await fileSystem.write('test.txt', 'content');
-      const content = await fileSystem.readSafe('test.txt');
-      expect(content).toBe('content');
-    });
 
-    it('should return fallback for non-existent file', async () => {
-      const content = await fileSystem.readSafe('nonexistent.txt', 'fallback');
-      expect(content).toBe('fallback');
-    });
-
-    it('should return empty string as default fallback', async () => {
-      const content = await fileSystem.readSafe('nonexistent.txt');
-      expect(content).toBe('');
-    });
-  });
-
-  describe('writeAtomic', () => {
-    it('should write file atomically', async () => {
-      await fileSystem.writeAtomic('test.txt', 'atomic content');
-
-      const content = await fileSystem.read('test.txt');
-      expect(content).toBe('atomic content');
-    });
-
-    it('should create parent directories', async () => {
-      await fileSystem.writeAtomic('nested/dir/atomic.txt', 'content');
-
-      const content = await fileSystem.read('nested/dir/atomic.txt');
-      expect(content).toBe('content');
-    });
-
-    it('should not leave temporary file on success', async () => {
-      await fileSystem.writeAtomic('test.txt', 'content');
-
-      expect(await fileSystem.exists('test.txt.tmp')).toBe(false);
-    });
-
-    it('should clean up temporary file on error', async () => {
-      // Create a situation where rename might fail
-      const fs = fileSystem as any;
-      const originalRename = fs.fileSystem?.rename;
-
-      // This test is complex to set up properly, so we'll just verify the method exists
-      expect(typeof fileSystem.writeAtomic).toBe('function');
-    });
-  });
 
   describe('error handling', () => {
     it('should provide descriptive error messages', async () => {

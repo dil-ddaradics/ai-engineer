@@ -44,6 +44,7 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/test/**/*.test.js",
+      "**/test/**/*.test.ts",
       "**/src/**/*.test.ts"
     ],
     "verbose": true,

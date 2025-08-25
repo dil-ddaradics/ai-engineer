@@ -6,8 +6,7 @@ import {
   FileSystem,
   StateRepository,
   Transition,
-} from './types.js';
-import { TEMPLATES } from './templates.js';
+} from './types';
 
 /**
  * Define explicit state transitions with conditions
@@ -47,18 +46,10 @@ export class AiEngineerStateMachine implements StateMachine {
         success: false,
         newState: 'ERROR_NO_PLAN',
         message: `Failed to execute spell ${spell}: ${error instanceof Error ? error.message : String(error)}`,
-        responseType: 'error',
       };
     }
   }
 
-  async getCurrentState(): Promise<StateContext | null> {
-    return this.stateRepository.load();
-  }
-
-  async resetState(): Promise<void> {
-    await this.stateRepository.clear();
-  }
 
   /**
    * Handle spell execution using explicit transitions
@@ -81,10 +72,7 @@ export class AiEngineerStateMachine implements StateMachine {
         await this.stateRepository.updateState(context, result.newState);
       }
 
-      return {
-        ...result,
-        previousState: context.currentState,
-      };
+      return result;
     }
 
     // No valid transition found
@@ -92,34 +80,7 @@ export class AiEngineerStateMachine implements StateMachine {
       success: false,
       newState: context.currentState,
       message: `The spell ${spell} is not available in the current state ${context.currentState}`,
-      responseType: 'blocked',
     };
   }
 
-  /**
-   * Get template content for creating new files
-   */
-  async getTemplate(templateName: string): Promise<string> {
-    return TEMPLATES[templateName] || '';
-  }
-
-  /**
-   * Check if the state machine has been initialized
-   */
-  async isInitialized(): Promise<boolean> {
-    return await this.stateRepository.hasExistingState();
-  }
-
-  /**
-   * Get the current session information
-   */
-  async getSessionInfo(): Promise<{ age: number; createdAt: Date | null } | null> {
-    const context = await this.getCurrentState();
-    if (!context) return null;
-
-    return {
-      age: this.stateRepository.getSessionAge(context),
-      createdAt: this.stateRepository.getSessionCreatedAt(context),
-    };
-  }
 }

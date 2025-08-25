@@ -39,8 +39,6 @@ export async function accioTool() {
       spell: 'Accio',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -63,8 +61,6 @@ export async function expectoTool() {
       spell: 'Expecto',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -87,8 +83,6 @@ export async function reparoTool() {
       spell: 'Reparo',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -111,8 +105,6 @@ export async function revertoTool() {
       spell: 'Reverto',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -135,8 +127,6 @@ export async function finiteTool() {
       spell: 'Finite',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -160,8 +150,6 @@ export async function lumosTool() {
       spell: 'Lumos',
       message: result.message,
       newState: result.newState,
-      previousState: result.previousState,
-      responseType: result.responseType,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
