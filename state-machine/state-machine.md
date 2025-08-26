@@ -352,8 +352,8 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 | ID  | Current State                    | Trigger | MCP Condition | Next State | MCP Actions | Response                                | Implementation |
 | --- | -------------------------------- | ------- | ------------- | ---------- | ----------- | --------------------------------------- | -------------- |
 | F3  | PR*APPLIED_PENDING_ARCHIVE*[G/A] | Finite  | -             | [BLOCKED]  | -           | [F3.md](responses/finite_blocked/F3.md) | yes            |
-| F4  | GATHER_NEEDS_CONTEXT             | Finite  | -             | [BLOCKED]  | -           | [F4.md](responses/finite_blocked/F4.md) |                |
-| F5  | GATHER_EDITING_CONTEXT           | Finite  | -             | [BLOCKED]  | -           | [F5.md](responses/finite_blocked/F5.md) |                |
+| F4  | GATHER_NEEDS_CONTEXT             | Finite  | -             | [BLOCKED]  | -           | [F4.md](responses/finite_blocked/F4.md) | yes            |
+| F5  | GATHER_EDITING_CONTEXT           | Finite  | -             | [BLOCKED]  | -           | [F5.md](responses/finite_blocked/F5.md) | yes            |
 
 #### Reverto Transitions (Exit PR Review)
 
