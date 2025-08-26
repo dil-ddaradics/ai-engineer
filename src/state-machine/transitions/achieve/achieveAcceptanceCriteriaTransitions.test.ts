@@ -1,5 +1,6 @@
 import {
   a1Transition,
+  a1bTransition,
   achieveAcceptanceCriteriaTransitions,
 } from './achieveAcceptanceCriteriaTransitions';
 import { MockFileSystem } from '../../testUtils';
@@ -77,9 +78,52 @@ describe('Achieve Acceptance Criteria Transitions', () => {
     });
   });
 
+  describe('A1b - ACHIEVE_TASK_DRAFTING + Accio -> ERROR_TASK_MISSING', () => {
+    it('should be defined with correct properties', () => {
+      expect(a1bTransition).toBeDefined();
+      expect(a1bTransition.fromState).toBe('ACHIEVE_TASK_DRAFTING');
+      expect(a1bTransition.spell).toBe('Accio');
+      expect(a1bTransition.toState).toBe('ERROR_TASK_MISSING');
+      expect(a1bTransition.condition).toBeDefined();
+      expect(a1bTransition.execute).toBeDefined();
+    });
+
+    it('should have condition that returns true when task.md is missing', async () => {
+      // Setup: Don't create task.md
+      const result = await a1bTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(true);
+    });
+
+    it('should have condition that returns false when task.md exists', async () => {
+      // Setup: Create task.md
+      await mockFileSystem.write(FILE_PATHS.TASK_FILE, 'task content');
+
+      const result = await a1bTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should execute and return correct response', async () => {
+      const result = await a1bTransition.execute(mockContext, mockFileSystem);
+
+      expect(result.message).toBe(ResponseUtils.formatResponse('achieve_transitions_A1b'));
+    });
+
+    it('should not perform any file operations during execution', async () => {
+      const initialFileCount = (await mockFileSystem.listFiles('')).length;
+
+      await a1bTransition.execute(mockContext, mockFileSystem);
+
+      const finalFileCount = (await mockFileSystem.listFiles('')).length;
+      expect(finalFileCount).toBe(initialFileCount);
+    });
+  });
+
   it('should have transitions defined', () => {
     expect(achieveAcceptanceCriteriaTransitions).toBeDefined();
     expect(achieveAcceptanceCriteriaTransitions.length).toBeGreaterThan(0);
     expect(achieveAcceptanceCriteriaTransitions).toContain(a1Transition);
+    expect(achieveAcceptanceCriteriaTransitions).toContain(a1bTransition);
   });
 });
