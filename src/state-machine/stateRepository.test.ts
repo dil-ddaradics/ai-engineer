@@ -26,23 +26,23 @@ describe('JsonFileStateRepository', () => {
 
   describe('initialize', () => {
     it('should create initial state context', async () => {
-      const context = await repository.initialize('GATHER_NO_PLAN', tempDir);
+      const context = await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
 
-      expect(context.currentState).toBe('GATHER_NO_PLAN');
+      expect(context.currentState).toBe('GATHER_NEEDS_CONTEXT');
     });
 
     it('should save initial state to file', async () => {
-      await repository.initialize('GATHER_NO_PLAN', tempDir);
+      await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
 
       const loadedContext = await repository.load();
       expect(loadedContext).not.toBeNull();
-      expect(loadedContext!.currentState).toBe('GATHER_NO_PLAN');
+      expect(loadedContext!.currentState).toBe('GATHER_NEEDS_CONTEXT');
     });
   });
 
   describe('save and load', () => {
     it('should save and load state context', async () => {
-      const originalContext = await repository.initialize('GATHER_NO_PLAN', tempDir);
+      const originalContext = await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
 
       const loadedContext = await repository.load();
       expect(loadedContext).toEqual(originalContext);
@@ -74,25 +74,25 @@ describe('JsonFileStateRepository', () => {
 
   describe('updateState', () => {
     it('should update current state', async () => {
-      const context = await repository.initialize('GATHER_NO_PLAN', tempDir);
+      const context = await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
 
-      const updatedContext = await repository.updateState(context, 'GATHER_PLAN_DRAFT');
+      const updatedContext = await repository.updateState(context, 'GATHER_EDITING_CONTEXT');
 
-      expect(updatedContext.currentState).toBe('GATHER_PLAN_DRAFT');
+      expect(updatedContext.currentState).toBe('GATHER_EDITING_CONTEXT');
     });
 
     it('should persist updated state', async () => {
-      const context = await repository.initialize('GATHER_NO_PLAN', tempDir);
-      await repository.updateState(context, 'GATHER_PLAN_DRAFT');
+      const context = await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
+      await repository.updateState(context, 'GATHER_EDITING_CONTEXT');
 
       const loadedContext = await repository.load();
-      expect(loadedContext?.currentState).toBe('GATHER_PLAN_DRAFT');
+      expect(loadedContext?.currentState).toBe('GATHER_EDITING_CONTEXT');
     });
   });
 
   describe('clear', () => {
     it('should remove state file', async () => {
-      await repository.initialize('GATHER_NO_PLAN', tempDir);
+      await repository.initialize('GATHER_NEEDS_CONTEXT', tempDir);
       expect(await repository.load()).not.toBeNull();
 
       await repository.clear();

@@ -38,6 +38,7 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         // Jest globals
+        jest: 'readonly',
         describe: 'readonly',
         test: 'readonly',
         it: 'readonly',

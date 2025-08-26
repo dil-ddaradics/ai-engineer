@@ -12,7 +12,6 @@ export const finiteInputSchema = {};
 import { AiEngineerStateMachine } from '../state-machine/stateMachine.js';
 import { JsonFileStateRepository } from '../state-machine/stateRepository.js';
 import { NodeFileSystem } from '../state-machine/fileSystem.js';
-import { Spell } from '../state-machine/types.js';
 
 // Create singleton instances for state machine integration
 const getStateMachine = (() => {

@@ -40,19 +40,20 @@ describe('AiEngineerStateMachine', () => {
   });
 
   describe('executeSpell', () => {
-    it('should initialize with GATHER_NO_PLAN state when no state exists', async () => {
+    it('should initialize with GATHER_NEEDS_CONTEXT state when no state exists', async () => {
       const result = await stateMachine.executeSpell('Accio');
 
-      expect(result.success).toBe(false);
-      expect(result.message).toContain('not available in the current state');
+      // Accio should now work from GATHER_NEEDS_CONTEXT because we implemented GC1 transition
+      expect(result.success).toBe(true);
+      expect(result.message).toBeDefined();
 
-      // Check that state was saved to file
+      // Check that state was saved and transitioned to GATHER_EDITING_CONTEXT
       const savedState = await getCurrentStateFromFile();
       expect(savedState).not.toBeNull();
-      expect(savedState!.currentState).toBe('GATHER_NO_PLAN');
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT');
     });
 
-    it('should return blocked message for any spell since no transitions are defined', async () => {
+    it('should return blocked message for spells without transitions defined', async () => {
       const result = await stateMachine.executeSpell('Lumos');
 
       expect(result.success).toBe(false);
@@ -62,10 +63,10 @@ describe('AiEngineerStateMachine', () => {
     it('should execute successful transition with injected transitions', async () => {
       const testTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
-          execute: async (context: StateContext, fileSystem: FileSystem) => {
+          toState: 'GATHER_EDITING_CONTEXT',
+          execute: async (_context: StateContext, _fileSystem: FileSystem) => {
             return { message: 'Plan creation started' };
           },
         },
@@ -82,17 +83,20 @@ describe('AiEngineerStateMachine', () => {
       expect(result.message).toBe('Plan creation started');
 
       const savedState = await getCurrentStateFromFile();
-      expect(savedState!.currentState).toBe('GATHER_PLAN_DRAFT');
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT');
     });
 
     it('should handle conditional transitions', async () => {
       const testTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
-          condition: async (context: StateContext, fileSystem: FileSystem) => context.currentState === 'GATHER_NO_PLAN',
-          execute: async (context: StateContext, fileSystem: FileSystem) => ({ message: 'Condition met' }),
+          toState: 'GATHER_EDITING_CONTEXT',
+          condition: async (context: StateContext, _fileSystem: FileSystem) =>
+            context.currentState === 'GATHER_NEEDS_CONTEXT',
+          execute: async (_context: StateContext, _fileSystem: FileSystem) => ({
+            message: 'Condition met',
+          }),
         },
       ];
 
@@ -110,10 +114,10 @@ describe('AiEngineerStateMachine', () => {
     it('should handle errors without corrupting state', async () => {
       const testTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
-          execute: async (context: StateContext, fileSystem: FileSystem) => {
+          toState: 'GATHER_EDITING_CONTEXT',
+          execute: async (_context: StateContext, _fileSystem: FileSystem) => {
             throw new Error('Transition execution failed');
           },
         },
@@ -143,9 +147,15 @@ describe('AiEngineerStateMachine', () => {
         const result = await stateMachine.executeSpell(spell);
         expect(result).toHaveProperty('success');
         expect(result).toHaveProperty('message');
-        // All spells should be blocked since no transitions are defined
-        expect(result.success).toBe(false);
-        expect(result.message).toContain('not available in the current state');
+
+        if (spell === 'Accio') {
+          // Accio should work from GATHER_NEEDS_CONTEXT (GC1 transition implemented)
+          expect(result.success).toBe(true);
+        } else {
+          // Other spells should be blocked since no transitions are defined for them
+          expect(result.success).toBe(false);
+          expect(result.message).toContain('not available in the current state');
+        }
 
         // Verify state was saved to file
         const savedState = await getCurrentStateFromFile();

@@ -38,7 +38,7 @@ export class JsonFileStateRepository implements StateRepository {
     }
   }
 
-  async initialize(initialState: StateName, workingDirectory: string): Promise<StateContext> {
+  async initialize(initialState: StateName, _workingDirectory: string): Promise<StateContext> {
     const context: StateContext = {
       currentState: initialState,
     };
@@ -81,7 +81,7 @@ export class JsonFileStateRepository implements StateRepository {
   /**
    * Validate that the loaded state context has all required fields
    */
-  private validateStateContext(parsed: any): StateContext {
+  private validateStateContext(parsed: unknown): StateContext {
     try {
       return this.stateContextSchema.parse(parsed);
     } catch (error) {

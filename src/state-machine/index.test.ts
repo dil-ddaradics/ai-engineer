@@ -56,9 +56,9 @@ describe('State Machine Index', () => {
     it('should create a state machine with custom transitions', async () => {
       const customTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
+          toState: 'GATHER_EDITING_CONTEXT',
           execute: async () => ({ message: 'Custom transition executed' }),
         },
       ];
@@ -101,9 +101,9 @@ describe('State Machine Index', () => {
 
       const customTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Lumos',
-          toState: 'GATHER_NO_PLAN', // Stay in same state
+          toState: 'GATHER_NEEDS_CONTEXT', // Stay in same state
           execute: async () => ({ message: 'Custom Lumos response' }),
         },
       ];
@@ -124,15 +124,15 @@ describe('State Machine Index', () => {
     it('should maintain state between spell executions', async () => {
       const customTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
+          toState: 'GATHER_EDITING_CONTEXT',
           execute: async () => ({ message: 'Moved to draft state' }),
         },
         {
-          fromState: 'GATHER_PLAN_DRAFT',
+          fromState: 'GATHER_EDITING_CONTEXT',
           spell: 'Lumos',
-          toState: 'GATHER_PLAN_DRAFT',
+          toState: 'GATHER_EDITING_CONTEXT',
           execute: async () => ({ message: 'Currently in draft state' }),
         },
       ];
@@ -156,9 +156,9 @@ describe('State Machine Index', () => {
     it('should persist state to file system', async () => {
       const customTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
+          toState: 'GATHER_EDITING_CONTEXT',
           execute: async () => ({ message: 'State changed' }),
         },
       ];
@@ -177,15 +177,15 @@ describe('State Machine Index', () => {
 
       const stateContent = fs.readFileSync(stateFilePath, 'utf8');
       const stateData = JSON.parse(stateContent);
-      expect(stateData.currentState).toBe('GATHER_PLAN_DRAFT');
+      expect(stateData.currentState).toBe('GATHER_EDITING_CONTEXT');
     });
 
     it('should handle spell execution errors gracefully', async () => {
       const errorTransitions: Transition[] = [
         {
-          fromState: 'GATHER_NO_PLAN',
+          fromState: 'GATHER_NEEDS_CONTEXT',
           spell: 'Accio',
-          toState: 'GATHER_PLAN_DRAFT',
+          toState: 'GATHER_EDITING_CONTEXT',
           execute: async () => {
             throw new Error('Test error');
           },

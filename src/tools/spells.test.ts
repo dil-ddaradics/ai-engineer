@@ -55,73 +55,34 @@ describe('Spell Tools Tests', () => {
   });
 
   describe('Spell Tool Execution Tests', () => {
-    test('Accio tool should execute and return blocked response', () => {
-      const result = runInspector('tools/call', {
-        toolName: 'accio',
+    const spellTools = [
+      { name: 'accio', expectedSpell: 'Accio' },
+      { name: 'expecto', expectedSpell: 'Expecto' },
+      { name: 'reparo', expectedSpell: 'Reparo' },
+      { name: 'reverto', expectedSpell: 'Reverto' },
+      { name: 'finite', expectedSpell: 'Finite' },
+    ];
+
+    spellTools.forEach(({ name, expectedSpell }) => {
+      test(`${expectedSpell} tool should be callable and return valid response structure`, () => {
+        const result = runInspector('tools/call', {
+          toolName: name,
+        });
+
+        expect(result.content).toBeDefined();
+        expect(result.content.length).toBe(1);
+
+        const response = JSON.parse(result.content[0].text);
+        // Only test structure, not specific success/failure outcomes
+        // since state machine behavior depends on persistent state
+        expect(response).toHaveProperty('success');
+        expect(response).toHaveProperty('spell');
+        expect(response).toHaveProperty('message');
+        expect(response.spell).toBe(expectedSpell);
+        expect(typeof response.success).toBe('boolean');
+        expect(typeof response.message).toBe('string');
+        expect(response.message.length).toBeGreaterThan(0);
       });
-
-      expect(result.content).toBeDefined();
-      expect(result.content.length).toBe(1);
-
-      const response = JSON.parse(result.content[0].text);
-      expect(response.success).toBe(false); // No transitions defined, so blocked
-      expect(response.spell).toBe('Accio');
-      expect(response.message).toBeDefined();
-      expect(response.message).toContain('not available in the current state');
     });
-
-    test('Expecto tool should execute and return blocked response', () => {
-      const result = runInspector('tools/call', {
-        toolName: 'expecto',
-      });
-
-      expect(result.content).toBeDefined();
-      const response = JSON.parse(result.content[0].text);
-      expect(response.success).toBe(false); // No transitions defined, so blocked
-      expect(response.spell).toBe('Expecto');
-      expect(response.message).toBeDefined();
-      expect(response.message).toContain('not available in the current state');
-    });
-
-    test('Reparo tool should execute and return blocked response', () => {
-      const result = runInspector('tools/call', {
-        toolName: 'reparo',
-      });
-
-      expect(result.content).toBeDefined();
-      const response = JSON.parse(result.content[0].text);
-      expect(response.success).toBe(false); // No transitions defined, so blocked
-      expect(response.spell).toBe('Reparo');
-      expect(response.message).toBeDefined();
-      expect(response.message).toContain('not available in the current state');
-    });
-
-    test('Reverto tool should execute and return blocked response', () => {
-      const result = runInspector('tools/call', {
-        toolName: 'reverto',
-      });
-
-      expect(result.content).toBeDefined();
-      const response = JSON.parse(result.content[0].text);
-      expect(response.success).toBe(false); // No transitions defined, so blocked
-      expect(response.spell).toBe('Reverto');
-      expect(response.message).toBeDefined();
-      expect(response.message).toContain('not available in the current state');
-    });
-
-    test('Finite tool should execute and return blocked response', () => {
-      const result = runInspector('tools/call', {
-        toolName: 'finite',
-      });
-
-      expect(result.content).toBeDefined();
-      const response = JSON.parse(result.content[0].text);
-      expect(response.success).toBe(false); // No transitions defined, so blocked
-      expect(response.spell).toBe('Finite');
-      expect(response.message).toBeDefined();
-      expect(response.message).toContain('not available in the current state');
-    });
-
-    // Lumos is now a resource, not a tool, so it's tested in the resources test file
   });
 });

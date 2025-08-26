@@ -134,7 +134,6 @@ describe('prebuild script', () => {
     fs.mkdirSync(testOutputDir, { recursive: true });
 
     // Test responses build with missing directory
-    const responses: Record<string, string> = {};
 
     // This should not throw when directory doesn't exist
     expect(() => {

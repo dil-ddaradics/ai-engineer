@@ -1,6 +1,5 @@
 import {
   StateMachine,
-  StateContext,
   Spell,
   TransitionResult,
   FileSystem,
@@ -26,15 +25,14 @@ export class AiEngineerStateMachine implements StateMachine {
   ) {}
 
   async executeSpell(spell: Spell): Promise<TransitionResult> {
-    let context: StateContext | null = null;
     let resultMessage: string;
     let resultSuccess: boolean;
 
     try {
       // Load or initialize context
-      context = await this.stateRepository.load();
+      let context = await this.stateRepository.load();
       if (!context) {
-        context = { currentState: 'GATHER_NO_PLAN' };
+        context = { currentState: 'GATHER_NEEDS_CONTEXT' };
       }
 
       // Find matching transition using injected transitions
