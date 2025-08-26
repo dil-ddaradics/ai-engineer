@@ -34,3 +34,5 @@ coverage/
 *.tmp
 *.temp
 review.md
+
+demo-run

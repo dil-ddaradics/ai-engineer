@@ -3,11 +3,13 @@
 ## Current State Analysis
 
 ### Existing Demo System
+
 The current demo system uses descriptive names and only creates `.ai` folders:
 
 **Current Demo States:**
+
 - `gather-needs-context` - Fresh Start
-- `gather-editing-context` - Context Created  
+- `gather-editing-context` - Context Created
 - `gather-editing` - Plan Ready
 - `achieve-task-drafting` - Task Ready
 - `achieve-task-executed` - Task Completed
@@ -17,6 +19,7 @@ The current demo system uses descriptive names and only creates `.ai` folders:
 - `error-plan-missing` - Error State
 
 **Current Structure:**
+
 ```
 demos/gather-editing/.ai/task/
 ├── context.md
@@ -25,6 +28,7 @@ demos/gather-editing/.ai/task/
 ```
 
 **Limitations:**
+
 - Only creates `.ai` folders, no actual project code
 - Descriptive names don't show clear progression
 - No runnable code to demonstrate implementation stages
@@ -33,6 +37,7 @@ demos/gather-editing/.ai/task/
 ## New System Design
 
 ### Numbered Demo States
+
 Replace current system with 11 numbered states showing complete project evolution:
 
 1. **01-empty** - Completely empty directory (fresh start)
@@ -48,6 +53,7 @@ Replace current system with 11 numbered states showing complete project evolutio
 11. **11-final-complete** - All feedback addressed, production ready
 
 ### CLI Command Format
+
 ```bash
 npx ai-engineer-demo set 01-empty
 npx ai-engineer-demo set 02-context-gathering
@@ -58,11 +64,13 @@ npx ai-engineer-demo set 09-calculator-executed
 ## Complete File Structure Specifications
 
 ### 01-empty/
+
 ```
 (completely empty directory)
 ```
 
 ### 02-context-gathering/
+
 ```
 ├── .ai/task/
 │   ├── context.md (basic calculator project context, in progress)
@@ -70,6 +78,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 03-context-complete/
+
 ```
 ├── .ai/task/
 │   ├── context.md (complete calculator project context)
@@ -77,6 +86,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 04-planning/
+
 ```
 ├── .ai/task/
 │   ├── context.md (complete)
@@ -85,6 +95,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 05-plan-ready/
+
 ```
 ├── .ai/task/
 │   ├── context.md (complete)
@@ -93,6 +104,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 06-setup-drafting/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -104,6 +116,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 07-setup-executed/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -122,6 +135,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 08-calculator-drafting/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -137,6 +151,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 09-calculator-executed/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -153,6 +168,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 10-pr-review/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -163,6 +179,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ```
 
 ### 11-final-complete/
+
 ```
 ├── .ai/task/
 │   ├── context.md
@@ -183,21 +200,25 @@ npx ai-engineer-demo set 09-calculator-executed
 ## Implementation Steps
 
 ### Phase 1: Backup and Clean
+
 1. **Backup existing demos** (optional, for reference)
 2. **Delete entire `demos/` directory**
 3. **Create new `demos/` directory structure**
 
 ### Phase 2: Create New Demo States
+
 1. **Create 11 numbered demo directories**
 2. **Populate each with appropriate file structure**
 3. **Create realistic content for each stage**
 
 ### Phase 3: Update Source Code
+
 1. **Update `src/demo/index.ts`**
 2. **Update `src/demo/cli.ts`**
 3. **Modify CLI behavior for full project copying**
 
 ### Phase 4: Testing and Documentation
+
 1. **Test all demo states**
 2. **Update documentation**
 3. **Verify MCP integration**
@@ -207,6 +228,7 @@ npx ai-engineer-demo set 09-calculator-executed
 ### src/demo/index.ts
 
 **Replace DEMO_STATES object:**
+
 ```typescript
 export const DEMO_STATES: Record<string, DemoState> = {
   '01-empty': {
@@ -279,6 +301,7 @@ export const DEMO_STATES: Record<string, DemoState> = {
 ```
 
 **Update setState method:**
+
 ```typescript
 async setState(stateName: string): Promise<void> {
   const demoState = DEMO_STATES[stateName];
@@ -289,7 +312,7 @@ async setState(stateName: string): Promise<void> {
   }
 
   const demoSourcePath = path.join(this.demosDir, stateName);
-  
+
   // Check if demo folder exists
   try {
     await fs.access(demoSourcePath);
@@ -326,6 +349,7 @@ async setState(stateName: string): Promise<void> {
 ### src/demo/cli.ts
 
 **Update help text:**
+
 ```typescript
 function showHelp(): void {
   console.log(`
@@ -371,6 +395,7 @@ For more information, visit: https://github.com/your-org/ai-engineer
 ## Content Templates
 
 ### Context Template (used in states 02-11)
+
 ```markdown
 # Task Context
 
@@ -403,6 +428,7 @@ Creating a simple calculator TypeScript class for a Node.js project. The calcula
 ```
 
 ### Plan Template (used in states 04-11)
+
 ```markdown
 # Project Plan
 
@@ -423,27 +449,32 @@ Create a comprehensive Calculator TypeScript class with full test coverage and p
 ## Technical Approach
 
 ### Phase 1: Project Setup
+
 - Initialize TypeScript project
 - Configure Jest for testing
 - Set up project structure
 
 ### Phase 2: Core Implementation
+
 - Create Calculator class with basic methods
 - Implement proper TypeScript types
 - Add input validation
 
 ### Phase 3: Error Handling & Testing
+
 - Add division by zero handling
 - Implement comprehensive test suite
 - Achieve 100% test coverage
 
 ### Phase 4: Documentation & Polish
+
 - Add JSDoc comments
 - Create usage examples
 - Final code review and cleanup
 ```
 
 ### Package.json Template (states 06-11)
+
 ```json
 {
   "name": "calculator-demo",
@@ -474,6 +505,7 @@ Create a comprehensive Calculator TypeScript class with full test coverage and p
 ### Calculator.ts Template (states 08-11)
 
 **State 08 (drafting):**
+
 ```typescript
 /**
  * Simple Calculator class for basic arithmetic operations
@@ -514,6 +546,7 @@ export class Calculator {
 ```
 
 **State 09+ (executed):**
+
 ```typescript
 /**
  * Simple Calculator class for basic arithmetic operations
@@ -587,18 +620,21 @@ export class Calculator {
 ## Benefits of New System
 
 ### For Users
+
 - **Clear Progression**: Numbers show exact workflow order
 - **Time Travel**: Jump to any development stage with real code
 - **Complete Context**: See full project evolution, not just .ai files
 - **Runnable Code**: Can execute `npm test`, `npm run build` at appropriate stages
 
 ### For MCP Integration
+
 - **Real Implementation**: AI can see and modify actual source code
 - **Progressive Development**: Shows realistic development workflow
 - **Testing Integration**: Can run actual tests and see results
 - **Full Project Context**: AI understands complete project structure
 
 ### For Demonstrations
+
 - **Realistic Scenarios**: Shows real TypeScript + Jest development
 - **Clear Teaching**: Easy to explain numbered progression
 - **Flexible Navigation**: Jump to any stage for specific demonstrations

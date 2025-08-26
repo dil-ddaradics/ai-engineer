@@ -1,0 +1,29 @@
+{
+  "name": "calculator-demo",
+  "version": "1.0.0",
+  "description": "Simple TypeScript calculator with comprehensive tests",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": [
+    "calculator",
+    "typescript",
+    "jest",
+    "demo"
+  ],
+  "author": "AI Engineer Demo",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

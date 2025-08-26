@@ -126,7 +126,15 @@ async function handleSetCommand(demoManager: DemoManager, args: string[]): Promi
   await demoManager.setState(stateName);
 
   console.log('✅ Demo state configured successfully!');
-  console.log(`📁 .ai folder created with state: ${DEMO_STATES[stateName].state}`);
+
+  if (stateName === '01-empty') {
+    console.log('📁 Directory cleared - fresh start!');
+  } else {
+    console.log(
+      `📁 Complete project structure created with state: ${DEMO_STATES[stateName].state}`
+    );
+  }
+
   console.log('\n💡 Next steps:');
   console.log('   - Open your AI assistant (Claude Code, Cursor, etc.)');
   console.log('   - Navigate to this directory');
@@ -272,23 +280,31 @@ USAGE:
 COMMANDS:
   list, ls              List all available demo states
   set <state-name>      Set up a specific demo state
-  reset, clear          Remove current .ai directory
+  reset, clear          Remove current demo content
   current, status       Show current state and file structure
-  backup                Create backup of current .ai directory
-  restore [path]        Restore from backup (uses most recent if no path)
+  backup                Create backup of current directory
+  restore [path]        Restore from backup
   help, -h, --help      Show this help message
 
 EXAMPLES:
   npx ai-engineer-demo list
-  npx ai-engineer-demo set gather-editing
+  npx ai-engineer-demo set 01-empty
+  npx ai-engineer-demo set 05-plan-ready
+  npx ai-engineer-demo set 09-calculator-executed
   npx ai-engineer-demo current
-  npx ai-engineer-demo backup
-  npx ai-engineer-demo restore
 
 DEMO STATES:
-${Object.entries(DEMO_STATES)
-  .map(([key, state]) => `  ${key.padEnd(20)} ${state.displayName}`)
-  .join('\n')}
+  01-empty              Empty Start - Fresh directory
+  02-context-gathering  Context Gathering - Working on context
+  03-context-complete   Context Complete - Context established
+  04-planning           Planning - Creating project plan
+  05-plan-ready         Plan Ready - Complete plan ready
+  06-setup-drafting     Setup Drafting - Project setup in progress
+  07-setup-executed     Setup Executed - TypeScript + Jest ready
+  08-calculator-drafting Calculator Drafting - Implementation in progress
+  09-calculator-executed Calculator Executed - Full implementation
+  10-pr-review          PR Review - Review feedback phase
+  11-final-complete     Final Complete - Production ready
 
 For more information, visit: https://github.com/your-org/ai-engineer
 `);

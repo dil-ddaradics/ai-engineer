@@ -27,59 +27,71 @@ export interface DemoBackup {
  * Available demo states with their configurations
  */
 export const DEMO_STATES: Record<string, DemoState> = {
-  'gather-needs-context': {
-    name: 'gather-needs-context',
-    displayName: 'Fresh Start',
-    description: 'Starting point - no files exist yet, ready to begin calculator project',
+  '01-empty': {
+    name: '01-empty',
+    displayName: 'Empty Start',
+    description: 'Completely empty directory - fresh start',
     state: 'GATHER_NEEDS_CONTEXT',
   },
-  'gather-editing-context': {
-    name: 'gather-editing-context',
-    displayName: 'Context Created',
-    description: 'Context file exists, working on calculator project context',
+  '02-context-gathering': {
+    name: '02-context-gathering',
+    displayName: 'Context Gathering',
+    description: 'Working on project context for calculator',
     state: 'GATHER_EDITING_CONTEXT',
   },
-  'gather-editing': {
-    name: 'gather-editing',
-    displayName: 'Plan Ready',
-    description: 'Plan file exists with calculator acceptance criteria, ready to start work',
+  '03-context-complete': {
+    name: '03-context-complete',
+    displayName: 'Context Complete',
+    description: 'Calculator project context established',
+    state: 'GATHER_EDITING_CONTEXT',
+  },
+  '04-planning': {
+    name: '04-planning',
+    displayName: 'Planning',
+    description: 'Creating project plan with acceptance criteria',
     state: 'GATHER_EDITING',
   },
-  'achieve-task-drafting': {
-    name: 'achieve-task-drafting',
-    displayName: 'Task Ready',
-    description: 'Calculator implementation task file exists, ready to execute work',
+  '05-plan-ready': {
+    name: '05-plan-ready',
+    displayName: 'Plan Ready',
+    description: 'Complete plan with calculator acceptance criteria',
+    state: 'GATHER_EDITING',
+  },
+  '06-setup-drafting': {
+    name: '06-setup-drafting',
+    displayName: 'Setup Drafting',
+    description: 'TypeScript project setup task in progress',
     state: 'ACHIEVE_TASK_DRAFTING',
   },
-  'achieve-task-executed': {
-    name: 'achieve-task-executed',
-    displayName: 'Task Completed',
-    description: 'Calculator task completed with results, ready for review',
+  '07-setup-executed': {
+    name: '07-setup-executed',
+    displayName: 'Setup Executed',
+    description: 'TypeScript + Jest project fully configured',
     state: 'ACHIEVE_TASK_EXECUTED',
   },
-  'achieve-complete': {
-    name: 'achieve-complete',
-    displayName: 'Calculator Complete',
-    description: 'All calculator acceptance criteria met, workflow complete',
-    state: 'ACHIEVE_COMPLETE',
+  '08-calculator-drafting': {
+    name: '08-calculator-drafting',
+    displayName: 'Calculator Drafting',
+    description: 'Calculator implementation task in progress',
+    state: 'ACHIEVE_TASK_DRAFTING',
   },
-  'pr-gathering-comments': {
-    name: 'pr-gathering-comments',
-    displayName: 'PR Review Started',
-    description: 'Calculator PR review mode, collecting comments from GATHER phase',
+  '09-calculator-executed': {
+    name: '09-calculator-executed',
+    displayName: 'Calculator Executed',
+    description: 'Calculator fully implemented with complete tests',
+    state: 'ACHIEVE_TASK_EXECUTED',
+  },
+  '10-pr-review': {
+    name: '10-pr-review',
+    displayName: 'PR Review',
+    description: 'Pull request review with feedback collected',
     state: 'PR_GATHERING_COMMENTS_G',
   },
-  'pr-review-task-draft': {
-    name: 'pr-review-task-draft',
-    displayName: 'PR Review Task',
-    description: 'Calculator PR review task being drafted',
-    state: 'PR_REVIEW_TASK_DRAFT_G',
-  },
-  'error-plan-missing': {
-    name: 'error-plan-missing',
-    displayName: 'Error State',
-    description: 'Error state demonstration - calculator plan file missing',
-    state: 'ERROR_PLAN_MISSING',
+  '11-final-complete': {
+    name: '11-final-complete',
+    displayName: 'Final Complete',
+    description: 'All feedback addressed, production ready',
+    state: 'ACHIEVE_COMPLETE',
   },
 };
 
@@ -208,7 +220,7 @@ export class DemoManager {
       );
     }
 
-    const demoSourcePath = path.join(this.demosDir, stateName, '.ai');
+    const demoSourcePath = path.join(this.demosDir, stateName);
 
     // Check if demo folder exists
     try {
@@ -217,13 +229,29 @@ export class DemoManager {
       throw new Error(`Demo folder not found: ${demoSourcePath}`);
     }
 
-    // Remove existing .ai directory
-    if (await this.hasAiDirectory()) {
-      await fs.rm(this.aiDir, { recursive: true, force: true });
+    // For 01-empty, just create empty directory
+    if (stateName === '01-empty') {
+      // Remove everything in current directory except node_modules
+      const files = await fs.readdir('.');
+      for (const file of files) {
+        if (file !== 'node_modules') {
+          await fs.rm(file, { recursive: true, force: true });
+        }
+      }
+      return;
     }
 
-    // Copy demo state from demos folder
-    await this.copyDirectory(demoSourcePath, this.aiDir);
+    // For other states, copy entire project
+    // Remove existing files (except node_modules only)
+    const files = await fs.readdir('.');
+    for (const file of files) {
+      if (file !== 'node_modules') {
+        await fs.rm(file, { recursive: true, force: true });
+      }
+    }
+
+    // Copy demo state content to current directory
+    await this.copyDirectory(demoSourcePath, '.');
   }
 
   /**
