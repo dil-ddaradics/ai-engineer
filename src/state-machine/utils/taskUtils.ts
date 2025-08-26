@@ -43,7 +43,7 @@ export class TaskUtils {
   async archiveReviewTask(): Promise<string> {
     const timestamp = this.formatTimestamp();
     const archiveDirName = `pr-review-${timestamp}`;
-    const archiveDir = `pr-reviews/${archiveDirName}`;
+    const archiveDir = `.ai/task/pr-reviews/${archiveDirName}`;
 
     // Create archive directory
     await this.fileSystem.createDirectory(archiveDir);
@@ -97,7 +97,7 @@ export class TaskUtils {
    * Includes task directories, archive directories, and PR review directories
    */
   async createBaseDirectories(): Promise<void> {
-    const directories = [FILE_PATHS.TASK_BASE_DIR, '.ai/task/tasks', 'pr-reviews'];
+    const directories = [FILE_PATHS.TASK_BASE_DIR, '.ai/task/tasks', '.ai/task/pr-reviews'];
 
     for (const directory of directories) {
       await this.fileSystem.createDirectory(directory);
