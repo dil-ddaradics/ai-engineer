@@ -1,28 +1,16 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
-You have been provided with a list of Atlassian URLs from the `.ai/task/context.md` file that have not been processed yet:
+**EXECUTE IMMEDIATELY:**
+1. Read the `.ai/task/context.md` and `.ai/plan-guide.md` files to understand requirements
+2. Check if Atlassian MCP is available by calling `mcp__atlassian__atlassianUserInfo` with no parameters
+3. Process the provided Atlassian URLs from context.md file based on MCP availability
+4. If Atlassian MCP available: fetch content from each URL and add processed URLs to `.ai/task/.atlassian-refs` file
+5. If Atlassian MCP unavailable: copy URLs to separate section in generated plan for later processing
+6. Generate structured `.ai/task/plan.md` file using plan-guide.md guidelines with clear acceptance criteria
+7. **DELIVERABLE**: Complete plan.md file with organized information and processed Atlassian content (if available)
 
+Atlassian URLs to process:
 [ATLASSIAN_URLS_PLACEHOLDER]
-
-Read the `.ai/task/context.md` and `.ai/plan-guide.md` files.
-
-First, check if the Atlassian MCP is available using this approach:
-
-1. Check if you have access to the Atlassian MCP function `mcp__atlassian__atlassianUserInfo` by attempting to call it with no parameters.
-2. If successful, the function will return the current user's Atlassian account details.
-3. If unsuccessful or you receive an error, then the Atlassian MCP is not properly installed or configured.
-
-Based on Atlassian MCP availability:
-
-- If Atlassian MCP is available:
-  1. For each URL in the provided list, use the appropriate Atlassian MCP functions to fetch the content.
-  2. Integrate the information from these Atlassian resources during plan generation.
-  3. After successfully processing each URL, add it to the `.ai/task/.atlassian-refs` file (one URL per line).
-
-- If Atlassian MCP is not available:
-  1. Copy the URLs to a separate section in the generated plan.md for later processing.
-
-Generate a structured `.ai/task/plan.md` file based on the context.md content using the guidelines in plan-guide.md. Focus on creating clear acceptance criteria and organizing the information logically.
 
 ## Response to the Developer
 

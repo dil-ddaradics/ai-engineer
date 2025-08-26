@@ -1,8 +1,12 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
-Read the `.ai/task/context.md` and `.ai/plan-guide.md` files.
-
-Generate a structured `.ai/task/plan.md` file based on the context.md content using the guidelines in plan-guide.md. Focus on creating clear acceptance criteria and organizing the information logically.
+**EXECUTE IMMEDIATELY:**
+1. Read the `.ai/task/context.md` file to understand the project context and requirements
+2. Read the `.ai/plan-guide.md` file to understand planning guidelines and structure
+3. Generate a structured `.ai/task/plan.md` file based on context.md content
+4. Follow plan-guide.md guidelines for organization and formatting
+5. Focus on creating clear, specific acceptance criteria
+6. **DELIVERABLE**: Complete structured plan.md file with organized information and clear acceptance criteria
 
 ## Response to the Developer
 

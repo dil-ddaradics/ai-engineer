@@ -7,8 +7,8 @@
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { StateName } from '../state-machine/types';
-import { DemoTemplateProcessor } from './templates';
 
 export interface DemoState {
   name: string;
@@ -30,55 +30,55 @@ export const DEMO_STATES: Record<string, DemoState> = {
   'gather-needs-context': {
     name: 'gather-needs-context',
     displayName: 'Fresh Start',
-    description: 'Starting point - no files exist yet, ready to begin workflow',
+    description: 'Starting point - no files exist yet, ready to begin calculator project',
     state: 'GATHER_NEEDS_CONTEXT',
   },
   'gather-editing-context': {
     name: 'gather-editing-context',
     displayName: 'Context Created',
-    description: 'Context file exists, working on initial project context',
+    description: 'Context file exists, working on calculator project context',
     state: 'GATHER_EDITING_CONTEXT',
   },
   'gather-editing': {
     name: 'gather-editing',
     displayName: 'Plan Ready',
-    description: 'Plan file exists with acceptance criteria, ready to start work',
+    description: 'Plan file exists with calculator acceptance criteria, ready to start work',
     state: 'GATHER_EDITING',
   },
   'achieve-task-drafting': {
     name: 'achieve-task-drafting',
     displayName: 'Task Ready',
-    description: 'Task file exists, ready to execute work',
+    description: 'Calculator implementation task file exists, ready to execute work',
     state: 'ACHIEVE_TASK_DRAFTING',
   },
   'achieve-task-executed': {
     name: 'achieve-task-executed',
     displayName: 'Task Completed',
-    description: 'Task completed with results, ready for review',
+    description: 'Calculator task completed with results, ready for review',
     state: 'ACHIEVE_TASK_EXECUTED',
   },
   'achieve-complete': {
     name: 'achieve-complete',
-    displayName: 'Workflow Complete',
-    description: 'All acceptance criteria met, workflow complete',
+    displayName: 'Calculator Complete',
+    description: 'All calculator acceptance criteria met, workflow complete',
     state: 'ACHIEVE_COMPLETE',
   },
   'pr-gathering-comments': {
     name: 'pr-gathering-comments',
     displayName: 'PR Review Started',
-    description: 'PR review mode, collecting comments from GATHER phase',
+    description: 'Calculator PR review mode, collecting comments from GATHER phase',
     state: 'PR_GATHERING_COMMENTS_G',
   },
   'pr-review-task-draft': {
     name: 'pr-review-task-draft',
     displayName: 'PR Review Task',
-    description: 'PR review task being drafted',
+    description: 'Calculator PR review task being drafted',
     state: 'PR_REVIEW_TASK_DRAFT_G',
   },
   'error-plan-missing': {
     name: 'error-plan-missing',
     displayName: 'Error State',
-    description: 'Error state demonstration - plan file missing',
+    description: 'Error state demonstration - calculator plan file missing',
     state: 'ERROR_PLAN_MISSING',
   },
 };
@@ -86,10 +86,14 @@ export const DEMO_STATES: Record<string, DemoState> = {
 export class DemoManager {
   private readonly aiDir = '.ai';
   private readonly backupDir = '.ai-backup';
-  private readonly templateProcessor: DemoTemplateProcessor;
+  private readonly demosDir: string;
 
   constructor() {
-    this.templateProcessor = new DemoTemplateProcessor();
+    // Find demos directory relative to this module location
+    // When compiled to dist/demo/index.js, demos is at ../../demos/
+    // When running from source, demos is at ../../../demos/
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    this.demosDir = path.resolve(__dirname, '..', '..', 'demos');
   }
 
   /**
@@ -194,7 +198,7 @@ export class DemoManager {
   }
 
   /**
-   * Set demo state
+   * Set demo state by copying from demos folder
    */
   async setState(stateName: string): Promise<void> {
     const demoState = DEMO_STATES[stateName];
@@ -204,13 +208,22 @@ export class DemoManager {
       );
     }
 
+    const demoSourcePath = path.join(this.demosDir, stateName, '.ai');
+    
+    // Check if demo folder exists
+    try {
+      await fs.access(demoSourcePath);
+    } catch {
+      throw new Error(`Demo folder not found: ${demoSourcePath}`);
+    }
+
     // Remove existing .ai directory
     if (await this.hasAiDirectory()) {
       await fs.rm(this.aiDir, { recursive: true, force: true });
     }
 
-    // Generate demo state from templates
-    await this.templateProcessor.generateDemoState(demoState);
+    // Copy demo state from demos folder
+    await this.copyDirectory(demoSourcePath, this.aiDir);
   }
 
   /**

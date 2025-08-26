@@ -6,6 +6,11 @@
   "bin": {
     "ai-engineer-demo": "./bin/demo-cli.mjs"
   },
+  "files": [
+    "dist",
+    "bin",
+    "demos"
+  ],
   "scripts": {
     "prebuild": "tsx scripts/prebuild.ts && npm run lint:fix",
     "dev": "npm run prebuild && ts-node --esm src/index.ts",
@@ -17,7 +22,7 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build:demo": "npx tsc -p tsconfig.demo.json && node scripts/fix-demo-imports.js",
+    "build:demo": "npx tsc -p tsconfig.demo.json",
     "demo": "node bin/demo-cli.mjs",
     "demo:list": "npm run demo list",
     "demo:reset": "npm run demo reset"

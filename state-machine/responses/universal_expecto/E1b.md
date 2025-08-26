@@ -1,26 +1,16 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
-You have been provided with a list of Atlassian URLs from the `.ai/task/context.md` file that have not been processed yet:
+**EXECUTE IMMEDIATELY:**
+1. Check if Atlassian MCP is available by calling `mcp__atlassian__atlassianUserInfo` with no parameters
+2. Process the provided list of Atlassian URLs from the `.ai/task/context.md` file
+3. If Atlassian MCP available: fetch content from each URL using appropriate MCP functions
+4. If Atlassian MCP available: enrich `.ai/task/context.md` file with relevant information from these resources
+5. If Atlassian MCP available: add processed URLs to `.ai/task/.atlassian-refs` file (one URL per line)
+6. If Atlassian MCP unavailable: add note to context.md explaining integration unavailability
+7. **DELIVERABLE**: Enhanced context.md file with Atlassian information or documentation of integration unavailability
 
+Atlassian URLs to process:
 [ATLASSIAN_URLS_PLACEHOLDER]
-
-First, check if the Atlassian MCP is available using this approach:
-
-1. Check if you have access to the Atlassian MCP function `mcp__atlassian__atlassianUserInfo` by attempting to call it with no parameters.
-2. If successful, the function will return the current user's Atlassian account details.
-3. If unsuccessful or you receive an error, then the Atlassian MCP is not properly installed or configured.
-
-Based on Atlassian MCP availability:
-
-- If Atlassian MCP is available:
-  1. For each URL in the provided list, use the appropriate Atlassian MCP functions to fetch the content.
-  2. Enrich the `.ai/task/context.md` file with relevant information from these Atlassian resources.
-  3. After successfully processing each URL, add it to the `.ai/task/.atlassian-refs` file (one URL per line).
-  4. Use the "Atlassian Integration Available" response to the developer.
-
-- If Atlassian MCP is not available:
-  1. Add a note to the `.ai/task/context.md` file explaining that Atlassian integration is not available.
-  2. Use the "Atlassian Integration Unavailable" response to the developer.
 
 ## Response to the Developer
 

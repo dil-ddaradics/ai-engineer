@@ -1,9 +1,9 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
+**EXECUTE IMMEDIATELY:**
 1. Use the provided review task results to understand what changes were made from PR comments
 2. Update `.ai/task/plan.md` with a summary of these changes
-3. Read the existing `.ai/task/task.md` file to understand the current task
-4. Summarize the current task for the user in the context of the PR feedback
+3. **DELIVERABLE**: Updated plan file with summary of PR feedback changes
 
 Review Task Results Content:
 [REVIEW_TASK_RESULTS_PLACEHOLDER]

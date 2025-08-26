@@ -5,7 +5,7 @@
  * Supports commands: list, set, reset, current, backup, restore
  */
 
-import { DemoManager, DEMO_STATES } from './index';
+import { DemoManager, DEMO_STATES } from './index.js';
 
 export interface CliOptions {
   args: string[];

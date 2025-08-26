@@ -1,12 +1,3 @@
-## Response to the AI
-
-Read the existing `.ai/task/comments.md` file that was preserved when the user chose to continue with the current PR review process instead of restarting it.
-
-Then, analyze the comments and prepare to help the user address them by:
-
-1. Summarizing the main feedback points from the `.ai/task/comments.md` file
-2. Identifying the key areas that need attention
-3. Preparing to guide the user through addressing these comments
 
 ## Response to the Developer
 

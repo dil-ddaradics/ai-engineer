@@ -1,12 +1,3 @@
-## Response to the AI
-
-Read the existing `.ai/task/review-task.md` file that was preserved when the user chose to continue with the current PR review task instead of restarting it.
-
-Then:
-
-1. Review the tasks that were previously defined to address PR comments
-2. Prepare to guide the user through implementing these tasks
-3. Be ready to execute these tasks when the user casts Accio
 
 ## Response to the Developer
 
