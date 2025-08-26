@@ -75,10 +75,13 @@ export const [transitionId]Transition: Transition = {
   fromState: 'SOURCE_STATE_NAME',
   spell: 'SPELL_NAME',
   toState: 'NEXT_STATE_NAME',
+  // OPTION 1: No condition property (omit entirely if there is no condition to apply)
+
+  // OPTION 2: Condition with actual logic (when MCP Condition column has checks)
   condition: async (context: StateContext, fileSystem: FileSystem) => {
     // Implementation based on MCP Condition column
-    // Return boolean result
-    return true; // or false based on condition logic
+    // Example: Checks `.ai/task/context.md` exists (exists)
+    return await fileSystem.exists(FILE_PATHS.CONTEXT_FILE);
   },
   execute: async (context: StateContext, fileSystem: FileSystem) => {
     // Implementation based on MCP Actions column

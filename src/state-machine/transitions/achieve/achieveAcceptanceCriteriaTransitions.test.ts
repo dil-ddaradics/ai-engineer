@@ -346,15 +346,12 @@ This is a plan without acceptance criteria.
       expect(a4Transition.fromState).toBe('ACHIEVE_COMPLETE');
       expect(a4Transition.spell).toBe('Accio');
       expect(a4Transition.toState).toBe('ACHIEVE_COMPLETE');
-      expect(a4Transition.condition).toBeDefined();
+      expect(a4Transition.condition).toBeUndefined();
       expect(a4Transition.execute).toBeDefined();
     });
 
-    it('should have condition that always returns true (no-op transition)', async () => {
-      // This is a no-op transition that always applies
-      const result = await a4Transition.condition!(mockCompleteContext, mockFileSystem);
-
-      expect(result).toBe(true);
+    it('should have no condition property (no-op transitions are always truthy)', () => {
+      expect(a4Transition.condition).toBeUndefined();
     });
 
     it('should execute and return correct response', async () => {

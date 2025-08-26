@@ -166,10 +166,6 @@ export const a4Transition: Transition = {
   fromState: 'ACHIEVE_COMPLETE',
   spell: 'Accio',
   toState: 'ACHIEVE_COMPLETE',
-  condition: async () => {
-    // No condition - this is a no-op transition that always applies
-    return true;
-  },
   execute: async (_context, _fileSystem) => {
     // No file operations required - just message explaining the no-op
     const response = ResponseUtils.formatResponse('achieve_transitions_A4');
