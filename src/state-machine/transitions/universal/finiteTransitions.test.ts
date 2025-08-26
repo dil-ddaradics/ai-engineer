@@ -15,7 +15,7 @@ describe('Finite Transitions', () => {
   describe('F1 - Any state except excluded states + Finite -> GATHER_EDITING', () => {
     it('should be defined with correct properties', () => {
       expect(f1Transition).toBeDefined();
-      
+
       // F1 should use StateUtils.anyStateExcept to generate fromState
       const expectedFromStates = StateUtils.anyStateExcept([
         'ACHIEVE_TASK_EXECUTED',
@@ -40,12 +40,12 @@ describe('Finite Transitions', () => {
         'ERROR_REVIEW_TASK_RESULTS_MISSING_G',
         'ERROR_REVIEW_TASK_RESULTS_MISSING_A',
       ]);
-      
+
       expect(f1Transition.fromState).toEqual(expectedFromStates);
       expect(f1Transition.spell).toBe('Finite');
       expect(f1Transition.toState).toBe('GATHER_EDITING');
       expect(f1Transition.condition).toBeUndefined();
-      
+
       // Should have 5 allowed states (26 total - 21 blocked)
       expect(expectedFromStates).toHaveLength(5);
       expect(expectedFromStates).toContain('GATHER_EDITING');

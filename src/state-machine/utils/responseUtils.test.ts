@@ -60,4 +60,35 @@ describe('ResponseUtils', () => {
       expect(ResponseUtils.validateReplacements(response, invalidReplacements)).toBe(false);
     });
   });
+
+  describe('formatLumosResponse', () => {
+    it('should combine system explanation, core response, and tips', () => {
+      const responseKey = 'lumos_transitions_L2';
+      const formatted = ResponseUtils.formatLumosResponse(responseKey);
+
+      expect(formatted).toContain('AI Engineer Workflow'); // From system explanation
+      expect(formatted).toContain('Tips for Success'); // From tips and tricks
+      expect(typeof formatted).toBe('string');
+      expect(formatted.length).toBeGreaterThan(100); // Should be a substantial response
+    });
+
+    it('should handle replacements in core response', () => {
+      const responseKey = 'lumos_transitions_L2';
+      const replacements = { TEST_PLACEHOLDER: 'Test Value' };
+      const formatted = ResponseUtils.formatLumosResponse(responseKey, replacements);
+
+      expect(typeof formatted).toBe('string');
+      expect(formatted).toContain('AI Engineer Workflow');
+      expect(formatted).toContain('Commit Early & Often');
+    });
+
+    it('should filter out empty parts', () => {
+      // Test with a response key that doesn't exist
+      const formatted = ResponseUtils.formatLumosResponse('nonexistent_key');
+
+      // Should still contain system explanation and tips
+      expect(formatted).toContain('AI Engineer Workflow');
+      expect(formatted).toContain('Commit Early & Often');
+    });
+  });
 });

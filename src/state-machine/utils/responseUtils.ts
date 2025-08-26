@@ -1,4 +1,4 @@
-import { RESPONSES } from '../constants';
+import { RESPONSES, TEMPLATES } from '../constants';
 
 /**
  * Utility functions for handling state machine responses
@@ -40,5 +40,21 @@ export class ResponseUtils {
   static validateReplacements(response: string, replacements: Record<string, string>): boolean {
     const placeholders = this.getPlaceholders(response);
     return placeholders.every(placeholder => placeholder in replacements);
+  }
+
+  /**
+   * Format a Lumos response with system explanation prepended and tips appended
+   */
+  static formatLumosResponse(
+    responseKey: string,
+    replacements: Record<string, string> = {}
+  ): string {
+    const coreResponse = this.formatResponse(responseKey, replacements);
+    const systemExplanation = TEMPLATES.system_explanation || '';
+    const tipsAndTricks = TEMPLATES.tips_and_tricks || '';
+
+    // Combine: system explanation + core response + tips and tricks
+    const parts = [systemExplanation, coreResponse, tipsAndTricks].filter(part => part.trim());
+    return parts.join('\n\n');
   }
 }

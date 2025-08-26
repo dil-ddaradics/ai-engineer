@@ -6,7 +6,7 @@ import { ResponseUtils, StateUtils } from '../../utils';
  * From: "Finite Transitions (Universal Return to Plan)" table
  * Reference: state-machine/state-machine.md:347
  * Purpose: Universal return to plan editing for most states
- * 
+ *
  * States that block finite (excluded from this transition):
  * - ACHIEVE_TASK_EXECUTED: Must process task results first
  * - GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT: No plan to return to yet
@@ -20,11 +20,11 @@ export const f1Transition: Transition = {
   fromState: StateUtils.anyStateExcept([
     // States that must complete their current action before returning to plan
     'ACHIEVE_TASK_EXECUTED',
-    
+
     // States with no plan to return to yet
     'GATHER_NEEDS_CONTEXT',
     'GATHER_EDITING_CONTEXT',
-    
+
     // PR states that must archive results or are in active workflow
     'PR_APPLIED_PENDING_ARCHIVE_G',
     'PR_APPLIED_PENDING_ARCHIVE_A',
@@ -36,7 +36,7 @@ export const f1Transition: Transition = {
     'PR_CONFIRM_RESTART_COMMENTS_A',
     'PR_CONFIRM_RESTART_TASK_G',
     'PR_CONFIRM_RESTART_TASK_A',
-    
+
     // Error states that must be resolved first
     'ERROR_PLAN_MISSING',
     'ERROR_CONTEXT_MISSING',

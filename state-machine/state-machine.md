@@ -378,35 +378,34 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Universal Lumos Transitions
 
-| ID   | Current State                       | Trigger | MCP Condition | Next State | MCP Actions | Response                                       |
-| ---- | ----------------------------------- | ------- | ------------- | ---------- | ----------- | ---------------------------------------------- |
-| L1   | GATHER_NEEDS_PLAN                   | Lumos   | -             | Same state | -           | [L1.md](responses/lumos_transitions/L1.md)     |
-| L2   | GATHER_EDITING                      | Lumos   | -             | Same state | -           | [L2.md](responses/lumos_transitions/L2.md)     |
-| L3   | ACHIEVE_TASK_DRAFTING               | Lumos   | -             | Same state | -           | [L3.md](responses/lumos_transitions/L3.md)     |
-| L4   | ACHIEVE_TASK_EXECUTED               | Lumos   | -             | Same state | -           | [L4.md](responses/lumos_transitions/L4.md)     |
-| L5   | ACHIEVE_COMPLETE                    | Lumos   | -             | Same state | -           | [L5.md](responses/lumos_transitions/L5.md)     |
-| L6   | PR_GATHERING_COMMENTS_G             | Lumos   | -             | Same state | -           | [L6.md](responses/lumos_transitions/L6.md)     |
-| L7   | PR_GATHERING_COMMENTS_A             | Lumos   | -             | Same state | -           | [L7.md](responses/lumos_transitions/L7.md)     |
-| L8   | PR_REVIEW_TASK_DRAFT_G              | Lumos   | -             | Same state | -           | [L8.md](responses/lumos_transitions/L8.md)     |
-| L9   | PR_REVIEW_TASK_DRAFT_A              | Lumos   | -             | Same state | -           | [L9.md](responses/lumos_transitions/L9.md)     |
-| L10  | PR_APPLIED_PENDING_ARCHIVE_G        | Lumos   | -             | Same state | -           | [L10.md](responses/lumos_transitions/L10.md)   |
-| L11  | PR_APPLIED_PENDING_ARCHIVE_A        | Lumos   | -             | Same state | -           | [L11.md](responses/lumos_transitions/L11.md)   |
-| L12  | PR_CONFIRM_RESTART_COMMENTS_G       | Lumos   | -             | Same state | -           | [L12.md](responses/lumos_transitions/L12.md)   |
-| L13  | PR_CONFIRM_RESTART_COMMENTS_A       | Lumos   | -             | Same state | -           | [L13.md](responses/lumos_transitions/L13.md)   |
-| L14  | PR_CONFIRM_RESTART_TASK_G           | Lumos   | -             | Same state | -           | [L14.md](responses/lumos_transitions/L14.md)   |
-| L15  | PR_CONFIRM_RESTART_TASK_A           | Lumos   | -             | Same state | -           | [L15.md](responses/lumos_transitions/L15.md)   |
-| L16  | ERROR_TASK_MISSING                  | Lumos   | -             | Same state | -           | [L16.md](responses/lumos_transitions/L16.md)   |
-| L17  | ERROR_TASK_RESULTS_MISSING          | Lumos   | -             | Same state | -           | [L17.md](responses/lumos_transitions/L17.md)   |
-| L18  | ERROR_PLAN_MISSING                  | Lumos   | -             | Same state | -           | [L18.md](responses/lumos_transitions/L18.md)   |
-| L19  | ERROR_COMMENTS_MISSING_G            | Lumos   | -             | Same state | -           | [L19.md](responses/lumos_transitions/L19.md)   |
-| L19a | ERROR_COMMENTS_MISSING_A            | Lumos   | -             | Same state | -           | [L19a.md](responses/lumos_transitions/L19a.md) |
-| L20  | ERROR_REVIEW_TASK_MISSING_G         | Lumos   | -             | Same state | -           | [L20.md](responses/lumos_transitions/L20.md)   |
-| L20a | ERROR_REVIEW_TASK_MISSING_A         | Lumos   | -             | Same state | -           | [L20a.md](responses/lumos_transitions/L20a.md) |
-| L21  | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos   | -             | Same state | -           | [L21.md](responses/lumos_transitions/L21.md)   |
-| L21a | ERROR_REVIEW_TASK_RESULTS_MISSING_A | Lumos   | -             | Same state | -           | [L21a.md](responses/lumos_transitions/L21a.md) |
-| L22  | GATHER_NEEDS_CONTEXT                | Lumos   | -             | Same state | -           | [L22.md](responses/lumos_transitions/L22.md)   |
-| L23  | GATHER_EDITING_CONTEXT              | Lumos   | -             | Same state | -           | [L23.md](responses/lumos_transitions/L23.md)   |
-| L24  | ERROR_CONTEXT_MISSING               | Lumos   | -             | Same state | -           | [L24.md](responses/lumos_transitions/L24.md)   |
+| ID   | Current State                       | Trigger | MCP Condition | Next State | MCP Actions | Response                                       | Implementation |
+| ---- | ----------------------------------- | ------- | ------------- | ---------- | ----------- | ---------------------------------------------- | -------------- |
+| L2   | GATHER_EDITING                      | Lumos   | -             | Same state | -           | [L2.md](responses/lumos_transitions/L2.md)     | yes            |
+| L3   | ACHIEVE_TASK_DRAFTING               | Lumos   | -             | Same state | -           | [L3.md](responses/lumos_transitions/L3.md)     | yes            |
+| L4   | ACHIEVE_TASK_EXECUTED               | Lumos   | -             | Same state | -           | [L4.md](responses/lumos_transitions/L4.md)     | yes            |
+| L5   | ACHIEVE_COMPLETE                    | Lumos   | -             | Same state | -           | [L5.md](responses/lumos_transitions/L5.md)     | yes            |
+| L6   | PR_GATHERING_COMMENTS_G             | Lumos   | -             | Same state | -           | [L6.md](responses/lumos_transitions/L6.md)     | yes            |
+| L7   | PR_GATHERING_COMMENTS_A             | Lumos   | -             | Same state | -           | [L7.md](responses/lumos_transitions/L7.md)     | yes            |
+| L8   | PR_REVIEW_TASK_DRAFT_G              | Lumos   | -             | Same state | -           | [L8.md](responses/lumos_transitions/L8.md)     | yes            |
+| L9   | PR_REVIEW_TASK_DRAFT_A              | Lumos   | -             | Same state | -           | [L9.md](responses/lumos_transitions/L9.md)     | yes            |
+| L10  | PR_APPLIED_PENDING_ARCHIVE_G        | Lumos   | -             | Same state | -           | [L10.md](responses/lumos_transitions/L10.md)   | yes            |
+| L11  | PR_APPLIED_PENDING_ARCHIVE_A        | Lumos   | -             | Same state | -           | [L11.md](responses/lumos_transitions/L11.md)   | yes            |
+| L12  | PR_CONFIRM_RESTART_COMMENTS_G       | Lumos   | -             | Same state | -           | [L12.md](responses/lumos_transitions/L12.md)   | yes            |
+| L13  | PR_CONFIRM_RESTART_COMMENTS_A       | Lumos   | -             | Same state | -           | [L13.md](responses/lumos_transitions/L13.md)   | yes            |
+| L14  | PR_CONFIRM_RESTART_TASK_G           | Lumos   | -             | Same state | -           | [L14.md](responses/lumos_transitions/L14.md)   | yes            |
+| L15  | PR_CONFIRM_RESTART_TASK_A           | Lumos   | -             | Same state | -           | [L15.md](responses/lumos_transitions/L15.md)   | yes            |
+| L16  | ERROR_TASK_MISSING                  | Lumos   | -             | Same state | -           | [L16.md](responses/lumos_transitions/L16.md)   | yes            |
+| L17  | ERROR_TASK_RESULTS_MISSING          | Lumos   | -             | Same state | -           | [L17.md](responses/lumos_transitions/L17.md)   | yes            |
+| L18  | ERROR_PLAN_MISSING                  | Lumos   | -             | Same state | -           | [L18.md](responses/lumos_transitions/L18.md)   | yes            |
+| L19  | ERROR_COMMENTS_MISSING_G            | Lumos   | -             | Same state | -           | [L19.md](responses/lumos_transitions/L19.md)   | yes            |
+| L19a | ERROR_COMMENTS_MISSING_A            | Lumos   | -             | Same state | -           | [L19a.md](responses/lumos_transitions/L19a.md) | yes            |
+| L20  | ERROR_REVIEW_TASK_MISSING_G         | Lumos   | -             | Same state | -           | [L20.md](responses/lumos_transitions/L20.md)   | yes            |
+| L20a | ERROR_REVIEW_TASK_MISSING_A         | Lumos   | -             | Same state | -           | [L20a.md](responses/lumos_transitions/L20a.md) | yes            |
+| L21  | ERROR_REVIEW_TASK_RESULTS_MISSING_G | Lumos   | -             | Same state | -           | [L21.md](responses/lumos_transitions/L21.md)   | yes            |
+| L21a | ERROR_REVIEW_TASK_RESULTS_MISSING_A | Lumos   | -             | Same state | -           | [L21a.md](responses/lumos_transitions/L21a.md) | yes            |
+| L22  | GATHER_NEEDS_CONTEXT                | Lumos   | -             | Same state | -           | [L22.md](responses/lumos_transitions/L22.md)   | yes            |
+| L23  | GATHER_EDITING_CONTEXT              | Lumos   | -             | Same state | -           | [L23.md](responses/lumos_transitions/L23.md)   | yes            |
+| L24  | ERROR_CONTEXT_MISSING               | Lumos   | -             | Same state | -           | [L24.md](responses/lumos_transitions/L24.md)   | yes            |
 
 #### Universal Expecto Transitions
 
