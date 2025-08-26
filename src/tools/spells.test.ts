@@ -32,9 +32,13 @@ describe('Spell Tools Tests', () => {
     }
   }
 
-  beforeAll(() => {
-    // Build the server before running tests
-    execSync('npm run build', { stdio: 'inherit' });
+  beforeAll(async () => {
+    // Ensure dist directory exists - build should have been run by jest setup
+    const fs = await import('fs');
+    const distExists = fs.existsSync('./dist');
+    if (!distExists) {
+      throw new Error('Build artifacts not found. Run `npm run build` before running tests.');
+    }
   });
 
   describe('Tool Registration Tests', () => {

@@ -11,11 +11,45 @@ describe('AiEngineerStateMachine', () => {
   let fileSystem: NodeFileSystem;
   let tempDir: string;
 
+  // Mock transitions for controlled testing - only include what's needed for testing state machine logic
+  const mockTransitions: Transition[] = [
+    // Working transition: GATHER_NEEDS_CONTEXT + Accio -> GATHER_EDITING_CONTEXT
+    {
+      fromState: 'GATHER_NEEDS_CONTEXT',
+      spell: 'Accio',
+      toState: 'GATHER_EDITING_CONTEXT',
+      execute: async () => ({
+        message: 'Mock Accio transition executed successfully',
+      }),
+    },
+    // Conditional transition for testing condition logic: GATHER_EDITING_CONTEXT + Finite -> Same state
+    {
+      fromState: 'GATHER_EDITING_CONTEXT',
+      spell: 'Finite',
+      toState: 'GATHER_EDITING_CONTEXT',
+      condition: async () => true, // Always true for testing
+      execute: async () => ({
+        message: 'Mock conditional transition executed',
+      }),
+    },
+    // Conditional transition that fails: GATHER_EDITING_CONTEXT + Expecto -> Same state
+    {
+      fromState: 'GATHER_EDITING_CONTEXT',
+      spell: 'Expecto',
+      toState: 'GATHER_EDITING_CONTEXT',
+      condition: async () => false, // Always false for testing
+      execute: async () => ({
+        message: 'This should never execute due to failing condition',
+      }),
+    },
+  ];
+
   beforeEach(() => {
     tempDir = path.join(tmpdir(), `ai-engineer-test-${Date.now()}`);
     fileSystem = new NodeFileSystem(tempDir);
     stateRepository = new JsonFileStateRepository(fileSystem);
-    stateMachine = new AiEngineerStateMachine(stateRepository, fileSystem);
+    // Inject mock transitions instead of DEFAULT_TRANSITIONS
+    stateMachine = new AiEngineerStateMachine(stateRepository, fileSystem, mockTransitions);
   });
 
   // Helper function to read current state from file
@@ -149,10 +183,11 @@ describe('AiEngineerStateMachine', () => {
         expect(result).toHaveProperty('message');
 
         if (spell === 'Accio') {
-          // Accio should work from GATHER_NEEDS_CONTEXT (GC1 transition implemented)
+          // Accio should work from GATHER_NEEDS_CONTEXT (mock transition defined)
           expect(result.success).toBe(true);
+          expect(result.message).toBe('Mock Accio transition executed successfully');
         } else {
-          // Other spells should be blocked since no transitions are defined for them
+          // Other spells should be blocked since no transitions are defined for them in GATHER_NEEDS_CONTEXT
           expect(result.success).toBe(false);
           expect(result.message).toContain('not available in the current state');
         }
@@ -161,6 +196,34 @@ describe('AiEngineerStateMachine', () => {
         const savedState = await getCurrentStateFromFile();
         expect(savedState).not.toBeNull();
       });
+    });
+
+    it('should handle conditional transitions that succeed', async () => {
+      // First transition to GATHER_EDITING_CONTEXT
+      await stateMachine.executeSpell('Accio');
+
+      // Now test Finite which has condition that always returns true
+      const result = await stateMachine.executeSpell('Finite');
+
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Mock conditional transition executed');
+
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT');
+    });
+
+    it('should handle conditional transitions that fail', async () => {
+      // First transition to GATHER_EDITING_CONTEXT
+      await stateMachine.executeSpell('Accio');
+
+      // Now test Expecto which has condition that always returns false
+      const result = await stateMachine.executeSpell('Expecto');
+
+      expect(result.success).toBe(false);
+      expect(result.message).toContain('not available in the current state');
+
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT'); // State unchanged
     });
   });
 });
