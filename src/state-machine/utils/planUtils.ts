@@ -1,4 +1,4 @@
-import { FileSystem } from '../types';
+import { FileSystem, FILE_PATHS } from '../types';
 
 /**
  * Utility functions for handling plan operations and acceptance criteria
@@ -77,6 +77,53 @@ export class PlanUtils {
       return completed.length > 0 || pending.length > 0;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Get processed URLs from the .atlassian-refs file
+   */
+  async getProcessedUrls(): Promise<string[]> {
+    try {
+      if (!(await this.fileSystem.exists(FILE_PATHS.ATLASSIAN_REFS_FILE))) {
+        return [];
+      }
+      const content = await this.fileSystem.readSafe(FILE_PATHS.ATLASSIAN_REFS_FILE);
+      return content.split('\n').filter(line => line.trim().length > 0);
+    } catch (error) {
+      throw new Error(
+        `Failed to read processed URLs: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  /**
+   * Get unprocessed URLs from a file (URLs not in .atlassian-refs)
+   */
+  async getUnprocessedUrls(filePath: string): Promise<string[]> {
+    try {
+      const allUrls = await this.extractAtlassianUrls(filePath);
+      const processedUrls = await this.getProcessedUrls();
+      return allUrls.filter(url => !processedUrls.includes(url));
+    } catch (error) {
+      throw new Error(
+        `Failed to get unprocessed URLs: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  /**
+   * Update the .atlassian-refs file with new URLs
+   */
+  async updateProcessedUrls(newUrls: string[]): Promise<void> {
+    try {
+      const existingUrls = await this.getProcessedUrls();
+      const allUrls = [...existingUrls, ...newUrls];
+      await this.fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, allUrls.join('\n'));
+    } catch (error) {
+      throw new Error(
+        `Failed to update processed URLs: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

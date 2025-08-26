@@ -1,5 +1,6 @@
 import { PlanUtils } from './planUtils';
 import { NodeFileSystem } from '../fileSystem';
+import { FILE_PATHS } from '../types';
 import path from 'path';
 import { tmpdir } from 'os';
 
@@ -143,6 +144,152 @@ Non-Atlassian: https://github.com/repo`;
       const hasCriteria = await planUtils.hasAcceptanceCriteria('no-criteria.md');
 
       expect(hasCriteria).toBe(false);
+    });
+  });
+
+  describe('getProcessedUrls', () => {
+    it('should return empty array when .atlassian-refs file does not exist', async () => {
+      const urls = await planUtils.getProcessedUrls();
+      expect(urls).toEqual([]);
+    });
+
+    it('should return processed URLs from .atlassian-refs file', async () => {
+      const refsContent = `https://company.atlassian.net/browse/PROJ-123
+https://company.atlassian.net/wiki/spaces/DEV/pages/123456
+https://other.atlassian.net/browse/TASK-789`;
+
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, refsContent);
+      const urls = await planUtils.getProcessedUrls();
+
+      expect(urls).toHaveLength(3);
+      expect(urls).toContain('https://company.atlassian.net/browse/PROJ-123');
+      expect(urls).toContain('https://company.atlassian.net/wiki/spaces/DEV/pages/123456');
+      expect(urls).toContain('https://other.atlassian.net/browse/TASK-789');
+    });
+
+    it('should filter out empty lines from .atlassian-refs file', async () => {
+      const refsContent = `https://company.atlassian.net/browse/PROJ-123
+
+https://company.atlassian.net/wiki/spaces/DEV/pages/123456
+
+`;
+
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, refsContent);
+      const urls = await planUtils.getProcessedUrls();
+
+      expect(urls).toHaveLength(2);
+      expect(urls).toContain('https://company.atlassian.net/browse/PROJ-123');
+      expect(urls).toContain('https://company.atlassian.net/wiki/spaces/DEV/pages/123456');
+    });
+
+    it('should return empty array when .atlassian-refs file is empty', async () => {
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, '');
+      const urls = await planUtils.getProcessedUrls();
+      expect(urls).toEqual([]);
+    });
+  });
+
+  describe('getUnprocessedUrls', () => {
+    it('should return all URLs when no .atlassian-refs file exists', async () => {
+      const content = `Check these:
+- https://company.atlassian.net/browse/PROJ-123
+- https://company.atlassian.net/wiki/spaces/DEV/pages/123456`;
+
+      await fileSystem.write('test-file.md', content);
+      const urls = await planUtils.getUnprocessedUrls('test-file.md');
+
+      expect(urls).toHaveLength(2);
+      expect(urls).toContain('https://company.atlassian.net/browse/PROJ-123');
+      expect(urls).toContain('https://company.atlassian.net/wiki/spaces/DEV/pages/123456');
+    });
+
+    it('should return only unprocessed URLs', async () => {
+      const content = `Check these:
+- https://company.atlassian.net/browse/PROJ-123
+- https://company.atlassian.net/browse/PROJ-456
+- https://company.atlassian.net/wiki/spaces/DEV/pages/123456`;
+
+      const refsContent = `https://company.atlassian.net/browse/PROJ-123
+https://company.atlassian.net/wiki/spaces/DEV/pages/123456`;
+
+      await fileSystem.write('test-file.md', content);
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, refsContent);
+
+      const urls = await planUtils.getUnprocessedUrls('test-file.md');
+
+      expect(urls).toHaveLength(1);
+      expect(urls).toContain('https://company.atlassian.net/browse/PROJ-456');
+    });
+
+    it('should return empty array when all URLs are processed', async () => {
+      const content = 'Check: https://company.atlassian.net/browse/PROJ-123';
+      const refsContent = 'https://company.atlassian.net/browse/PROJ-123';
+
+      await fileSystem.write('test-file.md', content);
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, refsContent);
+
+      const urls = await planUtils.getUnprocessedUrls('test-file.md');
+      expect(urls).toEqual([]);
+    });
+
+    it('should return empty array when file has no Atlassian URLs', async () => {
+      const content = 'No Atlassian URLs here, just regular content';
+      await fileSystem.write('test-file.md', content);
+
+      const urls = await planUtils.getUnprocessedUrls('test-file.md');
+      expect(urls).toEqual([]);
+    });
+  });
+
+  describe('updateProcessedUrls', () => {
+    it('should create .atlassian-refs file with new URLs when file does not exist', async () => {
+      const newUrls = [
+        'https://company.atlassian.net/browse/PROJ-123',
+        'https://company.atlassian.net/wiki/spaces/DEV/pages/123456',
+      ];
+
+      await planUtils.updateProcessedUrls(newUrls);
+
+      const content = await fileSystem.read(FILE_PATHS.ATLASSIAN_REFS_FILE);
+      expect(content).toBe(
+        'https://company.atlassian.net/browse/PROJ-123\nhttps://company.atlassian.net/wiki/spaces/DEV/pages/123456'
+      );
+    });
+
+    it('should append new URLs to existing .atlassian-refs file', async () => {
+      const existingContent = 'https://company.atlassian.net/browse/PROJ-123';
+      const newUrls = [
+        'https://company.atlassian.net/browse/PROJ-456',
+        'https://company.atlassian.net/wiki/spaces/DEV/pages/123456',
+      ];
+
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, existingContent);
+      await planUtils.updateProcessedUrls(newUrls);
+
+      const content = await fileSystem.read(FILE_PATHS.ATLASSIAN_REFS_FILE);
+      const lines = content.split('\n');
+
+      expect(lines).toHaveLength(3);
+      expect(lines).toContain('https://company.atlassian.net/browse/PROJ-123');
+      expect(lines).toContain('https://company.atlassian.net/browse/PROJ-456');
+      expect(lines).toContain('https://company.atlassian.net/wiki/spaces/DEV/pages/123456');
+    });
+
+    it('should handle empty newUrls array', async () => {
+      const existingContent = 'https://company.atlassian.net/browse/PROJ-123';
+
+      await fileSystem.write(FILE_PATHS.ATLASSIAN_REFS_FILE, existingContent);
+      await planUtils.updateProcessedUrls([]);
+
+      const content = await fileSystem.read(FILE_PATHS.ATLASSIAN_REFS_FILE);
+      expect(content).toBe('https://company.atlassian.net/browse/PROJ-123');
+    });
+
+    it('should create file with empty content when updating empty newUrls on non-existent file', async () => {
+      await planUtils.updateProcessedUrls([]);
+
+      const content = await fileSystem.read(FILE_PATHS.ATLASSIAN_REFS_FILE);
+      expect(content).toBe('');
     });
   });
 });

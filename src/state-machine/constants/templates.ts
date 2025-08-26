@@ -20,5 +20,5 @@ export const TEMPLATES: Record<string, string> = {
     '# Task Results\n\n## Summary\n\n## What Was Accomplished\n\n## Files Changed\n\n## Problems Encountered\n\n[//]: # "Document any unexpected issues that arose during task execution, how they were solved, or if they weren\'t solved, explain why."\n',
   task: "---\ntask_name: '<task-name>'\n---\n\n# Task:\n\n## Objective\n\n## Acceptance Criteria\n\nThis task works toward the following acceptance criteria from the plan:\n\n- [ ] **AC**:\n\n## Steps\n\n1. [ ]\n2. [ ]\n3. [ ]\n4. [ ]\n\n## Verification\n\nThis section is mandatory and must be run after all steps are completed:\n\n- [ ]\n- [ ]\n- [ ]\n- [ ]\n",
   tips_and_tricks:
-    '# Tips for Success\n\n- **Commit Early & Often**: Save your progress with git commits after each meaningful change\n- **Fresh Context**: Start new AI conversations when switching tasks or when context gets too long\n- **Most importantly**: Collaborate with your AI, ask questions, give context\n',
+    '# Tips for Success\n\n- **Commit Early & Often**: Save your progress with git commits after each meaningful change\n- **Fresh Context**: Start new AI conversations when switching tasks or when context gets too long\n- **Collaborate**: Ask your AI questions, brainstorm together, give context.\n',
 };
