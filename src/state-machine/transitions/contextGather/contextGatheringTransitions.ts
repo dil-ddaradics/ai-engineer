@@ -78,7 +78,45 @@ export const gc2aTransition: Transition = {
 };
 
 /**
+ * GC2b: GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING
+ * Creates plan.md file when no Atlassian URLs are found in context.md
+ */
+export const gc2bTransition: Transition = {
+  fromState: 'GATHER_EDITING_CONTEXT',
+  spell: 'Accio',
+  toState: 'GATHER_EDITING',
+  condition: async (context, fileSystem) => {
+    // Check if context.md exists
+    if (!(await fileSystem.exists(FILE_PATHS.CONTEXT_FILE))) {
+      return false;
+    }
+
+    // Check if Atlassian URLs are NOT found in context.md
+    const planUtils = new PlanUtils(fileSystem);
+    return !(await planUtils.hasAtlassianUrls(FILE_PATHS.CONTEXT_FILE));
+  },
+  execute: async (context, fileSystem) => {
+    // Create TemplateUtils instance
+    const templateUtils = new TemplateUtils(fileSystem);
+
+    // Creates `.ai/task/plan.md` file
+    await templateUtils.writeTemplate('plan');
+
+    // Get response template
+    const response = ResponseUtils.formatResponse('gather_transitions_GC2-no-urls');
+
+    return {
+      message: response,
+    };
+  },
+};
+
+/**
  * Context Gathering Phase Transitions
  * Maps to: "Context Gathering Phase Transitions" table in state-machine.md
  */
-export const contextGatheringTransitions: Transition[] = [gc1Transition, gc2aTransition];
+export const contextGatheringTransitions: Transition[] = [
+  gc1Transition,
+  gc2aTransition,
+  gc2bTransition,
+];

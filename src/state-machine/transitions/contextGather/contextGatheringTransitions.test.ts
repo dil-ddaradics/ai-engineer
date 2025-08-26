@@ -2,6 +2,7 @@ import {
   contextGatheringTransitions,
   gc1Transition,
   gc2aTransition,
+  gc2bTransition,
 } from './contextGatheringTransitions';
 import { StateContext, FILE_PATHS } from '../../types';
 import { ResponseUtils } from '../../utils/responseUtils';
@@ -185,6 +186,99 @@ And this Jira: https://company.atlassian.net/browse/PROJ-456
       };
 
       await expect(gc2aTransition.execute(mockContext, errorFileSystem)).rejects.toThrow(
+        'Plan write failed'
+      );
+    });
+  });
+
+  describe('GC2b - GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING', () => {
+    it('should be defined with correct properties', () => {
+      expect(gc2bTransition).toBeDefined();
+      expect(gc2bTransition.fromState).toBe('GATHER_EDITING_CONTEXT');
+      expect(gc2bTransition.spell).toBe('Accio');
+      expect(gc2bTransition.toState).toBe('GATHER_EDITING');
+      expect(gc2bTransition.execute).toBeDefined();
+      expect(gc2bTransition.condition).toBeDefined();
+    });
+
+    it('should return true condition when context.md exists without Atlassian URLs', async () => {
+      // Create context.md without Atlassian URLs
+      const contextContent = `
+# Project Context
+
+This is a general project context without any Atlassian references.
+We need to implement some features and fix bugs.
+      `;
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2bTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false condition when context.md exists with Atlassian URLs', async () => {
+      // Create context.md with Atlassian URLs
+      const contextContent = `
+# Project Context
+
+We need to integrate with our Atlassian instance:
+https://company.atlassian.net/wiki/spaces/DEV/pages/123456/Requirements
+
+Also reference this Jira ticket:
+https://company.atlassian.net/browse/PROJ-123
+      `;
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2bTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false condition when context.md does not exist', async () => {
+      // Ensure context.md doesn't exist
+      expect(await mockFileSystem.exists(FILE_PATHS.CONTEXT_FILE)).toBe(false);
+
+      const result = await gc2bTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should create plan.md file when executed', async () => {
+      // Create context.md without Atlassian URLs
+      const contextContent = 'This is a project context without Atlassian URLs';
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      await gc2bTransition.execute(mockContext, mockFileSystem);
+
+      expect(await mockFileSystem.exists(FILE_PATHS.PLAN_FILE)).toBe(true);
+    });
+
+    it('should return formatted response', async () => {
+      const result = await gc2bTransition.execute(mockContext, mockFileSystem);
+
+      expect(result).toHaveProperty('message');
+      expect(typeof result.message).toBe('string');
+      expect(result.message.length).toBeGreaterThan(0);
+
+      // Verify the response uses the correct response key
+      const expectedResponse = ResponseUtils.formatResponse('gather_transitions_GC2-no-urls');
+      expect(result.message).toBe(expectedResponse);
+    });
+
+    it('should handle file system errors gracefully', async () => {
+      // Create a mock file system that throws errors during plan file creation
+      const errorFileSystem = new MockFileSystem();
+
+      // Make write fail for plan file specifically
+      const originalWrite = errorFileSystem.write.bind(errorFileSystem);
+      errorFileSystem.write = (path: string, content: string) => {
+        if (path === FILE_PATHS.PLAN_FILE) {
+          return Promise.reject(new Error('Plan write failed'));
+        }
+        return originalWrite(path, content);
+      };
+
+      await expect(gc2bTransition.execute(mockContext, errorFileSystem)).rejects.toThrow(
         'Plan write failed'
       );
     });
