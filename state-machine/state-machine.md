@@ -365,16 +365,16 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### PR Review Phase Blocked Transitions
 
-| ID   | Current State                                                    | Trigger | MCP Condition | Next State | MCP Actions | Response                                |
-| ---- | ---------------------------------------------------------------- | ------- | ------------- | ---------- | ----------- | --------------------------------------- |
-| PB1  | PR*APPLIED_PENDING_ARCHIVE*[G/A]                                 | Reverto | -             | [BLOCKED]  | -           | [PB1.md](responses/pr_blocked/PB1.md)   |
-| PB2  | PR*GATHERING_COMMENTS*[G/A]                                      | Expecto | -             | [BLOCKED]  | -           | [PB2.md](responses/pr_blocked/PB2.md)   |
-| PB2b | PR*REVIEW_TASK_DRAFT*[G/A]                                       | Expecto | -             | [BLOCKED]  | -           | [PB2b.md](responses/pr_blocked/PB2b.md) |
-| PB2d | PR*APPLIED_PENDING_ARCHIVE*[G/A]                                 | Expecto | -             | [BLOCKED]  | -           | [PB2d.md](responses/pr_blocked/PB2d.md) |
-| PB3  | PR*GATHERING_COMMENTS*[G/A], PR*REVIEW_TASK_DRAFT*[G/A]          | Finite  | -             | [BLOCKED]  | -           | [PB3.md](responses/pr_blocked/PB3.md)   |
-| PB4  | PR*GATHERING_COMMENTS*[G/A], PR*REVIEW_TASK_DRAFT*[G/A]          | Reparo  | -             | [BLOCKED]  | -           | [PB4.md](responses/pr_blocked/PB4.md)   |
-| PB5  | PR*CONFIRM_RESTART_COMMENTS*[G/A], PR*CONFIRM_RESTART_TASK*[G/A] | Finite  | -             | [BLOCKED]  | -           | [PB5.md](responses/pr_blocked/PB5.md)   |
-| PB6  | PR*CONFIRM_RESTART_COMMENTS*[G/A], PR*CONFIRM_RESTART_TASK*[G/A] | Expecto | -             | [BLOCKED]  | -           | [PB6.md](responses/pr_blocked/PB6.md)   |
+| ID   | Current State                                                    | Trigger | MCP Condition | Next State | MCP Actions | Response                                | Implementation |
+| ---- | ---------------------------------------------------------------- | ------- | ------------- | ---------- | ----------- | --------------------------------------- | -------------- |
+| PB1  | PR*APPLIED_PENDING_ARCHIVE*[G/A]                                 | Reverto | -             | [BLOCKED]  | -           | [PB1.md](responses/pr_blocked/PB1.md)   | yes            |
+| PB2  | PR*GATHERING_COMMENTS*[G/A]                                      | Expecto | -             | [BLOCKED]  | -           | [PB2.md](responses/pr_blocked/PB2.md)   | yes            |
+| PB2b | PR*REVIEW_TASK_DRAFT*[G/A]                                       | Expecto | -             | [BLOCKED]  | -           | [PB2b.md](responses/pr_blocked/PB2b.md) | yes            |
+| PB2d | PR*APPLIED_PENDING_ARCHIVE*[G/A]                                 | Expecto | -             | [BLOCKED]  | -           | [PB2d.md](responses/pr_blocked/PB2d.md) | yes            |
+| PB3  | PR*GATHERING_COMMENTS*[G/A], PR*REVIEW_TASK_DRAFT*[G/A]          | Finite  | -             | [BLOCKED]  | -           | [PB3.md](responses/pr_blocked/PB3.md)   | yes            |
+| PB4  | PR*GATHERING_COMMENTS*[G/A], PR*REVIEW_TASK_DRAFT*[G/A]          | Reparo  | -             | [BLOCKED]  | -           | [PB4.md](responses/pr_blocked/PB4.md)   | yes            |
+| PB5  | PR*CONFIRM_RESTART_COMMENTS*[G/A], PR*CONFIRM_RESTART_TASK*[G/A] | Finite  | -             | [BLOCKED]  | -           | [PB5.md](responses/pr_blocked/PB5.md)   | yes            |
+| PB6  | PR*CONFIRM_RESTART_COMMENTS*[G/A], PR*CONFIRM_RESTART_TASK*[G/A] | Expecto | -             | [BLOCKED]  | -           | [PB6.md](responses/pr_blocked/PB6.md)   | yes            |
 
 #### Universal Lumos Transitions
 
