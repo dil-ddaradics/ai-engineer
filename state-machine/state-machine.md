@@ -224,12 +224,12 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Context Gathering Phase Blocked Transitions
 
-| ID   | Current State                                | Trigger | MCP Condition | Next State | MCP Actions | Response                                    |
-| ---- | -------------------------------------------- | ------- | ------------- | ---------- | ----------- | ------------------------------------------- |
-| GCB1 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Reverto | -             | [BLOCKED]  | -           | [GCB1.md](responses/gather_blocked/GCB1.md) |
-| GCB2 | GATHER_NEEDS_CONTEXT                         | Expecto | -             | [BLOCKED]  | -           | [GCB2.md](responses/gather_blocked/GCB2.md) |
-| GCB3 | GATHER_NEEDS_CONTEXT                         | Reparo  | -             | [BLOCKED]  | -           | [GCB3.md](responses/gather_blocked/GCB3.md) |
-| GCB4 | GATHER_EDITING_CONTEXT                       | Reparo  | -             | [BLOCKED]  | -           | [GCB4.md](responses/gather_blocked/GCB4.md) |
+| ID   | Current State                                | Trigger | MCP Condition | Next State | MCP Actions | Response                                    | Implementation |
+| ---- | -------------------------------------------- | ------- | ------------- | ---------- | ----------- | ------------------------------------------- | -------------- |
+| GCB1 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Reverto | -             | [BLOCKED]  | -           | [GCB1.md](responses/gather_blocked/GCB1.md) | yes            |
+| GCB2 | GATHER_NEEDS_CONTEXT                         | Expecto | -             | [BLOCKED]  | -           | [GCB2.md](responses/gather_blocked/GCB2.md) | yes            |
+| GCB3 | GATHER_NEEDS_CONTEXT                         | Reparo  | -             | [BLOCKED]  | -           | [GCB3.md](responses/gather_blocked/GCB3.md) | yes            |
+| GCB4 | GATHER_EDITING_CONTEXT                       | Reparo  | -             | [BLOCKED]  | -           | [GCB4.md](responses/gather_blocked/GCB4.md) | yes            |
 
 #### Context Gathering Phase No-op Transitions
 
