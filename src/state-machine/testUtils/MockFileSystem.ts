@@ -40,6 +40,10 @@ export class MockFileSystem implements FileSystem {
     return Array.from(this.files.keys()).filter(path => path.startsWith(directory));
   }
 
+  async listDirectories(directory: string): Promise<string[]> {
+    return Array.from(this.directories).filter(path => path.startsWith(directory));
+  }
+
   getBaseDirectory(): string {
     return '/test';
   }
