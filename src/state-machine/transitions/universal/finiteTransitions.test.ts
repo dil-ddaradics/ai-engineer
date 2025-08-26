@@ -1,8 +1,88 @@
-import { finiteTransitions } from './finiteTransitions';
+import { f1Transition, f2Transition, finiteTransitions } from './finiteTransitions';
+import { MockFileSystem } from '../../testUtils';
+import { StateContext } from '../../types';
+import { ResponseUtils } from '../../utils/responseUtils';
 
-describe('finite Transitions', () => {
-  // TODO: Delete this dummy test when real tests are implemented
+describe('Finite Transitions', () => {
+  let mockFileSystem: MockFileSystem;
+  let mockContext: StateContext;
+
+  beforeEach(() => {
+    mockFileSystem = new MockFileSystem();
+    mockContext = { currentState: 'GATHER_EDITING' };
+  });
+
+  describe('F1 - Any state except excluded states + Finite -> GATHER_EDITING', () => {
+    it('should be defined with correct properties', () => {
+      expect(f1Transition).toBeDefined();
+      expect(f1Transition.fromState).toEqual([
+        'GATHER_EDITING',
+        'ACHIEVE_TASK_DRAFTING',
+        'ERROR_TASK_MISSING',
+        'ERROR_TASK_RESULTS_MISSING',
+      ]);
+      expect(f1Transition.spell).toBe('Finite');
+      expect(f1Transition.toState).toBe('GATHER_EDITING');
+      expect(f1Transition.condition).toBeUndefined();
+    });
+
+    it('should return formatted response from finite_transitions_F1', async () => {
+      const result = await f1Transition.execute(mockContext, mockFileSystem);
+
+      expect(result.message).toBeDefined();
+      expect(typeof result.message).toBe('string');
+
+      // Verify the response uses the correct template
+      const expectedResponse = ResponseUtils.formatResponse('finite_transitions_F1');
+      expect(result.message).toBe(expectedResponse);
+    });
+
+    it('should work from ACHIEVE_TASK_DRAFTING state', async () => {
+      mockContext = { currentState: 'ACHIEVE_TASK_DRAFTING' };
+
+      const result = await f1Transition.execute(mockContext, mockFileSystem);
+
+      expect(result.message).toBeDefined();
+      expect(typeof result.message).toBe('string');
+    });
+
+    it('should work from error states', async () => {
+      mockContext = { currentState: 'ERROR_TASK_MISSING' };
+
+      const result = await f1Transition.execute(mockContext, mockFileSystem);
+
+      expect(result.message).toBeDefined();
+      expect(typeof result.message).toBe('string');
+    });
+  });
+
+  describe('F2 - ACHIEVE_COMPLETE + Finite -> GATHER_EDITING', () => {
+    it('should be defined with correct properties', () => {
+      expect(f2Transition).toBeDefined();
+      expect(f2Transition.fromState).toBe('ACHIEVE_COMPLETE');
+      expect(f2Transition.spell).toBe('Finite');
+      expect(f2Transition.toState).toBe('GATHER_EDITING');
+      expect(f2Transition.condition).toBeUndefined();
+    });
+
+    it('should return formatted response from finite_transitions_F2', async () => {
+      mockContext = { currentState: 'ACHIEVE_COMPLETE' };
+
+      const result = await f2Transition.execute(mockContext, mockFileSystem);
+
+      expect(result.message).toBeDefined();
+      expect(typeof result.message).toBe('string');
+
+      // Verify the response uses the correct template
+      const expectedResponse = ResponseUtils.formatResponse('finite_transitions_F2');
+      expect(result.message).toBe(expectedResponse);
+    });
+  });
+
   it('should have transitions defined', () => {
     expect(finiteTransitions).toBeDefined();
+    expect(finiteTransitions.length).toBe(2);
+    expect(finiteTransitions).toContain(f1Transition);
+    expect(finiteTransitions).toContain(f2Transition);
   });
 });
