@@ -1,6 +1,7 @@
 import { Transition, FILE_PATHS } from '../../types';
 import { ResponseUtils } from '../../utils/responseUtils';
 import { TemplateUtils } from '../../utils/templateUtils';
+import { PlanUtils } from '../../utils/planUtils';
 
 /**
  * GC1: GATHER_NEEDS_CONTEXT + Accio -> GATHER_EDITING_CONTEXT
@@ -15,15 +16,15 @@ export const gc1Transition: Transition = {
     const templateUtils = new TemplateUtils(fileSystem);
 
     // (1) Creates `.ai/task/context.md` with template
-    await templateUtils.writeTemplate(FILE_PATHS.CONTEXT_FILE, 'context');
+    await templateUtils.writeTemplate('context');
 
     // (2) Copies `.ai/plan-guide.md` and `.ai/task-guide.md` from MCP resources if missing
     if (!(await fileSystem.exists(FILE_PATHS.PLAN_GUIDE_FILE))) {
-      await templateUtils.writeTemplate(FILE_PATHS.PLAN_GUIDE_FILE, 'plan_guide');
+      await templateUtils.writeTemplate('plan_guide');
     }
 
     if (!(await fileSystem.exists(FILE_PATHS.TASK_GUIDE_FILE))) {
-      await templateUtils.writeTemplate(FILE_PATHS.TASK_GUIDE_FILE, 'task_guide');
+      await templateUtils.writeTemplate('task_guide');
     }
 
     // Get response template
@@ -36,7 +37,48 @@ export const gc1Transition: Transition = {
 };
 
 /**
+ * GC2a: GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING
+ * Creates plan.md file when Atlassian URLs are found in context.md
+ */
+export const gc2aTransition: Transition = {
+  fromState: 'GATHER_EDITING_CONTEXT',
+  spell: 'Accio',
+  toState: 'GATHER_EDITING',
+  condition: async (context, fileSystem) => {
+    // Check if context.md exists
+    if (!(await fileSystem.exists(FILE_PATHS.CONTEXT_FILE))) {
+      return false;
+    }
+
+    // Check if Atlassian URLs are found in context.md
+    const planUtils = new PlanUtils(fileSystem);
+    return await planUtils.hasAtlassianUrls(FILE_PATHS.CONTEXT_FILE);
+  },
+  execute: async (context, fileSystem) => {
+    // Create TemplateUtils and PlanUtils instances
+    const templateUtils = new TemplateUtils(fileSystem);
+    const planUtils = new PlanUtils(fileSystem);
+
+    // Creates `.ai/task/plan.md` file
+    await templateUtils.writeTemplate('plan');
+
+    // Extract Atlassian URLs for response placeholder
+    const atlassianUrls = await planUtils.extractAtlassianUrls(FILE_PATHS.CONTEXT_FILE);
+    const urlsList = atlassianUrls.map(url => `- ${url}`).join('\n');
+
+    // Get response template and replace placeholder
+    const response = ResponseUtils.formatResponse('gather_transitions_GC2', {
+      ATLASSIAN_URLS_PLACEHOLDER: urlsList,
+    });
+
+    return {
+      message: response,
+    };
+  },
+};
+
+/**
  * Context Gathering Phase Transitions
  * Maps to: "Context Gathering Phase Transitions" table in state-machine.md
  */
-export const contextGatheringTransitions: Transition[] = [gc1Transition];
+export const contextGatheringTransitions: Transition[] = [gc1Transition, gc2aTransition];

@@ -92,18 +92,18 @@ describe('Utils', () => {
 
     describe('writeTemplate', () => {
       it('should write a template to a file', async () => {
-        await templateUtils.writeTemplate('test-plan.md', 'plan');
+        await templateUtils.writeTemplate('plan');
 
-        const exists = await fileSystem.exists('test-plan.md');
+        const exists = await fileSystem.exists('.ai/task/plan.md');
         expect(exists).toBe(true);
 
-        const content = await fileSystem.read('test-plan.md');
+        const content = await fileSystem.read('.ai/task/plan.md');
         expect(content).toContain('# Project Plan');
         expect(content).toContain('## Acceptance Criteria');
       });
 
       it('should throw error for non-existent template', async () => {
-        await expect(templateUtils.writeTemplate('test.md', 'nonexistent' as any)).rejects.toThrow(
+        await expect(templateUtils.writeTemplate('nonexistent' as any)).rejects.toThrow(
           "Template 'nonexistent' not found"
         );
       });

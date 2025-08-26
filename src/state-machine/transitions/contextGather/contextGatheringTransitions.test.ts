@@ -1,4 +1,8 @@
-import { contextGatheringTransitions, gc1Transition } from './contextGatheringTransitions';
+import {
+  contextGatheringTransitions,
+  gc1Transition,
+  gc2aTransition,
+} from './contextGatheringTransitions';
 import { StateContext, FILE_PATHS } from '../../types';
 import { ResponseUtils } from '../../utils/responseUtils';
 import { MockFileSystem } from '../../testUtils';
@@ -81,6 +85,107 @@ describe('Context Gathering Transitions', () => {
 
       await expect(gc1Transition.execute(mockContext, errorFileSystem)).rejects.toThrow(
         'Write failed'
+      );
+    });
+  });
+
+  describe('GC2a - GATHER_EDITING_CONTEXT + Accio -> GATHER_EDITING', () => {
+    it('should be defined with correct properties', () => {
+      expect(gc2aTransition).toBeDefined();
+      expect(gc2aTransition.fromState).toBe('GATHER_EDITING_CONTEXT');
+      expect(gc2aTransition.spell).toBe('Accio');
+      expect(gc2aTransition.toState).toBe('GATHER_EDITING');
+      expect(gc2aTransition.execute).toBeDefined();
+      expect(gc2aTransition.condition).toBeDefined();
+    });
+
+    it('should return true condition when context.md exists with Atlassian URLs', async () => {
+      // Create context.md with Atlassian URLs
+      const contextContent = `
+# Project Context
+
+We need to integrate with our Atlassian instance:
+https://company.atlassian.net/wiki/spaces/DEV/pages/123456/Requirements
+
+Also reference this Jira ticket:
+https://company.atlassian.net/browse/PROJ-123
+      `;
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2aTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false condition when context.md exists without Atlassian URLs', async () => {
+      // Create context.md without Atlassian URLs
+      const contextContent = `
+# Project Context
+
+This is a general project context without any Atlassian references.
+We need to implement some features and fix bugs.
+      `;
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2aTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false condition when context.md does not exist', async () => {
+      // Ensure context.md doesn't exist
+      expect(await mockFileSystem.exists(FILE_PATHS.CONTEXT_FILE)).toBe(false);
+
+      const result = await gc2aTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should create plan.md file when executed', async () => {
+      // Create context.md with Atlassian URLs
+      const contextContent = 'Check https://company.atlassian.net/wiki/page/123';
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      await gc2aTransition.execute(mockContext, mockFileSystem);
+
+      expect(await mockFileSystem.exists(FILE_PATHS.PLAN_FILE)).toBe(true);
+    });
+
+    it('should return response with Atlassian URLs placeholder replaced', async () => {
+      // Create context.md with Atlassian URLs
+      const contextContent = `
+Check this page: https://company.atlassian.net/wiki/page/123
+And this Jira: https://company.atlassian.net/browse/PROJ-456
+      `;
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2aTransition.execute(mockContext, mockFileSystem);
+
+      expect(result).toHaveProperty('message');
+      expect(typeof result.message).toBe('string');
+      expect(result.message.length).toBeGreaterThan(0);
+
+      // The response should contain the URLs in list format
+      expect(result.message).toContain('- https://company.atlassian.net/wiki/page/123');
+      expect(result.message).toContain('- https://company.atlassian.net/browse/PROJ-456');
+    });
+
+    it('should handle file system errors gracefully', async () => {
+      // Create a mock file system that throws errors during plan file creation
+      const errorFileSystem = new MockFileSystem();
+      await errorFileSystem.write(FILE_PATHS.CONTEXT_FILE, 'https://company.atlassian.net/page');
+
+      // Make write fail for plan file specifically
+      const originalWrite = errorFileSystem.write.bind(errorFileSystem);
+      errorFileSystem.write = (path: string, content: string) => {
+        if (path === FILE_PATHS.PLAN_FILE) {
+          return Promise.reject(new Error('Plan write failed'));
+        }
+        return originalWrite(path, content);
+      };
+
+      await expect(gc2aTransition.execute(mockContext, errorFileSystem)).rejects.toThrow(
+        'Plan write failed'
       );
     });
   });
