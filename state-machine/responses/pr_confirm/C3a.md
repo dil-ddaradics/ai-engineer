@@ -1,4 +1,3 @@
-
 ## Response to the Developer
 
 ### What Just Happened

@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Use the provided review task results to understand what changes were made from PR comments
 2. Update `.ai/task/plan.md` with a summary of these changes
 3. **DELIVERABLE**: Updated plan file with summary of PR feedback changes

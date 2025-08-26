@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Read the `.ai/task/context.md` file to understand the project context and requirements
 2. Read the `.ai/plan-guide.md` file to understand planning guidelines and structure
 3. Generate a structured `.ai/task/plan.md` file based on context.md content

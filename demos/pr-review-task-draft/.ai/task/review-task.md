@@ -11,6 +11,7 @@ Address the floating-point precision issues and input validation improvements id
 ## Priority Issues to Address
 
 ### 🟡 Important Improvements
+
 1. **Floating-Point Precision** (src/Calculator.ts:28)
    - Implement epsilon-based zero comparison for division
    - Add precision handling for all operations
@@ -22,6 +23,7 @@ Address the floating-point precision issues and input validation improvements id
    - Improve error messages with operand details
 
 ### 🟢 Quality Improvements
+
 3. **Error Message Improvements** (src/Calculator.ts:35)
    - Make division by zero errors more descriptive
    - Include operand values in error messages
@@ -79,4 +81,5 @@ Address the floating-point precision issues and input validation improvements id
 - [ ] All PR comments addressed and resolved
 
 ## Estimated Effort
+
 **1-2 hours** total implementation time

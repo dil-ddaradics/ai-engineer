@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Read the `.ai/task/context.md` and `.ai/plan-guide.md` files to understand requirements
 2. Check if Atlassian MCP is available by calling `mcp__atlassian__atlassianUserInfo` with no parameters
 3. Process the provided Atlassian URLs from context.md file based on MCP availability

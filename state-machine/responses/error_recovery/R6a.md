@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Read the PR feedback to understand what needs to be addressed
 2. Read the existing `.ai/task/review-task.md` file to understand the template format
 3. Fill out the review task template following the existing structure

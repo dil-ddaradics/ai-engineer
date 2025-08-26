@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Read the empty `.ai/task/comments.md` file to understand the context
 2. Check if GitHub MCP is available by examining your available tools/functions for GitHub-related capabilities
 3. Test GitHub MCP availability with a minimal call (simple repository search) and analyze the response

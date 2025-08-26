@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Read the `.ai/task/review-task.md` file to understand what PR feedback needs to be addressed
 2. Use the `.ai/task-guide.md` file for task execution guidance
 3. Execute the review task since the results file was missing

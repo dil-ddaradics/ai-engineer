@@ -209,7 +209,7 @@ export class DemoManager {
     }
 
     const demoSourcePath = path.join(this.demosDir, stateName, '.ai');
-    
+
     // Check if demo folder exists
     try {
       await fs.access(demoSourcePath);

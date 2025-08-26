@@ -1,6 +1,7 @@
 ## MANDATORY ACTION FOR AI
 
 **EXECUTE IMMEDIATELY:**
+
 1. Check if Atlassian MCP is available by calling `mcp__atlassian__atlassianUserInfo` with no parameters
 2. Process the provided list of Atlassian URLs from the `.ai/task/context.md` file
 3. If Atlassian MCP available: fetch content from each URL using appropriate MCP functions
