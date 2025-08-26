@@ -7,14 +7,12 @@ import {
   StateRepository,
   Transition,
 } from './types';
+import { DEFAULT_TRANSITIONS } from './transitions';
 
 /**
- * Define explicit state transitions with conditions
- * TODO: Add actual transitions here - currently empty so tests will fail cleanly
+ * Default transitions imported from transitions module
+ * Currently empty arrays to maintain backward compatibility with existing tests
  */
-const TRANSITIONS: Transition[] = [
-  // Transitions will be defined here later
-];
 
 /**
  * Core state machine implementation for AI Engineer workflow
@@ -24,13 +22,13 @@ export class AiEngineerStateMachine implements StateMachine {
   constructor(
     private readonly stateRepository: StateRepository,
     private readonly fileSystem: FileSystem,
-    private readonly transitions: readonly Transition[] = TRANSITIONS
+    private readonly transitions: readonly Transition[] = DEFAULT_TRANSITIONS
   ) {}
 
   async executeSpell(spell: Spell): Promise<TransitionResult> {
     let context: StateContext | null = null;
     let resultMessage: string;
-    let resultSuccess: boolean = false;
+    let resultSuccess: boolean;
 
     try {
       // Load or initialize context
