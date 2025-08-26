@@ -3,17 +3,24 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "ai-engineer-demo": "./bin/demo-cli.mjs"
+  },
   "scripts": {
     "prebuild": "tsx scripts/prebuild.ts && npm run lint:fix",
     "dev": "npm run prebuild && ts-node --esm src/index.ts",
-    "build": "npm run prebuild && npx @vercel/ncc build src/index.ts -o dist",
+    "build": "npm run prebuild && npx @vercel/ncc build src/index.ts -o dist && npm run build:demo",
     "start": "node dist/index.js",
     "test": "npm run build && jest",
     "prepare": "npm run prebuild",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "build:demo": "npx tsc -p tsconfig.demo.json && node scripts/fix-demo-imports.js",
+    "demo": "node bin/demo-cli.mjs",
+    "demo:list": "npm run demo list",
+    "demo:reset": "npm run demo reset"
   },
   "keywords": [],
   "author": "",

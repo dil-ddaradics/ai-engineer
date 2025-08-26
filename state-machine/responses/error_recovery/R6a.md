@@ -1,10 +1,12 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
-to understand the PR feedback. Fill out the review task template in `.ai/task/review-task.md` that has been created by the system. Use the `.ai/task-guide.md` file for task execution guidance. The review task should include:
-
-1. A summary of the PR comments
-2. Specific tasks to address each comment
-3. Acceptance criteria for those tasks
+**EXECUTE IMMEDIATELY:**
+1. Read the PR feedback to understand what needs to be addressed
+2. Read the existing `.ai/task/review-task.md` file to understand the template format
+3. Fill out the review task template following the existing structure
+4. Use the `.ai/task-guide.md` file for task execution guidance
+5. Include summary of PR comments, specific tasks to address each comment, and acceptance criteria
+6. **DELIVERABLE**: Completed review task file with structured plan to address all PR feedback
 
 ## Response to the Developer
 

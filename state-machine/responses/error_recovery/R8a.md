@@ -1,6 +1,11 @@
-## Response to the AI
+## MANDATORY ACTION FOR AI
 
-Read the `.ai/task/review-task.md` file to understand what PR feedback needs to be addressed. Use the `.ai/task-guide.md` file for task execution guidance. Execute the review task again since the results file was missing.
+**EXECUTE IMMEDIATELY:**
+1. Read the `.ai/task/review-task.md` file to understand what PR feedback needs to be addressed
+2. Use the `.ai/task-guide.md` file for task execution guidance
+3. Execute the review task since the results file was missing
+4. Document your execution process and results
+5. **DELIVERABLE**: Completed execution of review task with documented results addressing all PR feedback
 
 ## Response to the Developer
 
