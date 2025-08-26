@@ -2,6 +2,7 @@ import { AiEngineerStateMachine } from './stateMachine';
 import { JsonFileStateRepository } from './stateRepository';
 import { NodeFileSystem } from './fileSystem';
 import { StateContext, Spell, Transition, FileSystem } from './types';
+import { TransitionUtils } from './utils/transitionUtils';
 import path from 'path';
 import { tmpdir } from 'os';
 
@@ -224,6 +225,171 @@ describe('AiEngineerStateMachine', () => {
 
       const savedState = await getCurrentStateFromFile();
       expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT'); // State unchanged
+    });
+  });
+
+  describe('[G/A] suffix resolution integration', () => {
+    it('should correctly resolve [G/A] placeholder in toState from _G source state', async () => {
+      const testTransitions: Transition[] = [
+        // Initial transition to get to PR_GATHERING_COMMENTS_G
+        {
+          fromState: 'GATHER_NEEDS_CONTEXT',
+          spell: 'Accio',
+          toState: 'PR_GATHERING_COMMENTS_G',
+          execute: async () => ({ message: 'Moved to PR_GATHERING_COMMENTS_G' }),
+        },
+        // Transition with [G/A] placeholder that should resolve to _G
+        {
+          fromState: ['PR_GATHERING_COMMENTS_G', 'PR_GATHERING_COMMENTS_A'],
+          spell: 'Expecto',
+          toState: 'PR_REVIEW_TASK_DRAFT_[G/A]',
+          execute: async () => ({ message: 'Resolved [G/A] placeholder from _G state' }),
+        },
+      ];
+
+      const testStateMachine = new AiEngineerStateMachine(
+        stateRepository,
+        fileSystem,
+        testTransitions
+      );
+
+      // First, move to PR_GATHERING_COMMENTS_G
+      await testStateMachine.executeSpell('Accio');
+      let savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('PR_GATHERING_COMMENTS_G');
+
+      // Now execute transition with [G/A] placeholder
+      const result = await testStateMachine.executeSpell('Expecto');
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Resolved [G/A] placeholder from _G state');
+
+      // Verify the [G/A] was resolved to _G
+      savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('PR_REVIEW_TASK_DRAFT_G');
+    });
+
+    it('should correctly resolve [G/A] placeholder in toState from _A source state', async () => {
+      const testTransitions: Transition[] = [
+        // Initial transition to get to PR_GATHERING_COMMENTS_A
+        {
+          fromState: 'GATHER_NEEDS_CONTEXT',
+          spell: 'Accio',
+          toState: 'PR_GATHERING_COMMENTS_A',
+          execute: async () => ({ message: 'Moved to PR_GATHERING_COMMENTS_A' }),
+        },
+        // Transition with [G/A] placeholder that should resolve to _A
+        {
+          fromState: ['PR_GATHERING_COMMENTS_G', 'PR_GATHERING_COMMENTS_A'],
+          spell: 'Expecto',
+          toState: 'PR_REVIEW_TASK_DRAFT_[G/A]',
+          execute: async () => ({ message: 'Resolved [G/A] placeholder from _A state' }),
+        },
+      ];
+
+      const testStateMachine = new AiEngineerStateMachine(
+        stateRepository,
+        fileSystem,
+        testTransitions
+      );
+
+      // First, move to PR_GATHERING_COMMENTS_A
+      await testStateMachine.executeSpell('Accio');
+      let savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('PR_GATHERING_COMMENTS_A');
+
+      // Now execute transition with [G/A] placeholder
+      const result = await testStateMachine.executeSpell('Expecto');
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Resolved [G/A] placeholder from _A state');
+
+      // Verify the [G/A] was resolved to _A
+      savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('PR_REVIEW_TASK_DRAFT_A');
+    });
+
+    it('should handle STAY_IN_SAME_STATE correctly', async () => {
+      const testTransitions: Transition[] = [
+        // Initial transition to get to a specific state
+        {
+          fromState: 'GATHER_NEEDS_CONTEXT',
+          spell: 'Accio',
+          toState: 'GATHER_EDITING_CONTEXT',
+          execute: async () => ({ message: 'Moved to GATHER_EDITING_CONTEXT' }),
+        },
+        // Transition that stays in same state
+        {
+          fromState: 'GATHER_EDITING_CONTEXT',
+          spell: 'Finite',
+          toState: TransitionUtils.STAY_IN_SAME_STATE,
+          execute: async () => ({ message: 'Staying in same state' }),
+        },
+      ];
+
+      const testStateMachine = new AiEngineerStateMachine(
+        stateRepository,
+        fileSystem,
+        testTransitions
+      );
+
+      // First, move to GATHER_EDITING_CONTEXT
+      await testStateMachine.executeSpell('Accio');
+      let savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT');
+
+      // Now execute transition that should stay in same state
+      const result = await testStateMachine.executeSpell('Finite');
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Staying in same state');
+
+      // Verify we stayed in the same state
+      savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('GATHER_EDITING_CONTEXT');
+    });
+
+    it('should handle multiple transitions from array-based fromState with conditions', async () => {
+      const testTransitions: Transition[] = [
+        // Initial transition to get to PR_GATHERING_COMMENTS_G
+        {
+          fromState: 'GATHER_NEEDS_CONTEXT',
+          spell: 'Accio',
+          toState: 'PR_GATHERING_COMMENTS_G',
+          execute: async () => ({ message: 'Moved to PR_GATHERING_COMMENTS_G' }),
+        },
+        // First transition option - condition fails
+        {
+          fromState: ['PR_GATHERING_COMMENTS_G', 'PR_GATHERING_COMMENTS_A'],
+          spell: 'Expecto',
+          toState: 'ERROR_COMMENTS_MISSING_[G/A]',
+          condition: async () => false, // This should fail
+          execute: async () => ({ message: 'Should not execute - condition fails' }),
+        },
+        // Second transition option - condition succeeds
+        {
+          fromState: ['PR_GATHERING_COMMENTS_G', 'PR_GATHERING_COMMENTS_A'],
+          spell: 'Expecto',
+          toState: 'PR_REVIEW_TASK_DRAFT_[G/A]',
+          condition: async () => true, // This should succeed
+          execute: async () => ({ message: 'Condition succeeded, [G/A] resolved' }),
+        },
+      ];
+
+      const testStateMachine = new AiEngineerStateMachine(
+        stateRepository,
+        fileSystem,
+        testTransitions
+      );
+
+      // First, move to PR_GATHERING_COMMENTS_G
+      await testStateMachine.executeSpell('Accio');
+
+      // Execute spell - should use second transition since first condition fails
+      const result = await testStateMachine.executeSpell('Expecto');
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Condition succeeded, [G/A] resolved');
+
+      // Verify the [G/A] was resolved to _G (from source state PR_GATHERING_COMMENTS_G)
+      const savedState = await getCurrentStateFromFile();
+      expect(savedState!.currentState).toBe('PR_REVIEW_TASK_DRAFT_G');
     });
   });
 });

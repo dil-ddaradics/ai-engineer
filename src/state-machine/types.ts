@@ -1,7 +1,7 @@
 /**
  * Core types and interfaces for the AI Engineer State Machine
  */
-import {TransitionUtils} from "./utils";
+import { TransitionUtils } from './utils';
 
 // All possible states in the state machine (exact match to state-machine.md specification)
 export const STATE_NAMES = [
@@ -42,6 +42,23 @@ export const STATE_NAMES = [
 
 export type StateName = (typeof STATE_NAMES)[number];
 
+// Template states with [G/A] placeholders for transitions that preserve G/A suffixes
+export type TemplateStateName =
+  | 'PR_GATHERING_COMMENTS_[G/A]'
+  | 'PR_REVIEW_TASK_DRAFT_[G/A]'
+  | 'PR_APPLIED_PENDING_ARCHIVE_[G/A]'
+  | 'PR_CONFIRM_RESTART_COMMENTS_[G/A]'
+  | 'PR_CONFIRM_RESTART_TASK_[G/A]'
+  | 'ERROR_COMMENTS_MISSING_[G/A]'
+  | 'ERROR_REVIEW_TASK_MISSING_[G/A]'
+  | 'ERROR_REVIEW_TASK_RESULTS_MISSING_[G/A]';
+
+// Valid toState values: actual states, template states with placeholders, or stay-in-same-state
+export type ToStateValue =
+  | StateName
+  | TemplateStateName
+  | typeof TransitionUtils.STAY_IN_SAME_STATE;
+
 // Available spells that can be cast
 export type Spell = 'Accio' | 'Expecto' | 'Reparo' | 'Reverto' | 'Finite' | 'Lumos';
 
@@ -60,9 +77,7 @@ export interface TransitionResult {
 export interface Transition {
   readonly fromState: StateName | StateName[];
   readonly spell: Spell;
-  readonly toState:
-    | StateName
-    | typeof TransitionUtils.STAY_IN_SAME_STATE;
+  readonly toState: ToStateValue;
   readonly condition?: (context: StateContext, fileSystem: FileSystem) => Promise<boolean>;
   readonly execute: (context: StateContext, fileSystem: FileSystem) => Promise<{ message: string }>;
 }

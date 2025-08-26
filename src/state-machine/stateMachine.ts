@@ -62,14 +62,17 @@ export class AiEngineerStateMachine implements StateMachine {
           transition.toState
         );
         context = { currentState: resolvedToState };
+
+        // Save the updated state only after successful transition
+        await this.stateRepository.save(context);
       } else {
         // No transition found - blocked
         resultSuccess = false;
         resultMessage = `The spell ${spell} is not available in the current state ${context.currentState}`;
-      }
 
-      // Single save operation - only for successful processing
-      await this.stateRepository.save(context);
+        // Save the current state (in case it's the first time and we need to persist the initial state)
+        await this.stateRepository.save(context);
+      }
     } catch (error) {
       // No state modification on error - preserve existing state
       resultSuccess = false;

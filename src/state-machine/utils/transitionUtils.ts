@@ -1,4 +1,4 @@
-import { StateName, Transition } from '../types';
+import { StateName, Transition, ToStateValue } from '../types';
 
 /**
  * Utility functions for handling state machine transitions
@@ -31,10 +31,7 @@ export class TransitionUtils {
    * @param toStateTemplate - The destination state template (may contain placeholders)
    * @returns The actual destination state
    */
-  static resolveToState(
-    fromState: StateName,
-    toStateTemplate: StateName | typeof TransitionUtils.STAY_IN_SAME_STATE
-  ): StateName {
+  static resolveToState(fromState: StateName, toStateTemplate: ToStateValue): StateName {
     // Handle special case for staying in same state
     if (toStateTemplate === TransitionUtils.STAY_IN_SAME_STATE) {
       return fromState;
