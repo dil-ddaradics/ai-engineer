@@ -233,11 +233,11 @@ NOTE: The verification script may report "duplicate transitions" when using the 
 
 #### Context Gathering Phase No-op Transitions
 
-| ID   | Current State                                | Trigger | MCP Condition                                                                          | Next State | MCP Actions | Response                                 |
-| ---- | -------------------------------------------- | ------- | -------------------------------------------------------------------------------------- | ---------- | ----------- | ---------------------------------------- |
-| GCN1 | GATHER_EDITING_CONTEXT                       | Finite  | -                                                                                      | Same state | -           | [GCN1.md](responses/gather_noop/GCN1.md) |
-| GCN2 | GATHER_NEEDS_CONTEXT                         | Finite  | -                                                                                      | Same state | -           | [GCN2.md](responses/gather_noop/GCN2.md) |
-| GCN3 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Expecto | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none) | Same state | -           | [GCN3.md](responses/gather_noop/GCN3.md) |
+| ID   | Current State                                | Trigger | MCP Condition                                                                          | Next State | MCP Actions | Response                                 | Implementation |
+| ---- | -------------------------------------------- | ------- | -------------------------------------------------------------------------------------- | ---------- | ----------- | ---------------------------------------- | -------------- |
+| GCN1 | GATHER_EDITING_CONTEXT                       | Finite  | -                                                                                      | Same state | -           | [GCN1.md](responses/gather_noop/GCN1.md) | yes            |
+| GCN2 | GATHER_NEEDS_CONTEXT                         | Finite  | -                                                                                      | Same state | -           | [GCN2.md](responses/gather_noop/GCN2.md) | yes            |
+| GCN3 | GATHER_NEEDS_CONTEXT, GATHER_EDITING_CONTEXT | Expecto | Reads `.ai/task/context.md` content; Extracts Atlassian URLs from content (finds none) | Same state | -           | [GCN3.md](responses/gather_noop/GCN3.md) | yes            |
 
 #### Gather Acceptance Criteria Phase Blocked Transitions
 
