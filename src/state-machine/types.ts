@@ -1,6 +1,7 @@
 /**
  * Core types and interfaces for the AI Engineer State Machine
  */
+import {TransitionUtils} from "./utils";
 
 // All possible states in the state machine (exact match to state-machine.md specification)
 export const STATE_NAMES = [
@@ -57,9 +58,11 @@ export interface TransitionResult {
 
 // Definition of a state transition
 export interface Transition {
-  readonly fromState: StateName;
+  readonly fromState: StateName | StateName[];
   readonly spell: Spell;
-  readonly toState: StateName;
+  readonly toState:
+    | StateName
+    | typeof TransitionUtils.STAY_IN_SAME_STATE;
   readonly condition?: (context: StateContext, fileSystem: FileSystem) => Promise<boolean>;
   readonly execute: (context: StateContext, fileSystem: FileSystem) => Promise<{ message: string }>;
 }

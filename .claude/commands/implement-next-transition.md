@@ -24,6 +24,7 @@ You are implementing state machine transitions for the AI Engineer workflow syst
    - Response file reference
    - Implementation status (if column exists)
    - **Line number where the transition is defined** (for documentation references)
+   - **Multiple states mapping to same transition** (check for comma-separated states or [G/A] notation)
 
 ### Step 2: Identify Next Table to Implement
 
@@ -62,7 +63,7 @@ For the next unimplemented transition, generate TypeScript code following this p
 ```typescript
 // Import statements (NO file extensions!)
 import { Transition, FILE_PATHS } from '../../types';
-import { ResponseUtils } from '../../utils/responseUtils';
+import { ResponseUtils, TransitionUtils } from '../../utils';
 import { TemplateUtils } from '../../utils/templateUtils';
 
 /**
@@ -72,9 +73,20 @@ import { TemplateUtils } from '../../utils/templateUtils';
  * Purpose: [Brief description of what this transition does]
  */
 export const [transitionId]Transition: Transition = {
+  // OPTION 1: Single state
   fromState: 'SOURCE_STATE_NAME',
+
+  // OPTION 2: Multiple states (for transitions that handle multiple source states)
+  // fromState: ['STATE_ONE', 'STATE_TWO', 'STATE_THREE'],
+
   spell: 'SPELL_NAME',
   toState: 'NEXT_STATE_NAME',
+
+  // For blocked/no-op transitions that should stay in the same state:
+  // toState: TransitionUtils.STAY_IN_SAME_STATE,
+
+  // For [G/A] suffix preservation (states ending with _G or _A):
+  // toState: 'DESTINATION_STATE_[G/A]' as StateName, // Will be resolved automatically
   // OPTION 1: No condition property (omit entirely if there is no condition to apply)
 
   // OPTION 2: Condition with actual logic (when MCP Condition column has checks)
@@ -109,23 +121,30 @@ export const [fileName]Transitions: Transition[] = [
    - ✅ `import { Transition } from '../../types';`
    - ❌ `import { Transition } from '../../types.js';`
 
-2. **Individual Exports**: Export each transition individually with a descriptive name:
+2. **Multiple State Support**: The state machine now supports array-based `fromState` for transitions that handle multiple source states:
+   - **Single state**: `fromState: 'ACHIEVE_TASK_DRAFTING'`
+   - **Multiple states**: `fromState: ['ACHIEVE_TASK_DRAFTING', 'ACHIEVE_TASK_EXECUTED', 'ACHIEVE_COMPLETE']`
+   - **Special case for staying in same state**: `toState: TransitionUtils.STAY_IN_SAME_STATE` (when Next State matches Current State)
+   - **[G/A] placeholder notation**: Use `'DESTINATION_STATE_[G/A]'` for states that need G/A suffix preservation
+   - **Explicit \_G/\_A transitions**: Create separate transitions for `_G` and `_A` suffix states when they have different behavior
+
+3. **Individual Exports**: Export each transition individually with a descriptive name:
    - Pattern: `[transitionId]Transition` (e.g., `gc1Transition`, `g2Transition`)
    - Include detailed JSDoc comment with table reference and line number
 
-3. **Conditions**: Convert MCP Condition descriptions to file existence checks and content parsing:
+4. **Conditions**: Convert MCP Condition descriptions to file existence checks and content parsing:
    - "Checks `.ai/task/context.md` exists (exists)" → `await fileSystem.exists(FILE_PATHS.CONTEXT_FILE)`
    - "Reads content; Extracts URLs (finds some)" → Parse content and check for URLs
    - Use existing utilities from `planUtils.ts` and other utility files
    - Use `FILE_PATHS` constants instead of hardcoded strings
 
-4. **Actions**: Convert MCP Actions to file operations using FileSystem interface:
+5. **Actions**: Convert MCP Actions to file operations using FileSystem interface:
    - "Creates `.ai/task/context.md` with template" → Use `TemplateUtils.writeTemplate()`
    - "Archives files to path" → Use `TaskUtils.archiveTask()` or `TaskUtils.archiveReviewTask()`
    - "Reads content; Replaces placeholder" → Use `fileSystem.readSafe()` for safe reading, process, and use in response
    - "Creates base directories" → Use `TaskUtils.createBaseDirectories()`
 
-5. **Responses**: Use `ResponseUtils.formatResponse()` from response utilities:
+6. **Responses**: Use `ResponseUtils.formatResponse()` from response utilities:
    - Extract response file name from Response column
    - Convert file path to response key (e.g., "responses/gather_transitions/GC1.md" → "gather_transitions_GC1")
    - Handle placeholders using ResponseUtils methods:
@@ -134,11 +153,18 @@ export const [fileName]Transitions: Transition[] = [
      - `ResponseUtils.formatResponse(responseKey, replacements)` to replace placeholders
    - Common placeholders include: `[TASK_CONTENT_PLACEHOLDER]`, `[ATLASSIAN_URLS_PLACEHOLDER]`, `[REVIEW_TASK_RESULTS_PLACEHOLDER]`, etc.
 
-6. **Templates**: Use `TemplateUtils` class when creating new files from templates
+7. **Templates**: Use `TemplateUtils` class when creating new files from templates
 
-7. **Error Handling**: Include proper error handling for file operations
+8. **Error Handling**: Include proper error handling for file operations
 
-8. **Type Safety**: Ensure all TypeScript types are correct
+9. **Type Safety**: Ensure all TypeScript types are correct
+
+10. **State Machine Enhancements**: When implementing transitions with multiple source states or [G/A] notation:
+    - Use array-based `fromState` instead of creating separate transition objects for each state
+    - Use `TransitionUtils.STAY_IN_SAME_STATE` when the Next State column matches the Current State
+    - Use `'DESTINATION_STATE_[G/A]'` notation for [G/A] placeholder replacement (reduces duplicate transitions)
+    - Create explicit separate transitions for `_G` and `_A` states when they have different behavior
+    - Import `TransitionUtils` from the utils barrel export: `import { TransitionUtils } from '../../utils'`
 
 ### Step 5: Add to Appropriate File
 
@@ -194,7 +220,10 @@ Write tests for the implemented transition alongside the implementation:
      describe('[TRANSITION_ID] - [FROM_STATE] + [SPELL] -> [TO_STATE]', () => {
        it('should be defined with correct properties', () => {
          expect([transitionName]Transition).toBeDefined();
+         // For single state transitions:
          expect([transitionName]Transition.fromState).toBe('FROM_STATE');
+         // For multiple state transitions:
+         // expect([transitionName]Transition.fromState).toEqual(['STATE_ONE', 'STATE_TWO']);
          // ... other property tests
        });
 
@@ -243,6 +272,10 @@ After implementing ONE transition and its tests:
 - **Remove file extensions from imports** to avoid module resolution issues
 - **Include state machine row references** with file path and line number in JSDoc comments
 - **Test individual transitions directly** - never use `.find()` to locate transitions in tests
+- **Use array-based fromState** for transitions that handle multiple source states (reduces code duplication)
+- **Use TransitionUtils.STAY_IN_SAME_STATE** when the Next State column specifies the same state as the current state
+- **Use [G/A] placeholder notation** for reducing duplicate transitions where both G and A versions behave identically
+- **Create explicit \_G/\_A transitions** when G and A suffix states have different behavior
 - Use the FileSystem abstraction, never direct fs operations
 - All responses must use the ResponseUtils class
 - Use FILE_PATHS constants instead of hardcoded file paths

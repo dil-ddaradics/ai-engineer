@@ -7,6 +7,7 @@ import {
   Transition,
 } from './types';
 import { DEFAULT_TRANSITIONS } from './transitions';
+import { TransitionUtils } from './utils';
 
 /**
  * Default transitions imported from transitions module
@@ -39,7 +40,7 @@ export class AiEngineerStateMachine implements StateMachine {
       let transition: Transition | undefined;
 
       for (const t of this.transitions) {
-        if (t.fromState === context!.currentState && t.spell === spell) {
+        if (TransitionUtils.matchesFromState(t, context!.currentState) && t.spell === spell) {
           // Check condition if it exists
           if (!t.condition || (await t.condition(context!, this.fileSystem))) {
             transition = t;
@@ -55,7 +56,12 @@ export class AiEngineerStateMachine implements StateMachine {
         resultMessage = result.message;
 
         // Update context to the new state defined by transition
-        context = { currentState: transition.toState };
+        // For array-based fromStates, we need to handle potential [G/A] suffix preservation
+        const resolvedToState = TransitionUtils.resolveToState(
+          context.currentState,
+          transition.toState
+        );
+        context = { currentState: resolvedToState };
       } else {
         // No transition found - blocked
         resultSuccess = false;
