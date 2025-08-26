@@ -3,6 +3,7 @@ import {
   gc1Transition,
   gc2aTransition,
   gc2bTransition,
+  gc2cTransition,
 } from './contextGatheringTransitions';
 import { StateContext, FILE_PATHS } from '../../types';
 import { ResponseUtils } from '../../utils/responseUtils';
@@ -280,6 +281,73 @@ https://company.atlassian.net/browse/PROJ-123
 
       await expect(gc2bTransition.execute(mockContext, errorFileSystem)).rejects.toThrow(
         'Plan write failed'
+      );
+    });
+  });
+
+  describe('GC2c - GATHER_EDITING_CONTEXT + Accio -> ERROR_CONTEXT_MISSING', () => {
+    it('should be defined with correct properties', () => {
+      expect(gc2cTransition).toBeDefined();
+      expect(gc2cTransition.fromState).toBe('GATHER_EDITING_CONTEXT');
+      expect(gc2cTransition.spell).toBe('Accio');
+      expect(gc2cTransition.toState).toBe('ERROR_CONTEXT_MISSING');
+      expect(gc2cTransition.execute).toBeDefined();
+      expect(gc2cTransition.condition).toBeDefined();
+    });
+
+    it('should return true condition when context.md does not exist', async () => {
+      // Ensure context.md doesn't exist
+      expect(await mockFileSystem.exists(FILE_PATHS.CONTEXT_FILE)).toBe(false);
+
+      const result = await gc2cTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false condition when context.md exists', async () => {
+      // Create context.md
+      const contextContent = 'Some context content';
+      await mockFileSystem.write(FILE_PATHS.CONTEXT_FILE, contextContent);
+
+      const result = await gc2cTransition.condition!(mockContext, mockFileSystem);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return formatted error response', async () => {
+      const result = await gc2cTransition.execute(mockContext, mockFileSystem);
+
+      expect(result).toHaveProperty('message');
+      expect(typeof result.message).toBe('string');
+      expect(result.message.length).toBeGreaterThan(0);
+
+      // Verify the response uses the correct response key
+      const expectedResponse = ResponseUtils.formatResponse('gather_transitions_GC2b');
+      expect(result.message).toBe(expectedResponse);
+    });
+
+    it('should not perform any file operations', async () => {
+      // Track file system operations
+      const writeOperations: string[] = [];
+      const originalWrite = mockFileSystem.write.bind(mockFileSystem);
+      mockFileSystem.write = (path: string, content: string) => {
+        writeOperations.push(path);
+        return originalWrite(path, content);
+      };
+
+      await gc2cTransition.execute(mockContext, mockFileSystem);
+
+      // Verify no files were written
+      expect(writeOperations).toHaveLength(0);
+    });
+
+    it('should handle condition check errors gracefully', async () => {
+      // Create a mock file system that throws errors during exists check
+      const errorFileSystem = new MockFileSystem();
+      errorFileSystem.exists = () => Promise.reject(new Error('File check failed'));
+
+      await expect(gc2cTransition.condition!(mockContext, errorFileSystem)).rejects.toThrow(
+        'File check failed'
       );
     });
   });

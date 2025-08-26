@@ -112,6 +112,28 @@ export const gc2bTransition: Transition = {
 };
 
 /**
+ * GC2c: GATHER_EDITING_CONTEXT + Accio -> ERROR_CONTEXT_MISSING
+ * Error transition when context.md is missing
+ */
+export const gc2cTransition: Transition = {
+  fromState: 'GATHER_EDITING_CONTEXT',
+  spell: 'Accio',
+  toState: 'ERROR_CONTEXT_MISSING',
+  condition: async (context, fileSystem) => {
+    // Check if context.md does NOT exist
+    return !(await fileSystem.exists(FILE_PATHS.CONTEXT_FILE));
+  },
+  execute: async (_context, _fileSystem) => {
+    // No MCP actions - just return error response
+    const response = ResponseUtils.formatResponse('gather_transitions_GC2b');
+
+    return {
+      message: response,
+    };
+  },
+};
+
+/**
  * Context Gathering Phase Transitions
  * Maps to: "Context Gathering Phase Transitions" table in state-machine.md
  */
@@ -119,4 +141,5 @@ export const contextGatheringTransitions: Transition[] = [
   gc1Transition,
   gc2aTransition,
   gc2bTransition,
+  gc2cTransition,
 ];
