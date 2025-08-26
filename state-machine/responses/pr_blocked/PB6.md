@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that Expecto is only allowed in GATHER states and they need to resolve the current confirmation prompt first before they can return to plan editing and use Expecto.
-
 ## Response to the Developer
 
 ### What Just Happened

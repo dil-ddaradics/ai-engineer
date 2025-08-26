@@ -7,7 +7,11 @@ export class ResponseUtils {
   /**
    * Format a response with dynamic content replacement
    */
-  static formatResponse(responseKey: string, replacements: Record<string, string> = {}): string {
+  static formatResponse(
+    responseKey: string,
+    replacements: Record<string, string> = {},
+    includeSystemPrompt: boolean = true
+  ): string {
     let response = RESPONSES[responseKey] || '';
 
     // Replace placeholders with actual content
@@ -15,6 +19,14 @@ export class ResponseUtils {
       const placeholderPattern = new RegExp(`\\[${placeholder}\\]`, 'g');
       response = response.replace(placeholderPattern, value);
     });
+
+    // Prepend system prompt if requested
+    if (includeSystemPrompt) {
+      const systemPrompt = TEMPLATES.system_prompt || '';
+      if (systemPrompt.trim()) {
+        response = systemPrompt + '\n\n' + response;
+      }
+    }
 
     return response;
   }
@@ -49,12 +61,16 @@ export class ResponseUtils {
     responseKey: string,
     replacements: Record<string, string> = {}
   ): string {
-    const coreResponse = this.formatResponse(responseKey, replacements);
+    // Get core response without system prompt to avoid duplication
+    const coreResponse = this.formatResponse(responseKey, replacements, false);
+    const systemPrompt = TEMPLATES.system_prompt || '';
     const systemExplanation = TEMPLATES.system_explanation || '';
     const tipsAndTricks = TEMPLATES.tips_and_tricks || '';
 
-    // Combine: system explanation + core response + tips and tricks
-    const parts = [systemExplanation, coreResponse, tipsAndTricks].filter(part => part.trim());
+    // Combine: system prompt + system explanation + core response + tips and tricks
+    const parts = [systemPrompt, systemExplanation, coreResponse, tipsAndTricks].filter(part =>
+      part.trim()
+    );
     return parts.join('\n\n');
   }
 }

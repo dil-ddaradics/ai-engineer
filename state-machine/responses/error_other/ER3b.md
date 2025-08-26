@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that they need to complete the current PR review process by archiving the results before starting a new PR review. Direct them to use Accio first.
-
 ## Response to the Developer
 
 ### What Just Happened

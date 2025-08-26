@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that the `.ai/task/comments.md` file is missing and explain how to recover using Accio to recreate the file.
-
 ## Response to the Developer
 
 ### What Just Happened

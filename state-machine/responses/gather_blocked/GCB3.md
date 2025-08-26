@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Reparo cannot be used in the context gathering phase because PR reviews require a plan to return to.
-
 ## Response to the Developer
 
 ### What Just Happened

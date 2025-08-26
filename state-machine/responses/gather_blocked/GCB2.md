@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Expecto cannot be used right now because no context file exists to read Atlassian URLs from.
-
 ## Response to the Developer
 
 ### What Just Happened

@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that all Atlassian URLs in the plan.md file have already been processed and suggest editing .atlassian-refs to reprocess if needed.
-
 ## Response to the Developer
 
 ### What Just Happened

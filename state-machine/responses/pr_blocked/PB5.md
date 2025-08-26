@@ -1,7 +1,3 @@
-## Response to the AI
-
-Tell the developer they must first confirm or cancel the restart operation using Reparo or Reverto before they can return to plan editing.
-
 ## Response to the Developer
 
 ### What Just Happened

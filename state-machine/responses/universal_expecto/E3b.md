@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that no Atlassian URLs were found in the plan.md file and suggest adding Jira/Confluence links to enrich the plan.
-
 ## Response to the Developer
 
 ### What Just Happened

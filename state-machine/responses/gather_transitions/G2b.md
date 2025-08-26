@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the user that the `.ai/task/plan.md` file is missing, which is required for the workflow. Direct them to use Accio to reset and create a new plan.
-
 ## Response to the Developer
 
 ### What Just Happened

@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that casting Finite has no effect because they are in the initial state, and there's no plan to return to yet.
-
 ## Response to the Developer
 
 ### What Just Happened

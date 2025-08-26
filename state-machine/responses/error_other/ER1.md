@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that they cannot return to plan editing without a plan file. Direct them to use Accio to create a new plan file first.
-
 ## Response to the Developer
 
 ### What Just Happened

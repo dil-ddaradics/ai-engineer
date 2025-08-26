@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Expecto had no effect because no Atlassian URLs were found in the context.md file.
-
 ## Response to the Developer
 
 ### What Just Happened

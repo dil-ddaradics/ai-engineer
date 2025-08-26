@@ -1,7 +1,3 @@
-## Response to the AI
-
-Read the `.ai/task/task.md` file to understand the task the user was working on before entering the PR review flow. Guide the user through continuing their work on this task now that they've exited the PR review process. Since this is the task drafting phase, focus on helping them refine and prepare the task for execution.
-
 ## Response to the Developer
 
 ### What Just Happened

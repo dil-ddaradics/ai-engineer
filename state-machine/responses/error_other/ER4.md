@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that Reverto is only available in PR review states and that they need to resolve the current error first before they can use Reverto.
-
 ## Response to the Developer
 
 ### What Just Happened

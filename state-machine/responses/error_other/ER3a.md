@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that they cannot start a PR review while in an error state. Direct them to use Accio first to resolve the current error.
-
 ## Response to the Developer
 
 ### What Just Happened

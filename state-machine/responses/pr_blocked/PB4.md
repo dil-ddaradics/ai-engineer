@@ -1,7 +1,3 @@
-## Response to the AI
-
-Tell the developer they must complete the current PR review process or use Reverto to cancel it before starting a new PR review.
-
 ## Response to the Developer
 
 ### What Just Happened

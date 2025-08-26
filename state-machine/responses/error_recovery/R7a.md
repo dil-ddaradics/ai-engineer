@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that both the `.ai/task/review task.md` file and comments file are missing. They need to recreate the `.ai/task/comments.md` file first.
-
 ## Response to the Developer
 
 ### What Just Happened

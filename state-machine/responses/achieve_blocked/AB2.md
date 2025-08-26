@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Reverto is only available in PR states and explain that they are not currently in the PR review flow. Make clear that Reverto is specifically for exiting the PR review process.
-
 ## Response to the Developer
 
 ### What Just Happened

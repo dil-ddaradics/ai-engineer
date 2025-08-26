@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that the `.ai/task/comments.md` file is missing. The PR review process cannot continue without the `.ai/task/comments.md` file. Guide them to use Accio to recreate it and gather fresh PR comments.
-
 ## Response to the Developer
 
 ### What Just Happened

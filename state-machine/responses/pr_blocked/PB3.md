@@ -1,7 +1,3 @@
-## Response to the AI
-
-Tell the developer they must either complete the PR review flow with Accio or exit it with Reverto before returning to plan editing.
-
 ## Response to the Developer
 
 ### What Just Happened

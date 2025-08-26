@@ -1,7 +1,3 @@
-## Response to the AI
-
-Read the `.ai/task/task.md` file and the `.ai/task/task-results.md` file to understand the task the user has executed and its results. Guide the user through reviewing these results now that they've exited the PR review process. Since this is the task executed phase, focus on helping them process the results and prepare for the next step.
-
 ## Response to the Developer
 
 ### What Just Happened

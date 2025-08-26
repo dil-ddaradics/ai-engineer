@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that they cannot run Expecto when the `.ai/task/plan.md` file is missing. Direct them to use Accio first to create a new plan file.
-
 ## Response to the Developer
 
 ### What Just Happened

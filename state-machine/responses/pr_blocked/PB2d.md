@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Expecto is only available in GATHER states, and they need to first archive their current review results with Accio.
-
 ## Response to the Developer
 
 ### What Just Happened

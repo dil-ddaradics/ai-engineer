@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that the Reverto spell cannot be used in the current state because it is only available during PR review states. Explain that they are currently in a planning state where Reverto has no effect.
-
 ## Response to the Developer
 
 ### What Just Happened

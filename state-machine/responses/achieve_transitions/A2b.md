@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that the `.ai/task/task-results.md` file is missing, which is needed to properly process the task completion. Explain how to recover from this error state.
-
 ## Response to the Developer
 
 ### What Just Happened

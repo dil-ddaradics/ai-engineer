@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that Expecto is only available in GATHER states, and they need to exit the PR review flow first before they can use it.
-
 ## Response to the Developer
 
 ### What Just Happened

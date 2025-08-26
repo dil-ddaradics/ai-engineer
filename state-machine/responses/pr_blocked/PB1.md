@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that they cannot exit the PR review flow with Reverto at this point. They must first use Accio to properly archive the current review results.
-
 ## Response to the Developer
 
 ### What Just Happened

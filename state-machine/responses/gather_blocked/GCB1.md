@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Reverto cannot be used in context gathering states as it's only available in PR review states.
-
 ## Response to the Developer
 
 ### What Just Happened

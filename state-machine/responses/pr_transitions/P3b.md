@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that the `.ai/task/review task results.md` file is missing and provide options for recovery.
-
 ## Response to the Developer
 
 ### What Just Happened

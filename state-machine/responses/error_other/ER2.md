@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that they cannot return to plan editing while there's an issue with the review task. Direct them to use Accio to fix the missing review task first.
-
 ## Response to the Developer
 
 ### What Just Happened

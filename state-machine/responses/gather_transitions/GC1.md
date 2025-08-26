@@ -1,7 +1,3 @@
-## Response to the AI
-
-Guide the user through filling out the context file with their task information, plans, requirements, and any relevant links. The `.ai/task/context.md`, `.ai/plan-guide.md`, and `.ai/task-guide.md` files have been created for them.
-
 ## Response to the Developer
 
 ### What Just Happened

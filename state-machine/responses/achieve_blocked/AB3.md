@@ -1,7 +1,3 @@
-## Response to the AI
-
-Inform the developer that Expecto is only allowed in GATHER states because it's designed to enrich planning information from external resources. Explain that they need to return to plan editing first before using Expecto.
-
 ## Response to the Developer
 
 ### What Just Happened

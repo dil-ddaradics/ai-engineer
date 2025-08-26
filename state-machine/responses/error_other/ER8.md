@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain to the developer that Expecto is only allowed in GATHER states and they need to resolve the current error first with Accio.
-
 ## Response to the Developer
 
 ### What Just Happened

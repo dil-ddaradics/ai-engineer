@@ -1,7 +1,3 @@
-## Response to the AI
-
-Explain: "No context to return to, must Accio to create one first."
-
 ## Response to the Developer
 
 ### What Just Happened
