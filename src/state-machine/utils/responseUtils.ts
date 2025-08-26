@@ -1,5 +1,4 @@
-import { StateName } from '../types';
-import { RESPONSES } from '../constants/responses';
+import { RESPONSES } from '../constants';
 
 /**
  * Utility functions for handling state machine responses
@@ -19,8 +18,6 @@ export class ResponseUtils {
 
     return response;
   }
-
-
 
   /**
    * Check if a response contains placeholders that need replacement
@@ -44,9 +41,4 @@ export class ResponseUtils {
     const placeholders = this.getPlaceholders(response);
     return placeholders.every(placeholder => placeholder in replacements);
   }
-
-
-
-
-
 }

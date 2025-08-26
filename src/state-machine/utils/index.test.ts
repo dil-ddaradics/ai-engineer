@@ -1,4 +1,4 @@
-import { ResponseUtils, TemplateUtils, PlanUtils, FileUtils } from './index';
+import { ResponseUtils, TemplateUtils, PlanUtils } from './index';
 import { NodeFileSystem } from '../fileSystem';
 import path from 'path';
 import { tmpdir } from 'os';
@@ -70,10 +70,10 @@ describe('Utils', () => {
         const response = 'Task: [TASK_RESULTS_PLACEHOLDER], Archive: [ARCHIVE_PATH_PLACEHOLDER]';
         const validReplacements = {
           TASK_RESULTS_PLACEHOLDER: 'Task content',
-          ARCHIVE_PATH_PLACEHOLDER: '/path/to/archive'
+          ARCHIVE_PATH_PLACEHOLDER: '/path/to/archive',
         };
         const invalidReplacements = {
-          TASK_RESULTS_PLACEHOLDER: 'Task content'
+          TASK_RESULTS_PLACEHOLDER: 'Task content',
           // Missing ARCHIVE_PATH_PLACEHOLDER
         };
 
@@ -93,7 +93,7 @@ describe('Utils', () => {
     describe('writeTemplate', () => {
       it('should write a template to a file', async () => {
         await templateUtils.writeTemplate('test-plan.md', 'plan');
-        
+
         const exists = await fileSystem.exists('test-plan.md');
         expect(exists).toBe(true);
 
@@ -103,8 +103,9 @@ describe('Utils', () => {
       });
 
       it('should throw error for non-existent template', async () => {
-        await expect(templateUtils.writeTemplate('test.md', 'nonexistent' as any))
-          .rejects.toThrow("Template 'nonexistent' not found");
+        await expect(templateUtils.writeTemplate('test.md', 'nonexistent' as any)).rejects.toThrow(
+          "Template 'nonexistent' not found"
+        );
       });
     });
   });
@@ -236,108 +237,6 @@ Non-Atlassian: https://github.com/repo`;
         const hasCriteria = await planUtils.hasAcceptanceCriteria('no-criteria.md');
 
         expect(hasCriteria).toBe(false);
-      });
-    });
-  });
-
-  describe('FileUtils', () => {
-    let fileUtils: FileUtils;
-
-    beforeEach(() => {
-      fileUtils = new FileUtils(fileSystem);
-    });
-
-    describe('createBaseDirectories', () => {
-      it('should create required directories', async () => {
-        await fileUtils.createBaseDirectories();
-
-        const taskDirExists = await fileSystem.exists('.ai/task');
-        const tasksDirExists = await fileSystem.exists('.ai/task/tasks');
-
-        expect(taskDirExists).toBe(true);
-        expect(tasksDirExists).toBe(true);
-      });
-    });
-
-    describe('readFileSafe', () => {
-      it('should read existing file', async () => {
-        await fileSystem.write('test.md', 'Test content');
-        const content = await fileUtils.readFileSafe('test.md');
-
-        expect(content).toBe('Test content');
-      });
-
-      it('should return empty string for non-existent file', async () => {
-        const content = await fileUtils.readFileSafe('nonexistent.md');
-
-        expect(content).toBe('');
-      });
-    });
-
-    describe('validateFilePath', () => {
-      it('should validate paths within base directory', () => {
-        const valid = fileUtils.validateFilePath('.ai/task/plan.md');
-        expect(typeof valid).toBe('boolean');
-      });
-    });
-
-    describe('extractTaskName', () => {
-      it('should extract task name from frontmatter', async () => {
-        const taskContent = `---
-task_name: 'implement-feature'
----
-
-# Task: Implement Feature`;
-
-        await fileSystem.write('task.md', taskContent);
-        const taskName = await fileUtils.extractTaskName('task.md');
-
-        expect(taskName).toBe('implement-feature');
-      });
-
-      it('should return default name when no frontmatter', async () => {
-        await fileSystem.write('no-frontmatter.md', '# Task without frontmatter');
-        const taskName = await fileUtils.extractTaskName('no-frontmatter.md');
-
-        expect(taskName).toBe('unknown-task');
-      });
-
-      it('should return default name for non-existent file', async () => {
-        const taskName = await fileUtils.extractTaskName('nonexistent.md');
-
-        expect(taskName).toBe('unknown-task');
-      });
-    });
-
-    describe('archiveTaskFiles', () => {
-      it('should archive task files to tasks directory', async () => {
-        // Create test task files
-        await fileSystem.write('.ai/task/task.md', 'Task content');
-        await fileSystem.write('.ai/task/task-results.md', 'Results content');
-
-        const archiveDir = await fileUtils.archiveTaskFiles('test-task');
-
-        // Check archive directory was created
-        const archiveDirExists = await fileSystem.exists(archiveDir);
-        expect(archiveDirExists).toBe(true);
-
-        // Check task files were archived
-        const taskArchived = await fileSystem.exists(`${archiveDir}/task.md`);
-        const resultsArchived = await fileSystem.exists(`${archiveDir}/task-results.md`);
-
-        expect(taskArchived).toBe(true);
-        expect(resultsArchived).toBe(true);
-
-        // Verify archive path format
-        expect(archiveDir).toMatch(/^\.ai\/task\/tasks\/task-test-task-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/);
-      });
-
-      it('should handle missing task files gracefully', async () => {
-        const archiveDir = await fileUtils.archiveTaskFiles('missing-task');
-
-        // Archive directory should still be created
-        const archiveDirExists = await fileSystem.exists(archiveDir);
-        expect(archiveDirExists).toBe(true);
       });
     });
   });

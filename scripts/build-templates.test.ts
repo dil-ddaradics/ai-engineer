@@ -33,7 +33,7 @@ describe('build-templates script', () => {
   it('should generate templates.ts file with correct structure', () => {
     // Create test template files
     fs.mkdirSync(testTemplatesDir, { recursive: true });
-    
+
     fs.writeFileSync(
       path.join(testTemplatesDir, 'task-template.md'),
       '# Task Template\n\n## Steps\n\n- [ ] Step 1\n- [ ] Step 2'
@@ -45,7 +45,7 @@ describe('build-templates script', () => {
 
     // Mock the build-templates script logic
     const templates: Record<string, string> = {};
-    
+
     function readTemplates(dir: string): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
@@ -76,7 +76,7 @@ export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, nul
 
     // Verify the file was created and has correct content
     expect(fs.existsSync(outputPath)).toBe(true);
-    
+
     const generatedContent = fs.readFileSync(outputPath, 'utf8');
     expect(generatedContent).toContain('export const TEMPLATES');
     expect(generatedContent).toContain('"task_template"');
@@ -91,7 +91,7 @@ export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, nul
     fs.mkdirSync(testOutputDir, { recursive: true });
 
     const templates: Record<string, string> = {};
-    
+
     function readTemplates(dir: string): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
@@ -159,7 +159,7 @@ export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, nul
     fs.writeFileSync(path.join(testTemplatesDir, 'test-template.md'), templateContent);
 
     const templates: Record<string, string> = {};
-    
+
     function readTemplates(dir: string): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
@@ -182,7 +182,7 @@ export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, nul
 
   it('should ignore non-markdown files', () => {
     fs.mkdirSync(testTemplatesDir, { recursive: true });
-    
+
     // Create various file types
     fs.writeFileSync(path.join(testTemplatesDir, 'template.md'), '# Valid Template');
     fs.writeFileSync(path.join(testTemplatesDir, 'readme.txt'), 'Not a template');
@@ -190,7 +190,7 @@ export const TEMPLATES: Record<string, string> = ${JSON.stringify(templates, nul
     fs.writeFileSync(path.join(testTemplatesDir, 'script.js'), 'console.log("test");');
 
     const templates: Record<string, string> = {};
-    
+
     function readTemplates(dir: string): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {

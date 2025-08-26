@@ -37,7 +37,7 @@ A **files-first MCP orchestrator** that turns good AI engineering into a **guide
 ### How It Keeps the Agent Focused
 
 - **One step at a time:** `accio` returns only the **next action**, not a checklist of future work.
-- **Explicit triggers ("Accio", "Reparo", "Finite", "Lumos"):** Typing `Accio` is the **only** way to advance the workflow; the AI must treat it as _call the MCP **********\*\*\*\***********\`\`**********\*\*\*\*********** tool now_. Typing `Reparo` tells the AI to gather PR comments via the MCP. Typing `Finite` routes the workflow back to **Gather Acceptance Criteria** (from either **Achieve Acceptance Criteria** or **Handle PR Reviews**). Optionally allow `Accio: <note>` / `Reparo: <note>` / `Finite: <note>` to pass a brief reason to the tool.
+- **Explicit triggers ("Accio", "Reparo", "Finite", "Lumos"):** Typing `Accio` is the **only** way to advance the workflow; the AI must treat it as _call the MCP ****\*\*****\*\*\*\*****\*\*****\`\`****\*\*****\*\*\*\*****\*\***** tool now_. Typing `Reparo` tells the AI to gather PR comments via the MCP. Typing `Finite` routes the workflow back to **Gather Acceptance Criteria** (from either **Achieve Acceptance Criteria** or **Handle PR Reviews**). Optionally allow `Accio: <note>` / `Reparo: <note>` / `Finite: <note>` to pass a brief reason to the tool.
 - **Dual outputs every time:** a concise **message to the user** and a concrete **instruction set for the Coding Agent**.
 - **Files as truth:** the current plan/task/todos in `.ai/task/` are the **single source of truth** the agent follows.
 - **No leap-frogging:** Progress occurs only after the current artifact is complete **and** the user triggers `Accio`. Free-form words like “continue” inside conversation or documents **never** change workflow state.
@@ -282,7 +282,7 @@ The existence of specific files serves as a secondary indicator of state, but th
 
    - **Option B — Plan already exists**: Do **not** create anything. Return instructions for the AI to ask the user to expand/clarify `plan.md` where necessary. When ready, the user types **Accio** to proceed to _Achieve Acceptance Criteria_.
 
-4. **AI Agent**: Follows the MCP’s instructions—co-writes in chat or reviews direct edits. When the user types **Accio**, **call the ******************\*\*********************`accio`******************\*\*\*\******************* tool** to transition from _Gather Acceptance Criteria_ to _Achieve Acceptance Criteria_ and run the phase-entry check (verify remaining criteria). Follows the MCP’s instructions—co-writes in chat or reviews direct edits. When the user types **Accio**, \*\*call the \`accio\` tool to transition from \***Gather Acceptance Criteria**\* to \*\*\***Achieve Acceptance Criteria\*\*\* and run the phase-entry check (verify remaining criteria).
+4. **AI Agent**: Follows the MCP’s instructions—co-writes in chat or reviews direct edits. When the user types **Accio**, **call the ******\*\*\*\*********\*\*********\*\*\*\*********`accio`********\*\*********\*\*\*\*********\*\********* tool** to transition from _Gather Acceptance Criteria_ to _Achieve Acceptance Criteria_ and run the phase-entry check (verify remaining criteria). Follows the MCP’s instructions—co-writes in chat or reviews direct edits. When the user types **Accio**, \*\*call the \`accio\` tool to transition from \***Gather Acceptance Criteria**\* to \*\*\***Achieve Acceptance Criteria\*\*\* and run the phase-entry check (verify remaining criteria).
 
 ### Sequence: Expecto (Atlassian enrichment during Gather Acceptance Criteria only)
 
@@ -354,7 +354,7 @@ The existence of specific files serves as a secondary indicator of state, but th
 4. **Developer**: Types **Accio** to authorize execution.
 5. **AI Agent**: Performs the steps in `task.md`, making minimal, safe changes. Writes `.ai/task/task-results.md` capturing **achieved**, **learned**, **errors not solved**, and **which AC were satisfied**.
 6. **Developer ⇄ AI Agent**: Continue clarifications in chat; the AI Agent may append relevant notes into `task-results.md` to ensure context is preserved.
-7. **Developer → Accio (calls ********************\*\*\*\***********************``**)**: MCP **archives the task artifacts** by moving `.ai/task/task.md` and `.ai/task/task-results.md` into `.ai/task/tasks/task-<task_name>-<DATE>/` (e.g., `task-implement-sum-function-2025-08-20-1130/`), then **marks matching items in **``**********************\*\*********************** as done** (linking to the archived `task-results.md` where helpful) and **offers the next task**. If no AC remain, MCP declares completion and proposes **Reparo** or **Finite\*\*.
+7. **Developer → Accio (calls ********\*\***********\*\*\*\***********\*\***********``**)**: MCP **archives the task artifacts** by moving `.ai/task/task.md` and `.ai/task/task-results.md` into `.ai/task/tasks/task-<task_name>-<DATE>/` (e.g., `task-implement-sum-function-2025-08-20-1130/`), then **marks matching items in **``**********\*\***********\*\***********\*\*********** as done** (linking to the archived `task-results.md` where helpful) and **offers the next task**. If no AC remain, MCP declares completion and proposes **Reparo** or **Finite\*\*.
 
 ### Sequence: Handle PR Reviews (anytime)
 
@@ -399,7 +399,7 @@ The existence of specific files serves as a secondary indicator of state, but th
 
 6. **Iterate review task**: Refine `review-task.md` with the user until clear.
 
-7. **Developer → Accio (AI Agent calls ************\*\***************`accio`************\*\*\*\*************) — MCP one‑shot instructions to the AI Agent (apply review task):\*\*
+7. **Developer → Accio (AI Agent calls ****\*\*******\*\*******\*\*******`accio`****\*\*\*\*****\*\*\*\*****\*\*\*\*****) — MCP one‑shot instructions to the AI Agent (apply review task):\*\*
 
    ```text
    Do the following as a single operation. Either perform the action or stop with a clear message; do not ask the user additional questions.

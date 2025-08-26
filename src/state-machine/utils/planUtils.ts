@@ -44,10 +44,6 @@ export class PlanUtils {
     return pending.length === 0 && completed.length > 0;
   }
 
-
-
-
-
   /**
    * Extract Atlassian URLs from a plan or context file
    */
@@ -72,9 +68,6 @@ export class PlanUtils {
     return urls.length > 0;
   }
 
-
-
-
   /**
    * Check if plan has at least one acceptance criterion
    */
@@ -86,6 +79,4 @@ export class PlanUtils {
       return false;
     }
   }
-
-
 }

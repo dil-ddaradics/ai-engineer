@@ -85,10 +85,7 @@ describe('State Machine Index', () => {
       const fileSystem = new NodeFileSystem(testDir);
       const stateRepository = new JsonFileStateRepository(fileSystem);
 
-      const stateMachine = createStateMachineWithDependencies(
-        stateRepository,
-        fileSystem
-      );
+      const stateMachine = createStateMachineWithDependencies(stateRepository, fileSystem);
 
       expect(stateMachine).toBeDefined();
       expect(typeof stateMachine.executeSpell).toBe('function');
@@ -101,7 +98,7 @@ describe('State Machine Index', () => {
     it('should create a state machine with custom dependencies and transitions', async () => {
       const fileSystem = new NodeFileSystem(testDir);
       const stateRepository = new JsonFileStateRepository(fileSystem);
-      
+
       const customTransitions: Transition[] = [
         {
           fromState: 'GATHER_NO_PLAN',

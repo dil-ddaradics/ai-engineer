@@ -13,9 +13,9 @@ describe('prebuild script', () => {
 
   it('should have generated responses.ts file', () => {
     const responsesPath = path.join(realConstantsDir, 'responses.ts');
-    
+
     expect(fs.existsSync(responsesPath)).toBe(true);
-    
+
     const content = fs.readFileSync(responsesPath, 'utf8');
     expect(content).toContain('export const RESPONSES: Record<string, string>');
     expect(content).toContain('Auto-generated file - do not edit directly');
@@ -23,9 +23,9 @@ describe('prebuild script', () => {
 
   it('should have generated templates.ts file', () => {
     const templatesPath = path.join(realConstantsDir, 'templates.ts');
-    
+
     expect(fs.existsSync(templatesPath)).toBe(true);
-    
+
     const content = fs.readFileSync(templatesPath, 'utf8');
     expect(content).toContain('export const TEMPLATES: Record<string, string>');
     expect(content).toContain('Auto-generated file - do not edit directly');
@@ -60,7 +60,7 @@ describe('prebuild script', () => {
     let expectedResponseCount = 0;
     function countResponseFiles(dir: string): void {
       if (!fs.existsSync(dir)) return;
-      
+
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
         const fullPath = path.join(dir, entry);
@@ -111,7 +111,7 @@ describe('prebuild script', () => {
 
   it('should ensure constants directory exists', () => {
     expect(fs.existsSync(realConstantsDir)).toBe(true);
-    
+
     // Check that it's a directory
     const stats = fs.statSync(realConstantsDir);
     expect(stats.isDirectory()).toBe(true);
@@ -120,7 +120,7 @@ describe('prebuild script', () => {
   it('should handle missing source directories gracefully', () => {
     // This test verifies that the build scripts don't crash when directories are missing
     // The actual build-responses.ts script has logic to handle missing directories
-    
+
     const testOutputDir = path.resolve(__dirname, '../test-output-prebuild');
     const testResponsesDir = path.resolve(__dirname, '../test-responses-missing');
     const testTemplatesDir = path.resolve(__dirname, '../test-templates-missing');
@@ -135,7 +135,7 @@ describe('prebuild script', () => {
 
     // Test responses build with missing directory
     const responses: Record<string, string> = {};
-    
+
     // This should not throw when directory doesn't exist
     expect(() => {
       if (fs.existsSync(testResponsesDir)) {
@@ -145,7 +145,7 @@ describe('prebuild script', () => {
 
     // Test templates build with existing directory
     fs.mkdirSync(testTemplatesDir, { recursive: true });
-    
+
     const templates: Record<string, string> = {};
     expect(() => {
       if (fs.existsSync(testTemplatesDir)) {

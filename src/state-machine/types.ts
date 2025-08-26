@@ -44,7 +44,7 @@ export const STATE_NAMES = [
   'ERROR_CONTEXT_MISSING',
 ] as const;
 
-export type StateName = typeof STATE_NAMES[number];
+export type StateName = (typeof STATE_NAMES)[number];
 
 // Available spells that can be cast
 export type Spell = 'Accio' | 'Expecto' | 'Reparo' | 'Reverto' | 'Finite' | 'Lumos';
@@ -65,14 +65,15 @@ export interface Transition {
   readonly fromState: StateName;
   readonly spell: Spell;
   readonly toState: StateName;
-  readonly condition?: (context: StateContext) => boolean;
-  readonly execute: (context: StateContext) => Promise<{ message: string }>;
+  readonly condition?: (context: StateContext, fileSystem: FileSystem) => Promise<boolean>;
+  readonly execute: (context: StateContext, fileSystem: FileSystem) => Promise<{ message: string }>;
 }
 
 // File system interface for abstracting file operations
 export interface FileSystem {
   exists(path: string): Promise<boolean>;
   read(path: string): Promise<string>;
+  readSafe(path: string): Promise<string>; // Returns empty string if file doesn't exist
   write(path: string, content: string): Promise<void>;
   delete(path: string): Promise<void>;
   createDirectory(path: string): Promise<void>;
@@ -80,6 +81,7 @@ export interface FileSystem {
   getBaseDirectory(): string;
   getRelativePath(path: string): string;
   isWithinBaseDirectory(path: string): boolean;
+  validateFilePath(path: string): boolean; // Alias for isWithinBaseDirectory for clarity
   resolvePath(...segments: string[]): string;
 }
 
@@ -117,4 +119,3 @@ export const FILE_PATHS = {
 
 // Utility type for file path constants
 export type FilePath = (typeof FILE_PATHS)[keyof typeof FILE_PATHS];
-

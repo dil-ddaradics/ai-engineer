@@ -34,11 +34,8 @@ describe('build-responses script', () => {
     // Create test response files
     fs.mkdirSync(testResponsesDir, { recursive: true });
     fs.mkdirSync(path.join(testResponsesDir, 'subfolder'), { recursive: true });
-    
-    fs.writeFileSync(
-      path.join(testResponsesDir, 'test1.md'),
-      'Test response 1 content'
-    );
+
+    fs.writeFileSync(path.join(testResponsesDir, 'test1.md'), 'Test response 1 content');
     fs.writeFileSync(
       path.join(testResponsesDir, 'subfolder', 'test2.md'),
       'Test response 2 content'
@@ -46,7 +43,7 @@ describe('build-responses script', () => {
 
     // Mock the build-responses script logic
     const responses: Record<string, string> = {};
-    
+
     function readResponses(dir: string, base = ''): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
@@ -80,7 +77,7 @@ export const RESPONSES: Record<string, string> = ${JSON.stringify(responses, nul
 
     // Verify the file was created and has correct content
     expect(fs.existsSync(outputPath)).toBe(true);
-    
+
     const generatedContent = fs.readFileSync(outputPath, 'utf8');
     expect(generatedContent).toContain('export const RESPONSES');
     expect(generatedContent).toContain('"test1": "Test response 1 content"');
@@ -93,7 +90,7 @@ export const RESPONSES: Record<string, string> = ${JSON.stringify(responses, nul
     fs.mkdirSync(testOutputDir, { recursive: true });
 
     const responses: Record<string, string> = {};
-    
+
     function readResponses(dir: string, base = ''): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {
@@ -156,7 +153,7 @@ const test = "value";
     fs.writeFileSync(path.join(testResponsesDir, 'test.md'), testContent);
 
     const responses: Record<string, string> = {};
-    
+
     function readResponses(dir: string, base = ''): void {
       const entries = fs.readdirSync(dir);
       for (const entry of entries) {

@@ -38,19 +38,24 @@ export class AiEngineerStateMachine implements StateMachine {
       }
 
       // Find matching transition using injected transitions
-      const transition = this.transitions.find(
-        t =>
-          t.fromState === context!.currentState &&
-          t.spell === spell &&
-          (!t.condition || t.condition(context!))
-      );
+      let transition: Transition | undefined;
+
+      for (const t of this.transitions) {
+        if (t.fromState === context!.currentState && t.spell === spell) {
+          // Check condition if it exists
+          if (!t.condition || (await t.condition(context!, this.fileSystem))) {
+            transition = t;
+            break;
+          }
+        }
+      }
 
       if (transition) {
         // Transition found - always successful
-        const result = await transition.execute(context);
+        const result = await transition.execute(context, this.fileSystem);
         resultSuccess = true;
         resultMessage = result.message;
-        
+
         // Update context to the new state defined by transition
         context = { currentState: transition.toState };
       } else {
@@ -61,7 +66,6 @@ export class AiEngineerStateMachine implements StateMachine {
 
       // Single save operation - only for successful processing
       await this.stateRepository.save(context);
-
     } catch (error) {
       // No state modification on error - preserve existing state
       resultSuccess = false;
@@ -73,6 +77,4 @@ export class AiEngineerStateMachine implements StateMachine {
       message: resultMessage,
     };
   }
-
-
 }

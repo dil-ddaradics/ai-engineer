@@ -60,7 +60,6 @@ export class NodeFileSystem implements FileSystem {
     }
   }
 
-
   async createDirectory(dirPath: string): Promise<void> {
     try {
       const fullPath = this.resolvePath(dirPath);
@@ -100,6 +99,16 @@ export class NodeFileSystem implements FileSystem {
     return this.baseDirectory;
   }
 
+  /**
+   * Safe read that returns empty string if file doesn't exist
+   */
+  async readSafe(filePath: string): Promise<string> {
+    try {
+      return await this.read(filePath);
+    } catch {
+      return '';
+    }
+  }
 
   /**
    * Check if a path is relative to the base directory
@@ -111,11 +120,17 @@ export class NodeFileSystem implements FileSystem {
   }
 
   /**
+   * Alias for isWithinBaseDirectory for clarity
+   */
+  validateFilePath(filePath: string): boolean {
+    return this.isWithinBaseDirectory(filePath);
+  }
+
+  /**
    * Get relative path from base directory
    */
   getRelativePath(filePath: string): string {
     const fullPath = this.resolvePath(filePath);
     return path.relative(this.baseDirectory, fullPath);
   }
-
 }

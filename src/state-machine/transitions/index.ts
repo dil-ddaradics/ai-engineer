@@ -8,7 +8,7 @@ import { gatherAcceptanceCriteriaTransitions } from './contextGather/gatherAccep
 import { gatherAcceptanceCriteriaBlocked } from './contextGather/gatherAcceptanceCriteriaBlocked';
 import { gatherAcceptanceCriteriaNoop } from './contextGather/gatherAcceptanceCriteriaNoop';
 
-// Achieve Phase Transitions  
+// Achieve Phase Transitions
 import { achieveAcceptanceCriteriaTransitions } from './achieve/achieveAcceptanceCriteriaTransitions';
 import { achieveAcceptanceCriteriaBlocked } from './achieve/achieveAcceptanceCriteriaBlocked';
 
@@ -42,21 +42,21 @@ export const DEFAULT_TRANSITIONS: Transition[] = [
   ...gatherAcceptanceCriteriaTransitions,
   ...gatherAcceptanceCriteriaBlocked,
   ...gatherAcceptanceCriteriaNoop,
-  
+
   // Achieve Phase Transitions
   ...achieveAcceptanceCriteriaTransitions,
   ...achieveAcceptanceCriteriaBlocked,
-  
+
   // PR Review Transitions
   ...prReviewTransitions,
   ...startingPrReviewTransitions,
   ...prReviewConfirmationTransitions,
   ...prReviewBlocked,
-  
+
   // Error State Transitions
   ...errorStateRecoveryTransitions,
   ...errorStateOtherTransitions,
-  
+
   // Universal Transitions
   ...finiteTransitions,
   ...finiteBlocked,
@@ -74,21 +74,21 @@ export {
   gatherAcceptanceCriteriaTransitions,
   gatherAcceptanceCriteriaBlocked,
   gatherAcceptanceCriteriaNoop,
-  
+
   // Achieve Phase Transitions
   achieveAcceptanceCriteriaTransitions,
   achieveAcceptanceCriteriaBlocked,
-  
+
   // PR Review Transitions
   prReviewTransitions,
   startingPrReviewTransitions,
   prReviewConfirmationTransitions,
   prReviewBlocked,
-  
+
   // Error State Transitions
   errorStateRecoveryTransitions,
   errorStateOtherTransitions,
-  
+
   // Universal Transitions
   finiteTransitions,
   finiteBlocked,

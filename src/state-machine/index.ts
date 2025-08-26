@@ -22,10 +22,7 @@ export function createStateMachine(options?: {
   baseDirectory?: string;
   transitions?: readonly Transition[];
 }): StateMachine {
-  const {
-    baseDirectory = process.cwd(),
-    transitions = DEFAULT_TRANSITIONS,
-  } = options || {};
+  const { baseDirectory = process.cwd(), transitions = DEFAULT_TRANSITIONS } = options || {};
 
   // Create dependencies
   const fileSystem = new NodeFileSystem(baseDirectory);
@@ -64,9 +61,4 @@ export type {
 };
 
 // Re-export implementation classes for advanced use cases
-export {
-  AiEngineerStateMachine,
-  JsonFileStateRepository,
-  NodeFileSystem,
-  DEFAULT_TRANSITIONS,
-};
+export { AiEngineerStateMachine, JsonFileStateRepository, NodeFileSystem, DEFAULT_TRANSITIONS };

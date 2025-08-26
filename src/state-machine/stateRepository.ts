@@ -71,7 +71,6 @@ export class JsonFileStateRepository implements StateRepository {
     return updatedContext;
   }
 
-
   /**
    * Zod schema for validating state context
    */

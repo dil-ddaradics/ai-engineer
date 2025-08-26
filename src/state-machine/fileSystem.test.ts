@@ -77,7 +77,6 @@ describe('NodeFileSystem', () => {
     });
   });
 
-
   describe('createDirectory', () => {
     it('should create directory', async () => {
       await fileSystem.createDirectory('test-dir');
@@ -152,7 +151,6 @@ describe('NodeFileSystem', () => {
     });
   });
 
-
   describe('isWithinBaseDirectory', () => {
     it('should return true for paths within base directory', () => {
       expect(fileSystem.isWithinBaseDirectory('test.txt')).toBe(true);
@@ -181,8 +179,6 @@ describe('NodeFileSystem', () => {
       expect(relativePath).toBe('test.txt');
     });
   });
-
-
 
   describe('error handling', () => {
     it('should provide descriptive error messages', async () => {

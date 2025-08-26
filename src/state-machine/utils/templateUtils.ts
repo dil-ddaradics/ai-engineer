@@ -1,5 +1,5 @@
 import { FileSystem } from '../types';
-import { TEMPLATES } from '../constants/templates';
+import { TEMPLATES } from '../constants';
 
 /**
  * Template types for creating workflow files
@@ -33,5 +33,4 @@ export class TemplateUtils {
 
     await this.fileSystem.write(filePath, template);
   }
-
 }

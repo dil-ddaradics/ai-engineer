@@ -1,6 +1,5 @@
 import { JsonFileStateRepository } from './stateRepository';
 import { NodeFileSystem } from './fileSystem';
-import { StateContext, StateName } from './types';
 import path from 'path';
 import { tmpdir } from 'os';
 
@@ -71,7 +70,6 @@ describe('JsonFileStateRepository', () => {
 
       await expect(repository.load()).rejects.toThrow('Invalid state context');
     });
-
   });
 
   describe('updateState', () => {
@@ -92,10 +90,6 @@ describe('JsonFileStateRepository', () => {
     });
   });
 
-
-
-
-
   describe('clear', () => {
     it('should remove state file', async () => {
       await repository.initialize('GATHER_NO_PLAN', tempDir);
@@ -109,6 +103,4 @@ describe('JsonFileStateRepository', () => {
       await expect(repository.clear()).resolves.not.toThrow();
     });
   });
-
-
 });

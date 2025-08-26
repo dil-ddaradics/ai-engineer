@@ -28,7 +28,7 @@ You are implementing state machine transitions for the AI Engineer workflow syst
 
 1. Scan all transition tables in `state-machine/state-machine.md` in order:
    - Context Gathering Phase Transitions
-   - Gather Acceptance Criteria Phase Transitions  
+   - Gather Acceptance Criteria Phase Transitions
    - Context Gathering Phase Blocked Transitions
    - Context Gathering Phase No-op Transitions
    - Gather Acceptance Criteria Phase Blocked Transitions
@@ -60,27 +60,26 @@ For the next unimplemented transition, generate TypeScript code following this p
 
 ```typescript
 {
-  id: 'TRANSITION_ID',
-  sourceState: 'SOURCE_STATE_NAME',
+  fromState: 'SOURCE_STATE_NAME',
   spell: 'SPELL_NAME',
-  condition: async (fileSystem: FileSystem) => {
+  toState: 'NEXT_STATE_NAME',
+  condition: async (context: StateContext, fileSystem: FileSystem) => {
     // Implementation based on MCP Condition column
     // Return boolean result
+    return true; // or false based on condition logic
   },
-  handler: async (context: StateContext, fileSystem: FileSystem) => {
+  execute: async (context: StateContext, fileSystem: FileSystem) => {
     // Implementation based on MCP Actions column
     // Perform file operations
     // Get response template
-    const responseTemplate = getResponse('response_file_name');
+    const responseTemplate = ResponseUtils.formatResponse('response_file_name');
     // Process any placeholders
-    const response = processResponse(responseTemplate, replacements);
-    
+    const response = ResponseUtils.formatResponse(responseTemplate, replacements);
+
     return {
-      nextState: 'NEXT_STATE_NAME',
-      response: response,
+      message: response,
     };
   },
-  description: 'Human readable description of transition',
 }
 ```
 
@@ -93,8 +92,9 @@ For the next unimplemented transition, generate TypeScript code following this p
 
 2. **Actions**: Convert MCP Actions to file operations using FileSystem interface:
    - "Creates `.ai/task/context.md` with template" → Use `writeTemplate()`
-   - "Archives files to path" → Use `fileSystem.archive()`
-   - "Reads content; Replaces placeholder" → Read, process, and use in response
+   - "Archives files to path" → Use `TaskUtils.archiveTask()` or `TaskUtils.archiveReviewTask()`
+   - "Reads content; Replaces placeholder" → Use `fileSystem.readSafe()` for safe reading, process, and use in response
+   - "Creates base directories" → Use `TaskUtils.createBaseDirectories()`
 
 3. **Responses**: Use `ResponseUtils.formatResponse()` from response utilities:
    - Extract response file name from Response column
@@ -189,7 +189,7 @@ After implementing ONE transition and its tests:
 - `src/state-machine/types.ts` - Type definitions
 - `src/state-machine/utils/responseUtils.ts` - Response processing with ResponseUtils class
 - `src/state-machine/utils/templateUtils.ts` - Template operations
-- `src/state-machine/utils/fileUtils.ts` - File parsing utilities with FileUtils class
+- `src/state-machine/fileSystem.ts` - FileSystem interface with safe reading and validation methods
 - `src/state-machine/utils/planUtils.ts` - Plan processing utilities
 - `src/state-machine/utils/taskUtils.ts` - Task archiving utilities with TaskUtils class
 - `src/state-machine/utils/index.ts` - Utility exports and factory functions
