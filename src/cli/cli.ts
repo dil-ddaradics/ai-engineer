@@ -294,6 +294,46 @@ EXAMPLES:
   npx ai-engineer set 09-calculator-executed
   npx ai-engineer current
 
+MCP SERVER INTEGRATION:
+
+Claude Code:
+  Add this configuration to your Claude Code settings:
+
+  {
+    "mcpServers": {
+      "ai-engineer": {
+        "command": "npx",
+        "args": ["@dil-ddaradics/ai-engineer"],
+        "env": {}
+      }
+    }
+  }
+
+  Or configure via Claude Code CLI:
+  claude mcp install ai-engineer npx @dil-ddaradics/ai-engineer
+
+Cursor:
+  Add this to your Cursor settings.json:
+
+  {
+    "mcp": {
+      "servers": {
+        "ai-engineer": {
+          "command": "npx",
+          "args": ["@dil-ddaradics/ai-engineer"]
+        }
+      }
+    }
+  }
+
+Available MCP Tools:
+  - accio          Advance workflow to next step
+  - expecto        Enrich plan from Atlassian resources
+  - reparo         Initiate/continue PR review process
+  - reverto        Exit PR review flow
+  - finite         Return to plan editing
+  - lumos          Show current state and actions
+
 DEMO STATES:
   01-empty              Empty Start - Fresh directory
   02-context-gathering  Context Gathering - Working on context

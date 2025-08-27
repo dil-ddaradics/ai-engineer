@@ -1,152 +1,352 @@
-# AI Engineer MCP Server
+# AI Engineer
 
-A Model Context Protocol (MCP) server designed for AI engineering tasks. This server provides resources and tools to assist with AI model evaluation, prompt engineering, and best practices.
+A Model Context Protocol (MCP) server that provides intelligent workflow orchestration for AI-assisted software development. AI Engineer helps developers collaborate effectively with AI assistants through a guided, state-driven workflow that includes context gathering, planning, task execution, and PR review processes.
 
-## Features
+## ✨ Key Features
 
-### Resources
+- **🧙‍♂️ Spell-based Workflow**: Six intuitive commands (Accio, Expecto, Reparo, Reverto, Finite, Lumos) guide you through development phases
+- **📋 Smart State Management**: Maintains workflow state across sessions using file-based persistence
+- **🔄 Demo System**: 11 pre-configured demo states let you explore the complete workflow
+- **🎯 Context-Aware**: Integrates with Atlassian (Jira/Confluence) for enhanced context gathering
+- **📝 Structured Planning**: Breaks down complex tasks into manageable acceptance criteria
+- **🔍 PR Review Workflow**: Systematic approach to handling pull request feedback
+- **🧪 CLI Management**: Powerful command-line interface for workflow management
 
-- **AI Engineering Frameworks** - Information about popular frameworks for machine learning, NLP, computer vision, and more
-- **AI Best Practices** - Guidance on testing, deployment, monitoring, and ethical considerations for AI systems
+## 🚀 Quick Start
 
-### Tools
+### Installation
 
-- **MCP Orchestrator** - Coordinates task execution between users and AI agents
+Install the AI Engineer MCP server:
 
-## MCP Orchestrator
+```bash
+npm install -g @dil-ddaradics/ai-engineer
+```
 
-The MCP Orchestrator is a proof-of-concept that demonstrates how MCP can coordinate task execution between users and AI agents without requiring a complex state machine.
+### Configure Your AI Assistant
 
-### How It Works
+#### Claude Code
 
-1. The user (via the AI agent) calls the `advance` tool.
-2. On first call:
-   - MCP creates `.ai/task/task.md` (a task template)
-   - MCP instructs both the AI agent and user what to do next
-3. On subsequent calls:
-   - MCP reads `.ai/task/task.md`
-   - MCP instructs the AI agent to execute what's written there
-   - MCP gives the user a brief summary of what will happen
+Add to your Claude Code settings:
+
+```json
+{
+  "mcpServers": {
+    "ai-engineer": {
+      "command": "npx",
+      "args": ["@dil-ddaradics/ai-engineer"],
+      "env": {}
+    }
+  }
+}
+```
+
+Or use the Claude Code CLI:
+
+```bash
+claude mcp install ai-engineer npx @dil-ddaradics/ai-engineer
+```
+
+#### Cursor
+
+Add to your Cursor settings.json:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "ai-engineer": {
+        "command": "npx",
+        "args": ["@dil-ddaradics/ai-engineer"]
+      }
+    }
+  }
+}
+```
+
+### Basic Usage
+
+1. **Start a workflow**: Ask your AI assistant to cast "Accio" to begin
+2. **Check current state**: Use "Lumos" to see where you are and what's available
+3. **Navigate the workflow**: Use the available spells to progress through phases
+4. **Get help**: Run `npx ai-engineer help` for detailed CLI usage
+
+## 📖 Usage Guide
+
+### CLI Commands
+
+The AI Engineer CLI provides powerful workflow management:
+
+```bash
+# List all available demo states
+npx ai-engineer list
+
+# Set up a specific demo state
+npx ai-engineer set 05-plan-ready
+
+# Check current workflow state
+npx ai-engineer current
+
+# Reset workflow (clear all state)
+npx ai-engineer reset
+
+# Create backup of current state
+npx ai-engineer backup
+
+# Restore from backup
+npx ai-engineer restore
+
+# Show help information
+npx ai-engineer help
+```
+
+### MCP Tools (Spells)
+
+These tools are available in your AI assistant once the MCP server is configured:
+
+- **🪄 Accio**: Advance workflow to the next step
+- **⚡ Expecto**: Enrich plan with Atlassian resources (Jira/Confluence)
+- **🔧 Reparo**: Initiate or continue PR review process
+- **↩️ Reverto**: Exit PR review flow and return to previous state
+- **🏁 Finite**: Return to plan editing phase
+- **💡 Lumos**: Show current state and available actions
+
+### Workflow Example
+
+1. **Start**: Cast "Accio" to create initial context
+2. **Plan**: Edit `.ai/task/context.md` and `.ai/task/plan.md`
+3. **Execute**: Cast "Accio" to create and execute tasks
+4. **Review**: Use "Reparo" to handle PR feedback
+5. **Complete**: Continue until all acceptance criteria are met
+
+## 🎭 Demo States
+
+The AI Engineer includes 11 carefully crafted demo states that showcase the complete workflow progression. Each state represents a different phase of a software development project.
+
+### Available Demo States
+
+| State | Name | Description |
+|-------|------|-------------|
+| `01-empty` | **Empty Start** | Fresh directory - starting point for new projects |
+| `02-context-gathering` | **Context Gathering** | Working on understanding project requirements |
+| `03-context-complete` | **Context Complete** | Project context established, ready for planning |
+| `04-planning` | **Planning** | Creating detailed project plan with acceptance criteria |
+| `05-plan-ready` | **Plan Ready** | Complete plan ready for implementation |
+| `06-setup-drafting` | **Setup Drafting** | Project setup in progress (TypeScript + Jest) |
+| `07-setup-executed` | **Setup Executed** | TypeScript + Jest environment ready |
+| `08-calculator-drafting` | **Calculator Drafting** | Implementation in progress |
+| `09-calculator-executed` | **Calculator Executed** | Full implementation complete |
+| `10-pr-review` | **PR Review** | Handling review feedback phase |
+| `11-final-complete` | **Final Complete** | Production-ready state |
+
+### Using Demo States
+
+Demo states let you jump into any part of the workflow to explore and learn:
+
+```bash
+# Start from the beginning
+npx ai-engineer set 01-empty
+
+# Jump to planning phase
+npx ai-engineer set 05-plan-ready
+
+# Explore PR review workflow
+npx ai-engineer set 10-pr-review
+
+# See the final result
+npx ai-engineer set 11-final-complete
+```
+
+Each demo state includes:
+- Pre-configured files (context, plans, tasks, etc.)
+- Appropriate workflow state
+- Realistic project progression
+- Learning opportunities for that phase
+
+### Demo Project: Calculator
+
+The demo states follow the development of a TypeScript calculator project, including:
+- **Requirements gathering** and context establishment
+- **Planning** with acceptance criteria
+- **Environment setup** (TypeScript, Jest, project structure)
+- **Implementation** of calculator functionality
+- **Testing** and validation
+- **PR review** cycle with feedback handling
+- **Production readiness** checklist
+
+## 🔄 State Machine Documentation
+
+AI Engineer uses a sophisticated state machine to guide the development workflow through four main phases.
+
+### Workflow Phases
+
+#### 1. Context Gathering Phase
+- **Purpose**: Understand what needs to be built
+- **Key Files**: `.ai/task/context.md`
+- **Activities**: Requirements analysis, stakeholder input, project scope
+- **Outcome**: Clear understanding of project goals
+
+#### 2. Planning Phase  
+- **Purpose**: Break down work into manageable pieces
+- **Key Files**: `.ai/task/plan.md`
+- **Activities**: Define acceptance criteria, create task breakdown
+- **Outcome**: Structured plan with measurable goals
+
+#### 3. Achievement Phase
+- **Purpose**: Execute planned work
+- **Key Files**: `.ai/task/task.md`, `.ai/task/task-results.md`
+- **Activities**: Implementation, testing, validation
+- **Outcome**: Working software that meets acceptance criteria
+
+#### 4. PR Review Phase
+- **Purpose**: Handle feedback and improve code quality
+- **Key Files**: `.ai/task/comments.md`, `.ai/task/review-task.md`
+- **Activities**: Address review comments, refine implementation
+- **Outcome**: Code ready for production
+
+### State Management
+
+The system maintains state through:
+
+- **`.ai/task/state.json`**: Authoritative state record with history
+- **File presence**: Secondary indicators (context.md, plan.md, task.md, etc.)
+- **State validation**: Automatic error detection and recovery
+- **Persistence**: State survives across sessions and AI context resets
+
+### Spell Behavior by Phase
+
+| Spell | Context Gathering | Planning | Achievement | PR Review |
+|-------|------------------|----------|-------------|-----------|
+| **Accio** | Create context → Create plan → Execute task | Continue tasks → Complete | Archive review → Return |
+| **Expecto** | Enhance context with Atlassian data | Enhance plan with Atlassian data | ❌ Blocked | ❌ Blocked |
+| **Reparo** | ❌ Blocked (no code yet) | Start PR review | Start PR review | ❌ Blocked (already in review) |
+| **Reverto** | ❌ Blocked (not in review) | ❌ Blocked (not in review) | ❌ Blocked (not in review) | Exit review → Return to previous |
+| **Finite** | ❌ Blocked (must complete context) | No-op (already editing) | Return to planning | ❌ Blocked (must complete review) |
+| **Lumos** | Show current state and next steps | Show current state and next steps | Show current state and next steps | Show current state and next steps |
+
+### Error Handling & Recovery
+
+The state machine includes comprehensive error detection:
+
+- **Missing Files**: Detects when expected files are absent
+- **State Corruption**: Handles inconsistent state conditions  
+- **Recovery Actions**: Provides clear paths to fix errors
+- **Graceful Degradation**: Continues working even with partial failures
+
+### Transition Validation
+
+Every state transition includes:
+- **Pre-conditions**: File existence and content validation
+- **Actions**: File creation, archiving, and content processing
+- **Post-conditions**: State consistency verification
+- **User Feedback**: Clear explanation of what happened and next steps
+
+## 🏗️ Implementation Details
+
+### Architecture Overview
+
+AI Engineer is built as a Model Context Protocol (MCP) server with three main components:
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   AI Assistant  │───▶│   MCP Server     │───▶│  File System    │
+│ (Claude/Cursor) │    │                  │    │   (.ai/task/)   │
+└─────────────────┘    │  ┌─────────────┐ │    └─────────────────┘
+                       │  │ State       │ │
+                       │  │ Machine     │ │    ┌─────────────────┐
+                       │  └─────────────┘ │───▶│   Templates     │
+                       │  ┌─────────────┐ │    │ & Responses     │
+                       │  │ Tools       │ │    └─────────────────┘
+                       │  │ (Spells)    │ │
+                       │  └─────────────┘ │    ┌─────────────────┐
+                       │  ┌─────────────┐ │───▶│   CLI System    │
+                       │  │ Resources   │ │    │                 │
+                       │  └─────────────┘ │    └─────────────────┘
+                       └──────────────────┘
+```
+
+### MCP Server Components
+
+#### Tools (Spells)
+- **TypeScript Implementation**: `/src/tools/spells.ts`
+- **Stateless Design**: Each tool delegates to the state machine
+- **Error Handling**: Comprehensive error catching and user-friendly messages
+- **Validation**: Input validation and pre-condition checking
+
+#### Resources
+- **Template System**: Provides markdown templates for workflow files
+- **Dynamic Content**: Context-aware resource generation
+- **Atlassian Integration**: URL extraction and reference management
+
+#### State Machine
+- **Core Engine**: `/src/state-machine/stateMachine.ts`
+- **96 Transitions**: Complete coverage of all state-spell combinations
+- **File Operations**: Atomic file creation, archiving, and management
+- **History Tracking**: Maintains transition history for debugging
 
 ### File Structure
 
-- `.ai/task/task.md` - Contains the task definition with goal, steps, and validation criteria
-- `.ai/task/task.log` - Contains a log of task execution progress
-
-### Usage Flow
-
-1. User says: "advance" → the agent calls the `advance` tool
-2. If response `mode: "draft"`:
-   - Task template is created
-   - Agent explains how to fill it out
-3. User and agent collaborate on `.ai/task/task.md`
-4. User says: "advance" again
-5. If response `mode: "execute"`:
-   - Agent summarizes what will happen
-   - Agent executes the steps
-   - Agent logs progress to `.ai/task/task.log`
-6. To start over, use the `reset` tool
-
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ai-engineer.git
-cd ai-engineer
-
-# Install dependencies
-npm install
+```
+ai-engineer/
+├── src/
+│   ├── index.ts                 # MCP server entry point
+│   ├── cli/                     # CLI implementation
+│   │   ├── cli.ts              # Command handlers
+│   │   └── index.ts            # CLI management
+│   ├── state-machine/          # Core state machine
+│   │   ├── stateMachine.ts     # Main state machine logic
+│   │   ├── stateRepository.ts  # State persistence
+│   │   ├── fileSystem.ts       # File operations
+│   │   ├── transitions/        # State transition handlers
+│   │   └── utils/              # Helper utilities
+│   ├── tools/                  # MCP tools (spells)
+│   │   └── spells.ts          # Tool implementations
+│   └── resources/              # MCP resources
+│       └── spells.ts          # Resource implementations
+├── demos/                      # Demo state configurations
+│   ├── 01-empty/              # Starting point
+│   ├── 05-plan-ready/         # Planning complete
+│   ├── 09-calculator-executed/ # Implementation complete
+│   └── 11-final-complete/     # Production ready
+├── state-machine/             # State machine documentation
+│   ├── state-machine.md       # Complete specification
+│   ├── responses/             # Response templates
+│   └── templates/             # File templates
+└── docs/                      # Additional documentation
+    ├── how-to-build-an-mcp-server.md
+    └── how-to-test-an-mcp-server.md
 ```
 
-## Development
+### State Persistence
 
-```bash
-# Run the server in development mode
-npm run dev
+The system uses a hybrid approach for state management:
+
+#### Primary State (`.ai/task/state.json`)
+```json
+{
+  "current_state": "GATHER_EDITING_CONTEXT",
+  "context": {
+    "origin_phase": "GATHER",
+    "confirmation_needed": false
+  },
+  "history": [
+    {
+      "timestamp": "2025-08-27T10:30:00Z",
+      "transition": "GATHER_NEEDS_CONTEXT → GATHER_EDITING_CONTEXT",
+      "trigger": "Accio"
+    }
+  ]
+}
 ```
 
-## Building
+#### Secondary Indicators
+- **Context Phase**: `.ai/task/context.md` existence
+- **Planning Phase**: `.ai/task/plan.md` existence and content
+- **Achievement Phase**: `.ai/task/task.md` and `.ai/task/task-results.md`
+- **PR Review Phase**: `.ai/task/comments.md` and `.ai/task/review-task.md`
 
-The server can be built into a single file using @vercel/ncc:
+#### File Archiving
+Completed work is automatically archived to maintain history:
+- **Tasks**: `.ai/task/tasks/task-{name}-{date}/`
+- **PR Reviews**: `.ai/task/pr-reviews/pr-review-{date}/`
 
-```bash
-# Build the server
-npm run build
-```
-
-This creates a standalone executable in the `dist` directory.
-
-## Running
-
-```bash
-# Run the built server
-npm start
-```
-
-## Using with Claude Code
-
-To use this MCP server with Claude Code:
-
-```bash
-# Add the MCP server to Claude Code
-claude mcp add --transport stdio ai-engineer -- 'npm start --prefix /path/to/ai-engineer'
-```
-
-For more reliable configuration:
-
-```bash
-# Using add-json for precise control
-claude mcp add-json ai-engineer '{
-  "type": "stdio",
-  "command": "/absolute/path/to/node",
-  "args": ["/absolute/path/to/ai-engineer/dist/index.js"],
-  "env": { "NODE_NO_WARNINGS": "1" }
-}'
-```
-
-## Available Tools
-
-### advance
-
-The `advance` tool is part of the MCP Orchestrator, which helps coordinate task execution between users and the AI agent. This tool either creates a task template or executes an existing task.
-
-Parameters:
-
-- `reason`: String (free text) explaining why you're advancing the task
-
-When called:
-
-- If `.ai/task/task.md` doesn't exist: Creates a task template file and enters "draft" mode
-- If `.ai/task/task.md` exists: Enters "execute" mode to carry out the steps in the file
-
-### reset
-
-Resets the orchestrator by deleting the task file.
-
-No parameters required.
-
-### append_log
-
-Appends a message to the task log file.
-
-Parameters:
-
-- `message`: The message to add to the log
-
-## Troubleshooting
-
-If you encounter connection issues with Claude Code:
-
-1. Ensure all console output uses stderr, not stdout
-2. Use absolute paths for both the Node executable and your server script
-3. Check the log files at `~/Library/Logs/Claude/mcp*.log`
-4. Use the MCP Inspector tool to validate your server:
-
-```bash
-npx -y @modelcontextprotocol/inspector --cli --method tools/list -- \
-  /absolute/path/to/node /absolute/path/to/ai-engineer/dist/index.js
-```
-
-## License
-
-ISC
+This architecture ensures the system is robust, maintainable, and provides a great developer experience while working with AI assistants.
