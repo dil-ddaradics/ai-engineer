@@ -220,6 +220,9 @@ export class DemoManager {
       );
     }
 
+    // Safety checks to prevent accidental cleanup
+    await this.performSafetyChecks();
+
     const demoSourcePath = path.join(this.demosDir, stateName);
 
     // Check if demo folder exists
@@ -260,6 +263,37 @@ export class DemoManager {
   async reset(): Promise<void> {
     if (await this.hasAiDirectory()) {
       await fs.rm(this.aiDir, { recursive: true, force: true });
+    }
+  }
+
+  /**
+   * Perform safety checks before allowing cleanup operations
+   */
+  private async performSafetyChecks(): Promise<void> {
+    // Check if .gitignore exists
+    try {
+      await fs.access('.gitignore');
+      throw new Error(
+        'Safety check failed: .gitignore file detected. Demo cleanup is disabled to prevent accidental deletion of a real project.'
+      );
+    } catch (error: any) {
+      // If this is our safety error, re-throw it
+      if (error.message && error.message.includes('Safety check failed')) {
+        throw error;
+      }
+      // If the error is not about file not existing, re-throw it
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+      // If .gitignore doesn't exist (ENOENT), continue with next check
+    }
+
+    // Check if current directory is named 'ai-engineer'
+    const currentDir = path.basename(process.cwd());
+    if (currentDir === 'ai-engineer') {
+      throw new Error(
+        'Safety check failed: Current directory is named "ai-engineer". Demo cleanup is disabled to prevent accidental deletion of the project source code.'
+      );
     }
   }
 
