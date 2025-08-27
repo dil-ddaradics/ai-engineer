@@ -10,9 +10,9 @@ describe('ResponseUtils', () => {
       expect(typeof formatted).toBe('string');
     });
 
-    it('should return empty string for non-existent response key', () => {
+    it('should return system prompt for non-existent response key', () => {
       const formatted = ResponseUtils.formatResponse('nonexistent_key');
-      expect(formatted).toBe('');
+      expect(formatted).toContain('AI Engineer assistant');
     });
   });
 

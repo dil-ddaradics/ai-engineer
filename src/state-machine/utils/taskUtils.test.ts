@@ -49,7 +49,10 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveTask();
 
       // Assert
-      expect(result).toBe('.ai/task/tasks/task-user-authentication-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/tasks/task-user-authentication-2025-01-15-143045');
+      expect(result.taskResultsPath).toBe(
+        '.ai/task/tasks/task-user-authentication-2025-01-15-143045/task-results.md'
+      );
       expect(mockFileSystem.createDirectory).toHaveBeenCalledWith(
         '.ai/task/tasks/task-user-authentication-2025-01-15-143045'
       );
@@ -80,7 +83,10 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveTask();
 
       // Assert
-      expect(result).toBe('.ai/task/tasks/task-incomplete-task-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/tasks/task-incomplete-task-2025-01-15-143045');
+      expect(result.taskResultsPath).toBe(
+        '.ai/task/tasks/task-incomplete-task-2025-01-15-143045/task-results.md'
+      );
       expect(mockFileSystem.write).toHaveBeenCalledTimes(1);
       expect(mockFileSystem.write).toHaveBeenCalledWith(
         '.ai/task/tasks/task-incomplete-task-2025-01-15-143045/task.md',
@@ -114,7 +120,10 @@ describe('TaskUtils', () => {
 
       // Act & Assert - should not throw
       const result = await taskUtils.archiveTask();
-      expect(result).toBe('.ai/task/tasks/task-error-task-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/tasks/task-error-task-2025-01-15-143045');
+      expect(result.taskResultsPath).toBe(
+        '.ai/task/tasks/task-error-task-2025-01-15-143045/task-results.md'
+      );
     });
   });
 
@@ -131,20 +140,23 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveReviewTask();
 
       // Assert
-      expect(result).toBe('pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.reviewTaskResultsPath).toBe(
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/review-task-results.md'
+      );
       expect(mockFileSystem.createDirectory).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045'
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045'
       );
       expect(mockFileSystem.write).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045/comments.md',
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/comments.md',
         '# Comments content'
       );
       expect(mockFileSystem.write).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045/review-task.md',
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/review-task.md',
         '# Review task content'
       );
       expect(mockFileSystem.write).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045/review-task-results.md',
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/review-task-results.md',
         '# Review results content'
       );
       expect(mockFileSystem.delete).toHaveBeenCalledTimes(3);
@@ -161,10 +173,13 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveReviewTask();
 
       // Assert
-      expect(result).toBe('pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.reviewTaskResultsPath).toBe(
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/review-task-results.md'
+      );
       expect(mockFileSystem.write).toHaveBeenCalledTimes(1);
       expect(mockFileSystem.write).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045/comments.md',
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/comments.md',
         '# Comments content'
       );
       expect(mockFileSystem.delete).toHaveBeenCalledTimes(1);
@@ -178,9 +193,12 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveReviewTask();
 
       // Assert
-      expect(result).toBe('pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/pr-reviews/pr-review-2025-01-15-143045');
+      expect(result.reviewTaskResultsPath).toBe(
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045/review-task-results.md'
+      );
       expect(mockFileSystem.createDirectory).toHaveBeenCalledWith(
-        'pr-reviews/pr-review-2025-01-15-143045'
+        '.ai/task/pr-reviews/pr-review-2025-01-15-143045'
       );
     });
   });
@@ -193,7 +211,7 @@ describe('TaskUtils', () => {
       // Assert
       expect(mockFileSystem.createDirectory).toHaveBeenCalledWith(FILE_PATHS.TASK_BASE_DIR);
       expect(mockFileSystem.createDirectory).toHaveBeenCalledWith('.ai/task/tasks');
-      expect(mockFileSystem.createDirectory).toHaveBeenCalledWith('pr-reviews');
+      expect(mockFileSystem.createDirectory).toHaveBeenCalledWith('.ai/task/pr-reviews');
       expect(mockFileSystem.createDirectory).toHaveBeenCalledTimes(3);
     });
   });
@@ -207,8 +225,8 @@ describe('TaskUtils', () => {
       const result1 = await taskUtils.archiveTask();
       const result2 = await taskUtils.archiveReviewTask();
 
-      expect(result1).toContain('2025-01-15-143045');
-      expect(result2).toContain('2025-01-15-143045');
+      expect(result1.archiveDir).toContain('2025-01-15-143045');
+      expect(result2.archiveDir).toContain('2025-01-15-143045');
     });
   });
 
@@ -222,7 +240,10 @@ describe('TaskUtils', () => {
       const result = await taskUtils.archiveTask();
 
       // Assert - should use 'unknown-task' fallback and not throw
-      expect(result).toBe('.ai/task/tasks/task-unknown-task-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/tasks/task-unknown-task-2025-01-15-143045');
+      expect(result.taskResultsPath).toBe(
+        '.ai/task/tasks/task-unknown-task-2025-01-15-143045/task-results.md'
+      );
     });
 
     it('should handle directory creation errors', async () => {
@@ -244,7 +265,10 @@ describe('TaskUtils', () => {
 
       // Act & Assert - should not throw
       const result = await taskUtils.archiveTask();
-      expect(result).toBe('.ai/task/tasks/task-test-task-2025-01-15-143045');
+      expect(result.archiveDir).toBe('.ai/task/tasks/task-test-task-2025-01-15-143045');
+      expect(result.taskResultsPath).toBe(
+        '.ai/task/tasks/task-test-task-2025-01-15-143045/task-results.md'
+      );
     });
   });
 

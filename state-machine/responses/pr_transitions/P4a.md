@@ -2,12 +2,9 @@
 
 **EXECUTE IMMEDIATELY:**
 
-1. Use the provided review task results to understand what changes were made from PR comments
+1. Read [REVIEW_TASK_RESULTS_FILE_PLACEHOLDER] to understand what changes were made from PR comments
 2. Update `.ai/task/plan.md` with a summary of these changes
 3. **DELIVERABLE**: Updated plan file with summary of PR feedback changes
-
-Review Task Results Content:
-[REVIEW_TASK_RESULTS_PLACEHOLDER]
 
 ## Response to the Developer
 

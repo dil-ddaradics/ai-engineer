@@ -1,6 +1,6 @@
 {
   "name": "@dil-ddaradics/ai-engineer",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "A Model Context Protocol (MCP) server for AI engineering tasks with demo workflow management",
   "main": "dist/index.js",
   "type": "module",

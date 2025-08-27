@@ -120,16 +120,13 @@ export const p3Transition: Transition = {
     return await fileSystem.exists(FILE_PATHS.REVIEW_TASK_RESULTS_FILE);
   },
   execute: async (context, fileSystem) => {
-    // (1) Reads `.ai/task/review-task-results.md` content
-    const reviewResultsContent = await fileSystem.readSafe(FILE_PATHS.REVIEW_TASK_RESULTS_FILE);
-
-    // (2) Archives review files to `pr-reviews/pr-review-<date>/`
+    // (1) Archives review files to `pr-reviews/pr-review-<date>/`
     const taskUtils = new TaskUtils(fileSystem);
-    await taskUtils.archiveReviewTask();
+    const { reviewTaskResultsPath } = await taskUtils.archiveReviewTask();
 
-    // (3) Replaces `[REVIEW_TASK_RESULTS_PLACEHOLDER]` in response with results content
+    // (2) Replaces placeholder with file path reference
     const response = ResponseUtils.formatResponse('pr_transitions_P3', {
-      '[REVIEW_TASK_RESULTS_PLACEHOLDER]': reviewResultsContent,
+      REVIEW_TASK_RESULTS_FILE_PLACEHOLDER: reviewTaskResultsPath,
     });
 
     return {
@@ -180,16 +177,13 @@ export const p4aTransition: Transition = {
     );
   },
   execute: async (context, fileSystem) => {
-    // (1) Reads `.ai/task/review-task-results.md` content
-    const reviewResultsContent = await fileSystem.readSafe(FILE_PATHS.REVIEW_TASK_RESULTS_FILE);
-
-    // (2) Archives review files to `pr-reviews/pr-review-<date>/`
+    // (1) Archives review files to `pr-reviews/pr-review-<date>/`
     const taskUtils = new TaskUtils(fileSystem);
-    await taskUtils.archiveReviewTask();
+    const { reviewTaskResultsPath } = await taskUtils.archiveReviewTask();
 
-    // (3) Replaces `[REVIEW_TASK_RESULTS_PLACEHOLDER]` in response with results content
+    // (2) Replaces placeholder with file path reference
     const response = ResponseUtils.formatResponse('pr_transitions_P4a', {
-      '[REVIEW_TASK_RESULTS_PLACEHOLDER]': reviewResultsContent,
+      REVIEW_TASK_RESULTS_FILE_PLACEHOLDER: reviewTaskResultsPath,
     });
 
     return {
@@ -216,20 +210,17 @@ export const p4bTransition: Transition = {
     );
   },
   execute: async (context, fileSystem) => {
-    // (1) Reads `.ai/task/review-task-results.md` content
-    const reviewResultsContent = await fileSystem.readSafe(FILE_PATHS.REVIEW_TASK_RESULTS_FILE);
-
-    // (2) Archives review files to `pr-reviews/pr-review-<date>/`
+    // (1) Archives review files to `pr-reviews/pr-review-<date>/`
     const taskUtils = new TaskUtils(fileSystem);
-    await taskUtils.archiveReviewTask();
+    const { reviewTaskResultsPath } = await taskUtils.archiveReviewTask();
 
-    // (3) Creates `.ai/task/task.md` with template
+    // (2) Creates `.ai/task/task.md` with template
     const templateUtils = new TemplateUtils(fileSystem);
     await templateUtils.writeTemplate('task');
 
-    // (4) Replaces `[REVIEW_TASK_RESULTS_PLACEHOLDER]` in response with results content
+    // (3) Replaces placeholder with file path reference
     const response = ResponseUtils.formatResponse('pr_transitions_P4b', {
-      '[REVIEW_TASK_RESULTS_PLACEHOLDER]': reviewResultsContent,
+      REVIEW_TASK_RESULTS_FILE_PLACEHOLDER: reviewTaskResultsPath,
     });
 
     return {

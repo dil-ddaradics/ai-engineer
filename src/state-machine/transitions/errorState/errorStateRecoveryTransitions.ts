@@ -37,12 +37,9 @@ export const r2Transition: Transition = {
     return await fileSystem.exists(FILE_PATHS.TASK_RESULTS_FILE);
   },
   execute: async (_context, fileSystem) => {
-    // Read task-results.md content before archiving
-    const taskResults = await fileSystem.read(FILE_PATHS.TASK_RESULTS_FILE);
-
     // Archive task files using TaskUtils
     const taskUtils = new TaskUtils(fileSystem);
-    const archivePath = await taskUtils.archiveTask();
+    const { archiveDir, taskResultsPath } = await taskUtils.archiveTask();
 
     // Create new task.md file
     const templateUtils = new TemplateUtils(fileSystem);
@@ -50,8 +47,8 @@ export const r2Transition: Transition = {
 
     // Format response with placeholders replaced
     const response = ResponseUtils.formatResponse('error_recovery_R2', {
-      ARCHIVE_PATH_PLACEHOLDER: archivePath,
-      TASK_RESULTS_PLACEHOLDER: taskResults,
+      ARCHIVE_PATH_PLACEHOLDER: archiveDir,
+      TASK_RESULTS_FILE_PLACEHOLDER: taskResultsPath,
     });
 
     return {

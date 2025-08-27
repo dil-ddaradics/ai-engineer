@@ -1,6 +1,6 @@
 ## Response to the AI
 
-1. Use the provided review task results to understand what changes were made from PR comments
+1. Read [REVIEW_TASK_RESULTS_FILE_PLACEHOLDER] to understand what changes were made from PR comments
 2. Update `.ai/task/plan.md` with a summary of these changes
 3. Read the `.ai/task/plan.md` to identify the next acceptance criterion to work on
 4. Create a new `.ai/task/task.md` with a clearly defined task that:
@@ -8,9 +8,6 @@
    - Can be completed in one session
    - Has clear completion criteria
    - Follows the `.ai/task/task.md` template format
-
-Review Task Results Content:
-[REVIEW_TASK_RESULTS_PLACEHOLDER]
 
 ## Response to the Developer
 

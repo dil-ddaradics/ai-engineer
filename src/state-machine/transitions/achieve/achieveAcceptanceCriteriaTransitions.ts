@@ -81,18 +81,15 @@ export const a2Transition: Transition = {
     const taskUtils = new TaskUtils(fileSystem);
     const templateUtils = new TemplateUtils(fileSystem);
 
-    // Read task-results.md content for placeholder replacement
-    const taskResultsContent = await fileSystem.read(FILE_PATHS.TASK_RESULTS_FILE);
-
     // Archive task files
-    await taskUtils.archiveTask();
+    const { taskResultsPath } = await taskUtils.archiveTask();
 
     // Create new task.md from template
     await templateUtils.writeTemplate('task');
 
-    // Format response with task results content
+    // Format response with task results file path
     const response = ResponseUtils.formatResponse('achieve_transitions_A2', {
-      TASK_RESULTS_PLACEHOLDER: taskResultsContent,
+      TASK_RESULTS_FILE_PLACEHOLDER: taskResultsPath,
     });
 
     return {

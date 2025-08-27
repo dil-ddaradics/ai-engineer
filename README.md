@@ -27,10 +27,11 @@ npm install -g @dil-ddaradics/ai-engineer --registry=https://npm.pkg.github.com
 To avoid specifying the registry with every command, configure your global npmrc:
 
 1. **Create/edit your global .npmrc file:**
+
    ```bash
    # Linux/macOS
    echo "@dil-ddaradics:registry=https://npm.pkg.github.com" >> ~/.npmrc
-   
+
    # Windows
    echo @dil-ddaradics:registry=https://npm.pkg.github.com >> %USERPROFILE%\.npmrc
    ```
@@ -145,19 +146,19 @@ The AI Engineer includes 11 carefully crafted demo states that showcase the comp
 
 ### Available Demo States
 
-| State | Name | Description |
-|-------|------|-------------|
-| `01-empty` | **Empty Start** | Fresh directory - starting point for new projects |
-| `02-context-gathering` | **Context Gathering** | Working on understanding project requirements |
-| `03-context-complete` | **Context Complete** | Project context established, ready for planning |
-| `04-planning` | **Planning** | Creating detailed project plan with acceptance criteria |
-| `05-plan-ready` | **Plan Ready** | Complete plan ready for implementation |
-| `06-setup-drafting` | **Setup Drafting** | Project setup in progress (TypeScript + Jest) |
-| `07-setup-executed` | **Setup Executed** | TypeScript + Jest environment ready |
-| `08-calculator-drafting` | **Calculator Drafting** | Implementation in progress |
-| `09-calculator-executed` | **Calculator Executed** | Full implementation complete |
-| `10-pr-review` | **PR Review** | Handling review feedback phase |
-| `11-final-complete` | **Final Complete** | Production-ready state |
+| State                    | Name                    | Description                                             |
+| ------------------------ | ----------------------- | ------------------------------------------------------- |
+| `01-empty`               | **Empty Start**         | Fresh directory - starting point for new projects       |
+| `02-context-gathering`   | **Context Gathering**   | Working on understanding project requirements           |
+| `03-context-complete`    | **Context Complete**    | Project context established, ready for planning         |
+| `04-planning`            | **Planning**            | Creating detailed project plan with acceptance criteria |
+| `05-plan-ready`          | **Plan Ready**          | Complete plan ready for implementation                  |
+| `06-setup-drafting`      | **Setup Drafting**      | Project setup in progress (TypeScript + Jest)           |
+| `07-setup-executed`      | **Setup Executed**      | TypeScript + Jest environment ready                     |
+| `08-calculator-drafting` | **Calculator Drafting** | Implementation in progress                              |
+| `09-calculator-executed` | **Calculator Executed** | Full implementation complete                            |
+| `10-pr-review`           | **PR Review**           | Handling review feedback phase                          |
+| `11-final-complete`      | **Final Complete**      | Production-ready state                                  |
 
 ### Using Demo States
 
@@ -178,6 +179,7 @@ npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 11-fina
 ```
 
 Each demo state includes:
+
 - Pre-configured files (context, plans, tasks, etc.)
 - Appropriate workflow state
 - Realistic project progression
@@ -186,6 +188,7 @@ Each demo state includes:
 ### Demo Project: Calculator
 
 The demo states follow the development of a TypeScript calculator project, including:
+
 - **Requirements gathering** and context establishment
 - **Planning** with acceptance criteria
 - **Environment setup** (TypeScript, Jest, project structure)
@@ -201,24 +204,28 @@ AI Engineer uses a sophisticated state machine to guide the development workflow
 ### Workflow Phases
 
 #### 1. Context Gathering Phase
+
 - **Purpose**: Understand what needs to be built
 - **Key Files**: `.ai/task/context.md`
 - **Activities**: Requirements analysis, stakeholder input, project scope
 - **Outcome**: Clear understanding of project goals
 
-#### 2. Planning Phase  
+#### 2. Planning Phase
+
 - **Purpose**: Break down work into manageable pieces
 - **Key Files**: `.ai/task/plan.md`
 - **Activities**: Define acceptance criteria, create task breakdown
 - **Outcome**: Structured plan with measurable goals
 
 #### 3. Achievement Phase
+
 - **Purpose**: Execute planned work
 - **Key Files**: `.ai/task/task.md`, `.ai/task/task-results.md`
 - **Activities**: Implementation, testing, validation
 - **Outcome**: Working software that meets acceptance criteria
 
 #### 4. PR Review Phase
+
 - **Purpose**: Handle feedback and improve code quality
 - **Key Files**: `.ai/task/comments.md`, `.ai/task/review-task.md`
 - **Activities**: Address review comments, refine implementation
@@ -235,27 +242,28 @@ The system maintains state through:
 
 ### Spell Behavior by Phase
 
-| Spell | Context Gathering | Planning | Achievement | PR Review |
-|-------|------------------|----------|-------------|-----------|
-| **Accio** | Create context → Create plan → Execute task | Continue tasks → Complete | Archive review → Return |
-| **Expecto** | Enhance context with Atlassian data | Enhance plan with Atlassian data | ❌ Blocked | ❌ Blocked |
-| **Reparo** | ❌ Blocked (no code yet) | Start PR review | Start PR review | ❌ Blocked (already in review) |
-| **Reverto** | ❌ Blocked (not in review) | ❌ Blocked (not in review) | ❌ Blocked (not in review) | Exit review → Return to previous |
-| **Finite** | ❌ Blocked (must complete context) | No-op (already editing) | Return to planning | ❌ Blocked (must complete review) |
-| **Lumos** | Show current state and next steps | Show current state and next steps | Show current state and next steps | Show current state and next steps |
+| Spell       | Context Gathering                           | Planning                          | Achievement                       | PR Review                         |
+| ----------- | ------------------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- |
+| **Accio**   | Create context → Create plan → Execute task | Continue tasks → Complete         | Archive review → Return           |
+| **Expecto** | Enhance context with Atlassian data         | Enhance plan with Atlassian data  | ❌ Blocked                        | ❌ Blocked                        |
+| **Reparo**  | ❌ Blocked (no code yet)                    | Start PR review                   | Start PR review                   | ❌ Blocked (already in review)    |
+| **Reverto** | ❌ Blocked (not in review)                  | ❌ Blocked (not in review)        | ❌ Blocked (not in review)        | Exit review → Return to previous  |
+| **Finite**  | ❌ Blocked (must complete context)          | No-op (already editing)           | Return to planning                | ❌ Blocked (must complete review) |
+| **Lumos**   | Show current state and next steps           | Show current state and next steps | Show current state and next steps | Show current state and next steps |
 
 ### Error Handling & Recovery
 
 The state machine includes comprehensive error detection:
 
 - **Missing Files**: Detects when expected files are absent
-- **State Corruption**: Handles inconsistent state conditions  
+- **State Corruption**: Handles inconsistent state conditions
 - **Recovery Actions**: Provides clear paths to fix errors
 - **Graceful Degradation**: Continues working even with partial failures
 
 ### Transition Validation
 
 Every state transition includes:
+
 - **Pre-conditions**: File existence and content validation
 - **Actions**: File creation, archiving, and content processing
 - **Post-conditions**: State consistency verification
@@ -288,17 +296,20 @@ AI Engineer is built as a Model Context Protocol (MCP) server with three main co
 ### MCP Server Components
 
 #### Tools (Spells)
+
 - **TypeScript Implementation**: `/src/tools/spells.ts`
 - **Stateless Design**: Each tool delegates to the state machine
 - **Error Handling**: Comprehensive error catching and user-friendly messages
 - **Validation**: Input validation and pre-condition checking
 
 #### Resources
+
 - **Template System**: Provides markdown templates for workflow files
 - **Dynamic Content**: Context-aware resource generation
 - **Atlassian Integration**: URL extraction and reference management
 
 #### State Machine
+
 - **Core Engine**: `/src/state-machine/stateMachine.ts`
 - **96 Transitions**: Complete coverage of all state-spell combinations
 - **File Operations**: Atomic file creation, archiving, and management
@@ -342,6 +353,7 @@ ai-engineer/
 The system uses a hybrid approach for state management:
 
 #### Primary State (`.ai/task/state.json`)
+
 ```json
 {
   "current_state": "GATHER_EDITING_CONTEXT",
@@ -360,13 +372,16 @@ The system uses a hybrid approach for state management:
 ```
 
 #### Secondary Indicators
+
 - **Context Phase**: `.ai/task/context.md` existence
 - **Planning Phase**: `.ai/task/plan.md` existence and content
 - **Achievement Phase**: `.ai/task/task.md` and `.ai/task/task-results.md`
 - **PR Review Phase**: `.ai/task/comments.md` and `.ai/task/review-task.md`
 
 #### File Archiving
+
 Completed work is automatically archived to maintain history:
+
 - **Tasks**: `.ai/task/tasks/task-{name}-{date}/`
 - **PR Reviews**: `.ai/task/pr-reviews/pr-review-{date}/`
 

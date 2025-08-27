@@ -404,7 +404,7 @@ Set up user authentication system
       const result = await g4Transition.execute(mockContext, mockFileSystem);
 
       expect(result).toHaveProperty('message');
-      expect(result.message).toContain(taskContent);
+      expect(result.message).toContain('existing task document');
     });
 
     it('should return formatted response with task content placeholder replaced', async () => {
@@ -417,8 +417,8 @@ Set up user authentication system
       expect(typeof result.message).toBe('string');
       expect(result.message.length).toBeGreaterThan(0);
 
-      // Verify the response includes the task content
-      expect(result.message).toContain(taskContent);
+      // Verify the response indicates task document was found
+      expect(result.message).toContain('existing task document');
     });
 
     it('should handle missing task file gracefully by using empty content', async () => {

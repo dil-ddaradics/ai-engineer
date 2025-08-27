@@ -193,8 +193,8 @@ task_name: 'test-task'
       expect(await mockFileSystem.exists(FILE_PATHS.TASK_FILE)).toBe(true); // New template created
       expect(await mockFileSystem.exists(FILE_PATHS.TASK_RESULTS_FILE)).toBe(false); // Original deleted
 
-      // Verify response contains results content
-      expect(result.message).toContain(resultsContent);
+      // Verify response contains reference to archived task results
+      expect(result.message).toContain('task-test-task-2025-08-27');
     });
 
     it('should return response with TASK_RESULTS_PLACEHOLDER replaced', async () => {
@@ -211,9 +211,10 @@ task_name: 'test-task'
 
       const result = await a2Transition.execute(mockContext, mockFileSystem);
 
-      // Check that the placeholder was replaced with the actual results content
-      expect(result.message).toContain(resultsContent);
-      expect(result.message).not.toContain('[TASK_RESULTS_PLACEHOLDER]');
+      // Check that the placeholder was replaced with the file path
+      expect(result.message).toContain('.ai/task/tasks/');
+      expect(result.message).toContain('task-results.md');
+      expect(result.message).not.toContain('[TASK_RESULTS_FILE_PLACEHOLDER]');
     });
   });
 

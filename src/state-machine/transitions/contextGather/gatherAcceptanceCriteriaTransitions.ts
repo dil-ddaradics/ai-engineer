@@ -109,14 +109,8 @@ export const g4Transition: Transition = {
       (await fileSystem.exists(FILE_PATHS.PLAN_FILE))
     );
   },
-  execute: async (context, fileSystem) => {
-    // (1) Reads `.ai/task/task.md` content
-    const taskContent = await fileSystem.readSafe(FILE_PATHS.TASK_FILE);
-
-    // (2) Replaces `[TASK_CONTENT_PLACEHOLDER]` in response with task content
-    const response = ResponseUtils.formatResponse('gather_transitions_G4', {
-      TASK_CONTENT_PLACEHOLDER: taskContent,
-    });
+  execute: async (_context, _fileSystem) => {
+    const response = ResponseUtils.formatResponse('gather_transitions_G4');
 
     return {
       message: response,

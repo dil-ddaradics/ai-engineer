@@ -8,7 +8,7 @@ import {
 } from './types';
 import { DEFAULT_TRANSITIONS } from './transitions';
 import { TransitionUtils, TaskUtils } from './utils';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
 
 /**
  * Default transitions imported from transitions module

@@ -11,13 +11,14 @@ export class TaskUtils {
    * Archive task files (both regular and incomplete tasks)
    * Gracefully handles missing task-results.md for incomplete tasks
    *
-   * @returns Promise<string> - The archive directory path
+   * @returns Promise<{archiveDir: string, taskResultsPath: string}> - The archive directory path and task results file path
    */
-  async archiveTask(): Promise<string> {
+  async archiveTask(): Promise<{ archiveDir: string; taskResultsPath: string }> {
     const taskName = await this.extractTaskName(FILE_PATHS.TASK_FILE);
     const timestamp = this.formatTimestamp();
     const archiveDirName = `task-${taskName}-${timestamp}`;
     const archiveDir = `.ai/task/tasks/${archiveDirName}`;
+    const taskResultsPath = `${archiveDir}/task-results.md`;
 
     // Create archive directory
     await this.fileSystem.createDirectory(archiveDir);
@@ -32,18 +33,19 @@ export class TaskUtils {
       await this.tryArchiveFile(file.source, `${archiveDir}/${file.name}`);
     }
 
-    return archiveDir;
+    return { archiveDir, taskResultsPath };
   }
 
   /**
    * Archive PR review files
    *
-   * @returns Promise<string> - The archive directory path
+   * @returns Promise<{archiveDir: string, reviewTaskResultsPath: string}> - The archive directory path and review task results file path
    */
-  async archiveReviewTask(): Promise<string> {
+  async archiveReviewTask(): Promise<{ archiveDir: string; reviewTaskResultsPath: string }> {
     const timestamp = this.formatTimestamp();
     const archiveDirName = `pr-review-${timestamp}`;
     const archiveDir = `.ai/task/pr-reviews/${archiveDirName}`;
+    const reviewTaskResultsPath = `${archiveDir}/review-task-results.md`;
 
     // Create archive directory
     await this.fileSystem.createDirectory(archiveDir);
@@ -59,7 +61,7 @@ export class TaskUtils {
       await this.tryArchiveFile(file.source, `${archiveDir}/${file.name}`);
     }
 
-    return archiveDir;
+    return { archiveDir, reviewTaskResultsPath };
   }
 
   /**

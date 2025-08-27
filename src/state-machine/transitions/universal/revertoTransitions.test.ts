@@ -114,7 +114,7 @@ describe('Reverto Transitions (Exit PR Review)', () => {
       const result = await v2aTransition.execute(mockContext, mockFileSystem);
 
       expect(result.message).toContain('exited the PR review process');
-      expect(result.message).toContain('task drafting phase');
+      expect(result.message).toContain('file drafting phase');
       expect(result.message).toContain('**Accio**');
     });
   });
@@ -170,7 +170,7 @@ describe('Reverto Transitions (Exit PR Review)', () => {
       const result = await v2bTransition.execute(mockContext, mockFileSystem);
 
       expect(result.message).toContain('exited the PR review process');
-      expect(result.message).toContain('task executed phase');
+      expect(result.message).toContain('file completion phase');
       expect(result.message).toContain('**Accio**');
     });
   });

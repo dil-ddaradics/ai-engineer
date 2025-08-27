@@ -34,8 +34,8 @@ describe('State Machine Index', () => {
 
       // Test that it initializes properly by executing a spell
       const result = await stateMachine.executeSpell('Lumos');
-      expect(result.success).toBe(false); // No transitions defined by default
-      expect(result.message).toContain('not available');
+      expect(result.success).toBe(true); // Default transitions are provided
+      expect(result.message).toContain('AI Engineer');
     });
 
     it('should create a state machine with default state file path', async () => {
@@ -92,7 +92,7 @@ describe('State Machine Index', () => {
 
       // Test that it works with the provided dependencies
       const result = await stateMachine.executeSpell('Lumos');
-      expect(result.success).toBe(false); // No transitions by default
+      expect(result.success).toBe(true); // Default transitions are provided
     });
 
     it('should create a state machine with custom dependencies and transitions', async () => {

@@ -64,8 +64,16 @@ export class PlanUtils {
    * Check if a file contains Atlassian URLs
    */
   async hasAtlassianUrls(filePath: string): Promise<boolean> {
-    const urls = await this.extractAtlassianUrls(filePath);
-    return urls.length > 0;
+    try {
+      const urls = await this.extractAtlassianUrls(filePath);
+      return urls.length > 0;
+    } catch (error) {
+      // Only catch file not found errors, let other errors (parsing, etc.) propagate
+      if (error instanceof Error && error.message.includes('File not found')) {
+        return false;
+      }
+      throw error;
+    }
   }
 
   /**
