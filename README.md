@@ -16,11 +16,32 @@ A Model Context Protocol (MCP) server that provides intelligent workflow orchest
 
 ### Installation
 
-Install the AI Engineer MCP server:
+Install the AI Engineer MCP server from GitHub Packages:
 
 ```bash
-npm install -g @dil-ddaradics/ai-engineer
+npm install -g @dil-ddaradics/ai-engineer --registry=https://npm.pkg.github.com
 ```
+
+### Configure GitHub Packages Registry (Recommended)
+
+To avoid specifying the registry with every command, configure your global npmrc:
+
+1. **Create/edit your global .npmrc file:**
+   ```bash
+   # Linux/macOS
+   echo "@dil-ddaradics:registry=https://npm.pkg.github.com" >> ~/.npmrc
+   
+   # Windows
+   echo @dil-ddaradics:registry=https://npm.pkg.github.com >> %USERPROFILE%\.npmrc
+   ```
+
+2. **After this configuration, you can use commands without the --registry flag:**
+   ```bash
+   npm install -g @dil-ddaradics/ai-engineer
+   npx @dil-ddaradics/ai-engineer help
+   ```
+
+**Note:** The examples below show commands with the `--registry` flag. If you've configured your global npmrc as shown above, you can omit the `--registry=https://npm.pkg.github.com` portion from all commands.
 
 ### Configure Your AI Assistant
 
@@ -33,7 +54,7 @@ Add to your Claude Code settings:
   "mcpServers": {
     "ai-engineer": {
       "command": "npx",
-      "args": ["@dil-ddaradics/ai-engineer"],
+      "args": ["--registry=https://npm.pkg.github.com", "@dil-ddaradics/ai-engineer"],
       "env": {}
     }
   }
@@ -43,7 +64,7 @@ Add to your Claude Code settings:
 Or use the Claude Code CLI:
 
 ```bash
-claude mcp install ai-engineer npx @dil-ddaradics/ai-engineer
+claude mcp install ai-engineer npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer
 ```
 
 #### Cursor
@@ -56,7 +77,7 @@ Add to your Cursor settings.json:
     "servers": {
       "ai-engineer": {
         "command": "npx",
-        "args": ["@dil-ddaradics/ai-engineer"]
+        "args": ["--registry=https://npm.pkg.github.com", "@dil-ddaradics/ai-engineer"]
       }
     }
   }
@@ -68,7 +89,7 @@ Add to your Cursor settings.json:
 1. **Start a workflow**: Ask your AI assistant to cast "Accio" to begin
 2. **Check current state**: Use "Lumos" to see where you are and what's available
 3. **Navigate the workflow**: Use the available spells to progress through phases
-4. **Get help**: Run `npx ai-engineer help` for detailed CLI usage
+4. **Get help**: Run `npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer help` for detailed CLI usage
 
 ## 📖 Usage Guide
 
@@ -78,25 +99,25 @@ The AI Engineer CLI provides powerful workflow management:
 
 ```bash
 # List all available demo states
-npx ai-engineer list
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer list
 
 # Set up a specific demo state
-npx ai-engineer set 05-plan-ready
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 05-plan-ready
 
 # Check current workflow state
-npx ai-engineer current
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer current
 
 # Reset workflow (clear all state)
-npx ai-engineer reset
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer reset
 
 # Create backup of current state
-npx ai-engineer backup
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer backup
 
 # Restore from backup
-npx ai-engineer restore
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer restore
 
 # Show help information
-npx ai-engineer help
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer help
 ```
 
 ### MCP Tools (Spells)
@@ -144,16 +165,16 @@ Demo states let you jump into any part of the workflow to explore and learn:
 
 ```bash
 # Start from the beginning
-npx ai-engineer set 01-empty
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 01-empty
 
 # Jump to planning phase
-npx ai-engineer set 05-plan-ready
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 05-plan-ready
 
 # Explore PR review workflow
-npx ai-engineer set 10-pr-review
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 10-pr-review
 
 # See the final result
-npx ai-engineer set 11-final-complete
+npx --registry=https://npm.pkg.github.com @dil-ddaradics/ai-engineer set 11-final-complete
 ```
 
 Each demo state includes:
