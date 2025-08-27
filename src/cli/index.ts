@@ -17,7 +17,7 @@ export interface DemoState {
   state: StateName;
 }
 
-export interface DemoBackup {
+export interface TaskBackup {
   timestamp: string;
   originalPath: string;
   backupPath: string;
@@ -95,9 +95,9 @@ export const DEMO_STATES: Record<string, DemoState> = {
   },
 };
 
-export class DemoManager {
-  private readonly aiDir = '.ai';
-  private readonly backupDir = '.ai-backup';
+export class CliManager {
+  private readonly taskDir = '.ai/task';
+  private readonly backupDir = '.ai/backups';
   private readonly demosDir: string;
 
   constructor() {
@@ -120,7 +120,7 @@ export class DemoManager {
    */
   async getCurrentState(): Promise<string | null> {
     try {
-      const stateFile = path.join(this.aiDir, 'task', 'state.json');
+      const stateFile = path.join(this.taskDir, 'state.json');
       const content = await fs.readFile(stateFile, 'utf-8');
       const state = JSON.parse(content);
       return state.currentState || null;
@@ -130,11 +130,11 @@ export class DemoManager {
   }
 
   /**
-   * Check if .ai directory exists
+   * Check if .ai/task directory exists
    */
-  async hasAiDirectory(): Promise<boolean> {
+  async hasTaskDirectory(): Promise<boolean> {
     try {
-      await fs.access(this.aiDir);
+      await fs.access(this.taskDir);
       return true;
     } catch {
       return false;
@@ -142,62 +142,83 @@ export class DemoManager {
   }
 
   /**
-   * Backup current .ai directory
+   * Backup current .ai/task directory
    */
-  async backup(): Promise<DemoBackup> {
+  async backup(): Promise<TaskBackup> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupPath = `${this.backupDir}-${timestamp}`;
+    const backupPath = path.join(this.backupDir, timestamp);
 
-    if (!(await this.hasAiDirectory())) {
-      throw new Error('No .ai directory exists to backup');
+    if (!(await this.hasTaskDirectory())) {
+      throw new Error('No .ai/task directory exists to backup');
     }
 
-    await this.copyDirectory(this.aiDir, backupPath);
+    // Ensure backup directory exists
+    await fs.mkdir(this.backupDir, { recursive: true });
+
+    await this.copyDirectory(this.taskDir, backupPath);
 
     return {
       timestamp,
-      originalPath: this.aiDir,
+      originalPath: this.taskDir,
       backupPath,
     };
   }
 
   /**
-   * Restore from backup
+   * Restore from backup by folder name
    */
-  async restore(backupPath?: string): Promise<void> {
-    if (!backupPath) {
+  async restore(backupFolderName?: string): Promise<void> {
+    if (!backupFolderName) {
       // Find most recent backup
       const backups = await this.listBackups();
       if (backups.length === 0) {
         throw new Error('No backups found');
       }
-      backupPath = backups[0].backupPath;
+      backupFolderName = path.basename(backups[0].backupPath);
     }
 
-    // Remove current .ai directory if it exists
-    if (await this.hasAiDirectory()) {
-      await fs.rm(this.aiDir, { recursive: true, force: true });
+    const backupPath = path.join(this.backupDir, backupFolderName);
+
+    // Check if backup exists
+    try {
+      await fs.access(backupPath);
+    } catch {
+      throw new Error(`Backup not found: ${backupFolderName}`);
+    }
+
+    // Remove current .ai/task directory if it exists
+    if (await this.hasTaskDirectory()) {
+      await fs.rm(this.taskDir, { recursive: true, force: true });
     }
 
     // Restore from backup
-    await this.copyDirectory(backupPath, this.aiDir);
+    await this.copyDirectory(backupPath, this.taskDir);
   }
 
   /**
    * List available backups
    */
-  async listBackups(): Promise<DemoBackup[]> {
+  async listBackups(): Promise<TaskBackup[]> {
     try {
-      const files = await fs.readdir('.');
-      const backups: DemoBackup[] = [];
+      // Check if backup directory exists
+      try {
+        await fs.access(this.backupDir);
+      } catch {
+        return []; // No backups directory exists
+      }
+
+      const files = await fs.readdir(this.backupDir);
+      const backups: TaskBackup[] = [];
 
       for (const file of files) {
-        if (file.startsWith(this.backupDir + '-')) {
-          const timestamp = file.substring(this.backupDir.length + 1);
+        const backupPath = path.join(this.backupDir, file);
+        const stat = await fs.stat(backupPath);
+
+        if (stat.isDirectory()) {
           backups.push({
-            timestamp,
-            originalPath: this.aiDir,
-            backupPath: file,
+            timestamp: file, // folder name is the timestamp
+            originalPath: this.taskDir,
+            backupPath,
           });
         }
       }
@@ -258,11 +279,11 @@ export class DemoManager {
   }
 
   /**
-   * Reset (remove) .ai directory
+   * Reset (remove) .ai/task directory
    */
   async reset(): Promise<void> {
-    if (await this.hasAiDirectory()) {
-      await fs.rm(this.aiDir, { recursive: true, force: true });
+    if (await this.hasTaskDirectory()) {
+      await fs.rm(this.taskDir, { recursive: true, force: true });
     }
   }
 
@@ -276,13 +297,13 @@ export class DemoManager {
       throw new Error(
         'Safety check failed: .gitignore file detected. Demo cleanup is disabled to prevent accidental deletion of a real project.'
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If this is our safety error, re-throw it
-      if (error.message && error.message.includes('Safety check failed')) {
+      if (error instanceof Error && error.message.includes('Safety check failed')) {
         throw error;
       }
       // If the error is not about file not existing, re-throw it
-      if (error.code !== 'ENOENT') {
+      if (error && typeof error === 'object' && 'code' in error && error.code !== 'ENOENT') {
         throw error;
       }
       // If .gitignore doesn't exist (ENOENT), continue with next check

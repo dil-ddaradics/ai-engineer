@@ -1,11 +1,12 @@
 /**
- * CLI Command Handlers for AI Engineer Demo Tool
+ * CLI Command Handlers for AI Engineer
  *
- * Handles command-line interface for managing demo states.
+ * Handles command-line interface for managing workflow states.
  * Supports commands: list, set, reset, current, backup, restore
  */
 
-import { DemoManager, DEMO_STATES } from './index.js';
+import { CliManager, DEMO_STATES, DemoState } from './index.js';
+import * as path from 'path';
 
 export interface CliOptions {
   args: string[];
@@ -14,8 +15,8 @@ export interface CliOptions {
 /**
  * Main CLI runner function
  */
-export async function runDemoCli(args: string[]): Promise<void> {
-  const demoManager = new DemoManager();
+export async function runCli(args: string[]): Promise<void> {
+  const cliManager = new CliManager();
   const command = args[0];
   const subArgs = args.slice(1);
 
@@ -23,29 +24,29 @@ export async function runDemoCli(args: string[]): Promise<void> {
     switch (command) {
       case 'list':
       case 'ls':
-        await handleListCommand(demoManager);
+        await handleListCommand(cliManager);
         break;
 
       case 'set':
-        await handleSetCommand(demoManager, subArgs);
+        await handleSetCommand(cliManager, subArgs);
         break;
 
       case 'reset':
       case 'clear':
-        await handleResetCommand(demoManager);
+        await handleResetCommand(cliManager);
         break;
 
       case 'current':
       case 'status':
-        await handleCurrentCommand(demoManager);
+        await handleCurrentCommand(cliManager);
         break;
 
       case 'backup':
-        await handleBackupCommand(demoManager);
+        await handleBackupCommand(cliManager);
         break;
 
       case 'restore':
-        await handleRestoreCommand(demoManager, subArgs);
+        await handleRestoreCommand(cliManager, subArgs);
         break;
 
       case 'help':
@@ -59,7 +60,7 @@ export async function runDemoCli(args: string[]): Promise<void> {
           showHelp();
         } else {
           console.error(`Unknown command: ${command}`);
-          console.error('Run "npx ai-engineer-demo help" for usage information.');
+          console.error('Run "npx ai-engineer help" for usage information.');
           process.exit(1);
         }
     }
@@ -72,13 +73,13 @@ export async function runDemoCli(args: string[]): Promise<void> {
 /**
  * Handle 'list' command - show available demo states
  */
-async function handleListCommand(demoManager: DemoManager): Promise<void> {
+async function handleListCommand(cliManager: CliManager): Promise<void> {
   console.log('📋 Available Demo States:\n');
 
-  const states = demoManager.listStates();
-  const currentState = await demoManager.getCurrentState();
+  const states = cliManager.listStates();
+  const currentState = await cliManager.getCurrentState();
 
-  states.forEach(state => {
+  states.forEach((state: DemoState) => {
     const indicator = currentState === state.state ? '→ ' : '  ';
     const status = currentState === state.state ? ' (current)' : '';
 
@@ -95,10 +96,10 @@ async function handleListCommand(demoManager: DemoManager): Promise<void> {
 /**
  * Handle 'set' command - set a specific demo state
  */
-async function handleSetCommand(demoManager: DemoManager, args: string[]): Promise<void> {
+async function handleSetCommand(cliManager: CliManager, args: string[]): Promise<void> {
   if (args.length === 0) {
     console.error('❌ Error: Please specify a demo state name.');
-    console.error('Use "npx ai-engineer-demo list" to see available states.');
+    console.error('Use "npx ai-engineer list" to see available states.');
     process.exit(1);
   }
 
@@ -111,10 +112,10 @@ async function handleSetCommand(demoManager: DemoManager, args: string[]): Promi
   }
 
   // Check if .ai directory exists and offer backup
-  if (await demoManager.hasAiDirectory()) {
-    console.log('⚠️  Existing .ai directory detected.');
-    console.log('This will replace your current .ai folder.');
-    console.log('Consider running "npx ai-engineer-demo backup" first.\n');
+  if (await cliManager.hasTaskDirectory()) {
+    console.log('⚠️  Existing .ai/task directory detected.');
+    console.log('This will replace your current task state.');
+    console.log('Consider running "npx ai-engineer backup" first.\n');
 
     // In a real CLI, we'd prompt for confirmation here
     // For now, we'll just warn and proceed
@@ -123,7 +124,7 @@ async function handleSetCommand(demoManager: DemoManager, args: string[]): Promi
 
   console.log(`🚀 Setting up demo state: ${DEMO_STATES[stateName].displayName}`);
 
-  await demoManager.setState(stateName);
+  await cliManager.setState(stateName);
 
   console.log('✅ Demo state configured successfully!');
 
@@ -144,28 +145,28 @@ async function handleSetCommand(demoManager: DemoManager, args: string[]): Promi
 /**
  * Handle 'reset' command - remove .ai directory
  */
-async function handleResetCommand(demoManager: DemoManager): Promise<void> {
-  if (!(await demoManager.hasAiDirectory())) {
-    console.log('ℹ️  No .ai directory found. Nothing to reset.');
+async function handleResetCommand(cliManager: CliManager): Promise<void> {
+  if (!(await cliManager.hasTaskDirectory())) {
+    console.log('ℹ️  No .ai/task directory found. Nothing to reset.');
     return;
   }
 
-  console.log('🧹 Removing .ai directory...');
-  await demoManager.reset();
-  console.log('✅ Demo state cleared successfully!');
+  console.log('🧹 Removing .ai/task directory...');
+  await cliManager.reset();
+  console.log('✅ Task state cleared successfully!');
 }
 
 /**
  * Handle 'current' command - show current state
  */
-async function handleCurrentCommand(demoManager: DemoManager): Promise<void> {
-  const currentState = await demoManager.getCurrentState();
+async function handleCurrentCommand(cliManager: CliManager): Promise<void> {
+  const currentState = await cliManager.getCurrentState();
 
   if (!currentState) {
     console.log('📭 No current state detected.');
     console.log('   - No .ai directory found, or');
     console.log('   - No state.json file exists');
-    console.log('\n💡 Use "npx ai-engineer-demo set <state>" to create a demo state.');
+    console.log('\n💡 Use "npx ai-engineer set <state>" to create a demo state.');
     return;
   }
 
@@ -218,14 +219,14 @@ async function handleCurrentCommand(demoManager: DemoManager): Promise<void> {
 /**
  * Handle 'backup' command - backup current .ai directory
  */
-async function handleBackupCommand(demoManager: DemoManager): Promise<void> {
-  if (!(await demoManager.hasAiDirectory())) {
-    console.log('ℹ️  No .ai directory found. Nothing to backup.');
+async function handleBackupCommand(cliManager: CliManager): Promise<void> {
+  if (!(await cliManager.hasTaskDirectory())) {
+    console.log('ℹ️  No .ai/task directory found. Nothing to backup.');
     return;
   }
 
-  console.log('💾 Creating backup of current .ai directory...');
-  const backup = await demoManager.backup();
+  console.log('💾 Creating backup of current .ai/task directory...');
+  const backup = await cliManager.backup();
 
   console.log('✅ Backup created successfully!');
   console.log(`📁 Backup location: ${backup.backupPath}`);
@@ -235,33 +236,33 @@ async function handleBackupCommand(demoManager: DemoManager): Promise<void> {
 /**
  * Handle 'restore' command - restore from backup
  */
-async function handleRestoreCommand(demoManager: DemoManager, args: string[]): Promise<void> {
-  const backups = await demoManager.listBackups();
+async function handleRestoreCommand(cliManager: CliManager, args: string[]): Promise<void> {
+  const backups = await cliManager.listBackups();
 
   if (backups.length === 0) {
     console.log('📭 No backups found.');
-    console.log('💡 Create a backup with "npx ai-engineer-demo backup" before making changes.');
+    console.log('💡 Create a backup with "npx ai-engineer backup" before making changes.');
     return;
   }
 
-  let backupPath: string | undefined;
+  let backupFolderName: string | undefined;
 
   if (args.length > 0) {
-    backupPath = args[0];
+    backupFolderName = args[0];
   } else {
     // Use most recent backup
-    backupPath = backups[0].backupPath;
-    console.log(`🔄 Restoring from most recent backup: ${backupPath}`);
+    backupFolderName = path.basename(backups[0].backupPath);
+    console.log(`🔄 Restoring from most recent backup: ${backupFolderName}`);
   }
 
-  console.log('♻️  Restoring .ai directory from backup...');
-  await demoManager.restore(backupPath);
+  console.log('♻️  Restoring .ai/task directory from backup...');
+  await cliManager.restore(backupFolderName);
 
   console.log('✅ Restore completed successfully!');
-  console.log('📁 .ai directory restored from backup');
+  console.log('📁 .ai/task directory restored from backup');
 
   // Show current state after restore
-  const currentState = await demoManager.getCurrentState();
+  const currentState = await cliManager.getCurrentState();
   if (currentState) {
     console.log(`📊 Current state: ${currentState}`);
   }
@@ -272,10 +273,10 @@ async function handleRestoreCommand(demoManager: DemoManager, args: string[]): P
  */
 function showHelp(): void {
   console.log(`
-🧙‍♂️ AI Engineer Demo Tool
+🧙‍♂️ AI Engineer CLI Tool
 
 USAGE:
-  npx ai-engineer-demo <command> [options]
+  npx ai-engineer <command> [options]
 
 COMMANDS:
   list, ls              List all available demo states
@@ -287,11 +288,11 @@ COMMANDS:
   help, -h, --help      Show this help message
 
 EXAMPLES:
-  npx ai-engineer-demo list
-  npx ai-engineer-demo set 01-empty
-  npx ai-engineer-demo set 05-plan-ready
-  npx ai-engineer-demo set 09-calculator-executed
-  npx ai-engineer-demo current
+  npx ai-engineer list
+  npx ai-engineer set 01-empty
+  npx ai-engineer set 05-plan-ready
+  npx ai-engineer set 09-calculator-executed
+  npx ai-engineer current
 
 DEMO STATES:
   01-empty              Empty Start - Fresh directory
